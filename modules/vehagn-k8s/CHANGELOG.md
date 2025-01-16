@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- pending issue #20: update terraform talos v0.6.1 → v0.7.0 (#18)
 
 ## [1.0.0] - 2024-12-23
 
