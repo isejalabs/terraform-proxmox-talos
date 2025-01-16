@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2025-01-16
+
+This is a "null operation" release without any changes.  It serves as a test
+for any consumers who use automatic release notify or update tools (e.g.
+`dependabot`, `renovate`) after the repo move and restructuring, which also
+caused a change in the release tag naming scheme.
+
 ## [2.0.0] - 2025-01-16
 
 ### Changed
