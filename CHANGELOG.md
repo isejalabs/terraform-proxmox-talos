@@ -9,6 +9,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2025-01-16
+
+### Changed
+
+**BREAKING CHANGE**: 
+* Repo ownership changed from @sebiklamar to @isejalabs.
+* In addition, there's a change in the repo structure by splitting up the
+  terraform modules to multiple repos.  As such, terraform module `vehagn-k8s`
+  will change its name to `terraform-proxmox-talos`, while version tags will
+  strip off the module name, i.e. change from `vehagn-k8s-v2.0.0` to `v2.0.0`.
+
+No further code changes, i.e. functionality equals the `v1.0.0` version.
+
+**Upgrade Notice**:
+While most tools will accomodate to the new repo URL per `git`'s redirect for
+the short term, a manual change is necessary for the long term and for adapting
+to the new repo structure because the module's code will move from the
+`modules/vehagn-k8s` subfolder to the repo root folder.
+
+Coming from a pre-`v2.0.0` version you normally have adapted any `source` URL
+references as part of the transition from `vehagn-k8s-v1.0.0` via the
+transitional release `vehagn-k8s-v2.0.0` already.
+1. If not done yet, set repo `source` URL in terraform/tofu/terragrunt to
+   `isejalabs/terraform-proxmox-talos.git?ref=v2.0.0`.
+2. Migrate your state file, depending on `remote_state` configuration. Read the
+   [release notes for vehagn-k8s-v2.0.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/vehagn-k8s-v2.0.0)
+   for further instructions.
 
 ## [1.0.0] - 2024-12-23
 
