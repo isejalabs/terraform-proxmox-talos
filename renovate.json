@@ -7,7 +7,6 @@
   "assignees": [
     "sebiklamar"
   ],
-  "additionalBranchPrefix": "{{packageFileDir}}/",
   "prBodyColumns": [
     "Package",
     "Package file",
