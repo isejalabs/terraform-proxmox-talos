@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Removed unused `ingressController` config in cilium defaults;
+  as `ingressController` was disabled anyway, this is a cosmetic change
+
+
 ## [2.0.1] - 2025-01-16
 
 This is a "null operation" release without any changes.  It serves as a test
