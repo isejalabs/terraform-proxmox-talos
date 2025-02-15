@@ -14,10 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed unused `ingressController` config in cilium defaults;
   as `ingressController` was disabled anyway, this is a cosmetic change
 
-
 ## [2.0.1] - 2025-01-16
 
-This is a "null operation" release without any changes.  It serves as a test
+This is a "null operation" release without any changes. It serves as a test
 for any consumers who use automatic release notify or update tools (e.g.
 `dependabot`, `renovate`) after the repo move and restructuring, which also
 caused a change in the release tag naming scheme.
@@ -26,10 +25,11 @@ caused a change in the release tag naming scheme.
 
 ### Changed
 
-**BREAKING CHANGE**: 
-* Repo ownership changed from @sebiklamar to @isejalabs.
-* In addition, there's a change in the repo structure by splitting up the
-  terraform modules to multiple repos.  As such, terraform module `vehagn-k8s`
+**BREAKING CHANGE**:
+
+- Repo ownership changed from @sebiklamar to @isejalabs.
+- In addition, there's a change in the repo structure by splitting up the
+  terraform modules to multiple repos. As such, terraform module `vehagn-k8s`
   will change its name to `terraform-proxmox-talos`, while version tags will
   strip off the module name, i.e. change from `vehagn-k8s-v2.0.0` to `v2.0.0`.
 
@@ -44,6 +44,7 @@ to the new repo structure because the module's code will move from the
 Coming from a pre-`v2.0.0` version you normally have adapted any `source` URL
 references as part of the transition from `vehagn-k8s-v1.0.0` via the
 transitional release `vehagn-k8s-v2.0.0` already.
+
 1. If not done yet, set repo `source` URL in terraform/tofu/terragrunt to
    `isejalabs/terraform-proxmox-talos.git?ref=v2.0.0`.
 2. Migrate your state file, depending on `remote_state` configuration. Read the
@@ -54,7 +55,9 @@ transitional release `vehagn-k8s-v2.0.0` already.
 
 ### Changed
 
-- **BREAKING CHANGE:** proxmox volume and downloaded file (talos image) respect
+**BREAKING CHANGE:**
+
+- proxmox volume and downloaded file (talos image) respect
   the environment (`var.env`) in the volume (e.g. `vm-9999-dev-foo`) and
   filename (e.g. `dev-talos-<schematic>-v1.8.4-nocloud-amd64.img`) if specified
   (optionally); there's no known and tested upgrade path other than destroying
@@ -72,7 +75,6 @@ transitional release `vehagn-k8s-v2.0.0` already.
 - update dependency cilium/cilium v1.16.4 → v1.16.5;
   beware potential issue with DNS, see siderolabs/talos#10002: Cilium 1.16.5
   breaks external DNS resolution with forwardKubeDNSToHost enabled)
-)
 
 ## [0.3.0] - 2024-12-14
 
@@ -180,9 +182,10 @@ Notable changes to the upstream version are:
 - changed CPU model to `x86-64-v2-AES` (was: `host`)
 - overwrite existing downloaded file from other module instance, hence limiting
   clashing with other module instances in the same proxmox cluster
-- implemented initial workaround for `schematic_id` issue (see ) by not
-  depending on the `schematic_id` in the resource id by having 2 instances of
-  `proxmox_virtual_environment_download_file` (impl. option 4, cf.
+- implemented initial workaround for `schematic_id` issue (see
+  vehagn/homelab#106) by not depending on the `schematic_id` in the resource id
+  by having 2 instances of `proxmox_virtual_environment_download_file`
+  (impl. option 4, cf.
   https://github.com/vehagn/homelab/issues/106#issuecomment-2481303369)
 
 ### Removed
@@ -191,16 +194,20 @@ Notable changes to the upstream version are:
   - `siderolabs/i915-ucode`
   - `siderolabs/intel-ucode`
 
+→ implemented in v0.0.2 to make this variable
+
 ### Known Issues
 
 - [x] node configuration hard-coded in module; needs to be moved to input variables
-  in `terragrunt.hcl`
-  → implemented in v0.0.2
+      in `terragrunt.hcl`
+      → implemented in v0.0.2
 - [x] sealed secrets and subsequent k8s bootstrapping not working yet - though you
-  get a working k8s cluster (w/ cilium even)
-  → implemented in v0.0.2
+      get a working k8s cluster (w/ cilium even)
+      → implemented in v0.0.2
 - [x] cilium values not configurable
-  → implemented in v0.2.0
+      → implemented in v0.2.0
 - [x] resources in proxmox clashing with other instances of this module in the same
-  proxmox cluster (due to same name used)
-  → initial implementation in v0.2.0 and finalized in v1.0.0
+      proxmox cluster (due to same name used)
+      → initial implementation in v0.2.0 and finalized in v1.0.0
+- [x] `schematic.yaml` is hard-coded and should be definable as variable
+      → implemented in v0.0.2
