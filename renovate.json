@@ -16,12 +16,12 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "\\.hcl$",
-        "\\.tf$",
-        "\\.tftpl$",
-        "\\.yaml$",
-        "\\.sh$"
+      "managerFilePatterns": [
+        "/\\.hcl$/",
+        "/\\.tf$/",
+        "/\\.tftpl$/",
+        "/\\.yaml$/",
+        "/\\.sh$/"
       ],
       "matchStrings": [
         "(?<currentValue>[\\w+\\.\\-]*)['\",;]*\\s*#\\s?renovate: (?<datasource>\\S+)=(?<depName>\\S+)\\s?(registry=(?<registryUrl>\\S+))?\\s?(versioning=(?<versioning>\\S+))?"
@@ -30,11 +30,18 @@
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
       "automerge": true
     },
     {
-      "matchDepTypes": ["devDependencies"],
+      "matchDepTypes": [
+        "devDependencies"
+      ],
       "automerge": true
     }
   ]
