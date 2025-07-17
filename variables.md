@@ -6,6 +6,7 @@ While setting the `env` variable is optional, its usage is strongly recommended 
 | Description                            | Type     | Default / Example |
 | -------------------------------------- | -------- | ----------------- |
 | environment (e.g. `prod`, `qa`, `dev`) | `string` | `""` / `"dev"`    |
+
 Setting the `env` variable, to e.g. `"dev"`, has an effect on the following resources:
 
 | Resource                     | Default Name                            | env-specific Name for `"dev"`                                                                                                             |
@@ -18,16 +19,25 @@ Setting the `env` variable, to e.g. `"dev"`, has an effect on the following reso
 ## `image`
 The `image` parameter not only allows adjusting the downloaded Talos image be defining its extensions (schematic), version and other settings.  The two `update_` attributes allow updating to another version or schematic definition.
 
-| Key                 | Description                                                                                                 | Type     | Default / Example                                                                                                                                                                                     |
-| ------------------- | ----------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `schematic`         | **required** Schematic ID ***TODO URL*** for Talos image, typically a file reference                        | `string` | e.g.  `file("assets/talos/schematic.yaml")`<br><br>Example file content:<br>```yaml<br>customization:<br>  systemExtensions:<br>    officialExtensions:<br>      - siderolabs/qemu-guest-agent<br>``` |
-| `version`           | **required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"` | `string` | e.g. `"v1.2.3"`                                                                                                                                                                                       |
-| `arch`              | architecture                                                                                                | `string` | `"amd64"` / `"arm64"`                                                                                                                                                                                 |
-| `factory_url`       | alternative [Talos Factory](https://factory.talos.dev/) URL                                                 | `string` | `"https://factory.talos.dev"`                                                                                                                                                                         |
-| `platform`          |                                                                                                             | `string` | `"nocloud"`                                                                                                                                                                                           |
-| `proxmox_datastore` | Proxmox datastore used to store the image                                                                   | `string` | `"local"`                                                                                                                                                                                             |
-| `update_schematic`  |                                                                                                             | `string` | `null`                                                                                                                                                                                                |
-| `update_version`    |                                                                                                             | `string` | `null`                                                                                                                                                                                                |
+| Key                 | Description                                                                                                 | Type     | Default / Example                           |
+| ------------------- | ----------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------- |
+| `schematic`         | **required** Schematic ID  for Talos image, typically a file reference                                      | `string` | e.g.  `file("assets/talos/schematic.yaml")` |
+| `version`           | **required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"` | `string` | e.g. `"v1.2.3"`                             |
+| `arch`              | architecture                                                                                                | `string` | `"amd64"` / `"arm64"`                       |
+| `factory_url`       | alternative [Talos Factory](https://factory.talos.dev/) URL                                                 | `string` | `"https://factory.talos.dev"`               |
+| `platform`          |                                                                                                             | `string` | `"nocloud"`                                 |
+| `proxmox_datastore` | Proxmox datastore used to store the image                                                                   | `string` | `"local"`                                   |
+| `update_schematic`  |                                                                                                             | `string` | `null`                                      |
+| `update_version`    |                                                                                                             | `string` | `null`                                      |
+### schematic
+An example file content for the `schematic` is shown below:
+```yaml
+customization:
+  systemExtensions:
+    officialExtensions:
+      - siderolabs/qemu-guest-agent
+```
+See the [Talos Image Factory documentation](https://github.com/siderolabs/image-factory) for more documentation and examples.
 ## `cluster`
 Cluster configuration
 
