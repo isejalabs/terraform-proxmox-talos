@@ -21,17 +21,24 @@ and
 
 Everything is set up with a simple `terragrunt apply` command.
 
+This module is designed for being minimalistic by bootstrapping a Kubernetes cluster with core intrastructure CNI, CSI and Secrets.  Of course, you can add more Kubernetes features, e.g. [Argo CD](https://argo-cd.readthedocs.io/en/stable/) and [Cert-manager](https://cert-manager.io/), by defining [kustomize](https://kustomize.io/) YAML code on-top.
 
 ## Usage
+
+### Documentation
+
+- [Module Technical Documentation](docs/module.md)
+- [Input Variables Documentation](docs/variables.md)
+
+### Example
 
 For seeing an example usage of the module, please be referred to the [author](https://github.com/sebiklamar/)'s implementation of the module in [isejalab/homelab](https://github.com/isejalabs/homelab).  You will see this module being used in a multi-environment (e.g. dev, qa, prod), not only leveraging [Terragrunt](https://terragrunt.gruntwork.io/) as a DRY-style wrapper for `terraform`/`tofu`.  Copious amounts of [YAML](https://yaml.org/) using [kustomize](https://kustomize.io/) and its [transformer](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/transformerconfigs/README.md), patches and components features will provide more [DRY](https://de.wikipedia.org/wiki/Don%E2%80%99t_repeat_yourself) capabilities.
 
     
 ## Roadmap and more features
 
-This module is designed for being minimalistic by bootstrapping a Kubernetes cluster with core intrastructure CNI, CSI and Secrets.  Of course, you can add more Kubernetes features, e.g. [Argo CD](https://argo-cd.readthedocs.io/en/stable/) and [Cert-manager](https://cert-manager.io/), by defining [kustomize](https://kustomize.io/) YAML code on-top.
 
-If you think a feature is worth being implemented inside this terraform/tofu module, feel free starting a community [discussion](https://github.com/isejalabs/terraform-proxmox-talos/discussions).
+If you think a feature is worth being implemented inside this terraform/tofu module, feel free starting a community [discussion](https://github.com/isejalabs/terraform-proxmox-talos/discussions).  You can also look for existing [feature requests](https://github.com/isejalabs/terraform-proxmox-talos/issues?q=is%3Aissue%20state%3Aopen%20type%3AFeature) created in the [issue tracker](https://github.com/isejalabs/terraform-proxmox-talos/issues) which is governed by the author's [homelab project](https://github.com/orgs/isejalabs/projects/1).
 
 ## Requirements
 
