@@ -1,0 +1,35 @@
+name: Terraform formatting and docs generation
+on:
+  pull_request: {}
+  push:
+    branches:
+      - docs/variables/gen-md
+jobs:
+  formatting:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: terraform fmt
+        uses: dflook/terraform-fmt-check@695943a23946943f58e7dd2ee17089785e24df9c
+        with:
+          path: .
+  docs:
+    needs: formatting
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+      - name: Render terraform docs inside the README.md and push changes back to PR branch
+        uses: terraform-docs/gh-actions@6de6da0cefcc6b4b7a5cbea4d79d97060733093c
+        with:
+          working-dir: .
+          output-file: ./docs/module.md
+          output-method: inject
+          output-format: markdown table
+          indention: 3
+          git-push: "true"
