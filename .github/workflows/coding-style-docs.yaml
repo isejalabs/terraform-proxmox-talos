@@ -3,7 +3,7 @@ on:
   pull_request: {}
   push:
     branches:
-      - docs/variables/gen-md
+      - main
 jobs:
   formatting:
     runs-on: ubuntu-24.04
