@@ -1,13 +1,41 @@
 # ToC
+- [cilium_values](#cilium_values)
+- [cluster](#cluster)
 - [env](#env)
 - [image](#image)
-- [cluster](#cluster)
-- [proxmox](#proxmox)
 - [nodes](#nodes)
+- [proxmox](#proxmox)
 - [volumes](#volumes)
-- [cilium_values](#cilium_values)
 
 # Variables
+## cilium_values
+The `cilium_values` variable lets you provide a custom Helm values file. See [cilium documentation](https://docs.cilium.io/en/stable/helm-reference/) for the Helm reference.
+If no file is provided, a default configuration defined in `talos/inline-manifests/cilium-values.default.yaml` is used.
+
+| Description                                        | Type     | Default / Example                                   |
+| -------------------------------------------------- | -------- | --------------------------------------------------- |
+| Path to Helm `values.yaml` file for cilium install | `string` | `talos/inline-manifests/cilium-values.default.yaml` |
+## cluster
+### Definition
+The Kubernetes cluster configuration defines its version and network configuration mainly.
+
+| Key             | Description                                                                                                                                                                                                                         | Type     | Default / Example   |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------- |
+| endpoint        | **Required** [Kubernetes endpoint address](https://www.talos.dev/v1.10/introduction/prodnotes/#decide-the-kubernetes-endpoint)                                                                                                      | `string` | e.g. `"10.1.2.34"`  |
+| gateway         | **Required** network gateway                                                                                                                                                                                                        | `string` | e.g. `"10.1.2.254"` |
+| name            | **Required** name                                                                                                                                                                                                                   | `string` | e.g. `"talos"`      |
+| proxmox_cluster | **Required** an arbitrary name for the Talos cluster<br>**will get *DEPRECATED* in a future version**                                                                                                                               | `string` | e.g. `"proxmox"`    |
+| talos_version   | **Required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"`.  Changing this value after cluster creation will destroy the cluster.<br>**will get *DEPRECATED* in a future version** | `string` | e.g. `"v1.2.3"`     |
+### Example
+```terraform
+cluster = {
+  endpoint        = "10.1.2.34"
+  gateway         = "10.1.2.254"
+  name            = "talos"
+  proxmox_cluster = "homelab"
+  talos_version   = "v1.2.3"
+}
+```
 ## env
 ### Definition
 By setting the `env` variable (to e.g. `prod`, `qa`, `dev`), resources created by `terraform`/`tofu` will be prefixed with this value, thus ensuring names are not clashing when instantiating the module multiple times for establishing a multi-environment system. If no `env` value is provided, no prefixing is done.
@@ -59,52 +87,6 @@ customization:
       - siderolabs/qemu-guest-agent
 ```
 See the [Talos Image Factory documentation](https://github.com/siderolabs/image-factory) for more guidance and examples.
-## cluster
-### Definition
-The Kubernetes cluster configuration defines its version and network configuration mainly.
-
-| Key             | Description                                                                                                                                                                                                                         | Type     | Default / Example   |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------- |
-| endpoint        | **Required** [Kubernetes endpoint address](https://www.talos.dev/v1.10/introduction/prodnotes/#decide-the-kubernetes-endpoint)                                                                                                      | `string` | e.g. `"10.1.2.34"`  |
-| gateway         | **Required** network gateway                                                                                                                                                                                                        | `string` | e.g. `"10.1.2.254"` |
-| name            | **Required** name                                                                                                                                                                                                                   | `string` | e.g. `"talos"`      |
-| proxmox_cluster | **Required** an arbitrary name for the Talos cluster<br>**will get *DEPRECATED* in a future version**                                                                                                                               | `string` | e.g. `"proxmox"`    |
-| talos_version   | **Required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"`.  Changing this value after cluster creation will destroy the cluster.<br>**will get *DEPRECATED* in a future version** | `string` | e.g. `"v1.2.3"`     |
-### Example
-```terraform
-cluster = {
-  endpoint        = "10.1.2.34"
-  gateway         = "10.1.2.254"
-  name            = "talos"
-  proxmox_cluster = "homelab"
-  talos_version   = "v1.2.3"
-}
-```
-## proxmox
-Configuration for the connection to the Proxmox cluster, according to [bgp/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox). See also the module's [authentication documentation](https://registry.terraform.io/providers/bpg/proxmox/latest/docs#authentication) for further instructions.
-### Definition
-
-| Key          | Description                                                                                                                                                      | Type     | Default / Example                                                      |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
-| api_token    | **Required** name                                                                                                                                                | `string` | e.g. `"terraform@pve!killertofu=01234567-89ab-cdef-0123-456789abcdef"` |
-| cluster_name | **Required** name of the talos cluster<br>**will get *DEPRECATED* in a future version**                                                                          | `string` | e.g. `"foo"`                                                           |
-| endpoint     | **Required** Proxmox endpoint to connect to                                                                                                                      | `string` | e.g. `"https://pve.example.com:8006"`                                  |
-| insecure     | **Required** Skip endpoint TLS verification if set to `true`                                                                                                     | `bool`   | e.g. `false`                                                           |
-| username     | **Required** Username for the SSH connection. A SSH connection is used to connect to the Proxmox server for operations that are not available in the Proxmox API | `string` | e.g. `"terraform"`                                                     |
-### Example
-Proxmox authentication configuration contains confidential data you never should add to a VCS such as git. The following example uses a simple approach by refering to a variable `proxmox_api_token` which you could set as environment variable via `export TF_VAR_proxmox_api_token="<YOUR_API_TOKEN>"`.
-```terraform
-proxmox = {
-  api_token    = var.proxmox_api_token
-  cluster_name = "foo"
-  endpoint     = "https://pve.example.com:8006"
-  insecure     = false
-  username     = "terraform"
-}
-```
-Another approach could be:
-- Define all proxmox configuration in a `*.auto.tfvars` (or `*.auto.tfvars.json`) variable definitions files, cf. [Variable Definitions (`.tfvars`) Files documentation](https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files), and `gitignore`the file(s).
-- Same as above but encrypt the files with e.g. [SOPS](https://github.com/getsops/sops) so they can be kept in a VCS.
 ## nodes
 ### Definition
 The `nodes` variable defines the Talos VMs that form the cluster.  It consists of a **map** with the *VM name* as keys having the following attributes:
@@ -146,6 +128,31 @@ nodes = {
   }
 }
 ```
+## proxmox
+Configuration for the connection to the Proxmox cluster, according to [bgp/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox). See also the module's [authentication documentation](https://registry.terraform.io/providers/bpg/proxmox/latest/docs#authentication) for further instructions.
+### Definition
+
+| Key          | Description                                                                                                                                                      | Type     | Default / Example                                                      |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
+| api_token    | **Required** name                                                                                                                                                | `string` | e.g. `"terraform@pve!killertofu=01234567-89ab-cdef-0123-456789abcdef"` |
+| cluster_name | **Required** name of the talos cluster<br>**will get *DEPRECATED* in a future version**                                                                          | `string` | e.g. `"foo"`                                                           |
+| endpoint     | **Required** Proxmox endpoint to connect to                                                                                                                      | `string` | e.g. `"https://pve.example.com:8006"`                                  |
+| insecure     | **Required** Skip endpoint TLS verification if set to `true`                                                                                                     | `bool`   | e.g. `false`                                                           |
+| username     | **Required** Username for the SSH connection. A SSH connection is used to connect to the Proxmox server for operations that are not available in the Proxmox API | `string` | e.g. `"terraform"`                                                     |
+### Example
+Proxmox authentication configuration contains confidential data you never should add to a VCS such as git. The following example uses a simple approach by refering to a variable `proxmox_api_token` which you could set as environment variable via `export TF_VAR_proxmox_api_token="<YOUR_API_TOKEN>"`.
+```terraform
+proxmox = {
+  api_token    = var.proxmox_api_token
+  cluster_name = "foo"
+  endpoint     = "https://pve.example.com:8006"
+  insecure     = false
+  username     = "terraform"
+}
+```
+Another approach could be:
+- Define all proxmox configuration in a `*.auto.tfvars` (or `*.auto.tfvars.json`) variable definitions files, cf. [Variable Definitions (`.tfvars`) Files documentation](https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files), and `gitignore`the file(s).
+- Same as above but encrypt the files with e.g. [SOPS](https://github.com/getsops/sops) so they can be kept in a VCS.
 ## volumes
 ### Definition
 Configuration for Persistent Volumes (PV) using the [proxmox-csi-plugin](https://github.com/sergelogvinov/proxmox-csi-plugin). The `volumes` variable is formed of a **map** consisting of the *volume name* as key and the following attributes:
@@ -170,13 +177,6 @@ volumes = {
   }
 }
 ```
-## cilium_values
-The `cilium_values` variable lets you provide a custom Helm values file. See [cilium documentation](https://docs.cilium.io/en/stable/helm-reference/) for the Helm reference.
-If no file is provided, a default configuration defined in `talos/inline-manifests/cilium-values.default.yaml` is used.
-
-| Description                                        | Type     | Default / Example                                   |
-| -------------------------------------------------- | -------- | --------------------------------------------------- |
-| Path to Helm `values.yaml` file for cilium install | `string` | `talos/inline-manifests/cilium-values.default.yaml` |
 # Useful Links
 - [Proxmox](https://www.proxmox.com/)
 - [Talos](https://www.talos.dev/)
