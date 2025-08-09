@@ -5,7 +5,6 @@ variable "cilium_values" {
 }
 
 variable "cluster" {
-  description = "Cluster configuration"
   type = object({
     endpoint        = string
     gateway         = string
@@ -13,8 +12,15 @@ variable "cluster" {
     proxmox_cluster = string
     talos_version   = string
   })
+  description = <<EOT
+    Cluster configuration with attributes
+      endpoint: "[Kubernetes endpoint address](https://www.talos.dev/v1.10/introduction/prodnotes/#decide-the-kubernetes-endpoint)"
+      name: "Name for cluster"
+      gateway: "Network gateway"
+      proxmox_cluster: "An arbitrary name for the Talos cluster; **subject for deprecation** in a future version"
+      talos_version: "[Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `v1.2.3`; **subject for deprecation** in a future version"
+  EOT
 }
-
 variable "env" {
   description = "environment (e.g. prod, qa, dev)"
   type        = string
