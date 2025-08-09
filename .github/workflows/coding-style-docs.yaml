@@ -19,6 +19,9 @@ jobs:
   docs:
     needs: formatting
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@8edcb1bdb4e267140fa742c62e395cd74f332709
@@ -31,5 +34,5 @@ jobs:
           output-file: ./docs/module.md
           output-method: inject
           output-format: markdown table
-          indention: 3
+          indention: 2
           git-push: "true"
