@@ -20,8 +20,6 @@ Ensure to use Talos version `v1.9.3` at minimum (cf. #20).
 
 ### Changed
 
-- Removed unused `ingressController` config in cilium defaults;
-  as `ingressController` was disabled anyway, this is a cosmetic change (#48)
 - Disable Talos' `forwardKubeDNSToHost` setting b/c it's incompatible with the
   cilium's `bpf.masquerade` option (#77).
   This change is only required for consumers who have `bpf.masquerade` option
@@ -32,6 +30,11 @@ Ensure to use Talos version `v1.9.3` at minimum (cf. #20).
   consumers depend on a decent default configuration of the module.  Hence,
   altering the default setting in this module and planning to make the Talos
   machine configurable per module (#79).
+
+### Removed
+
+- Removed unused `ingressController` config in cilium defaults;
+  as `ingressController` was disabled anyway, this is a cosmetic change (#48)
 
 ### Dependencies
 
