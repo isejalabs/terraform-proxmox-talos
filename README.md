@@ -10,9 +10,7 @@ You will get:
 - [Kubernetes](https://kubernetes.io/) cluster based on
 - [Talos Linux](https://talos.dev) (a secure, immutable, and minimal
   distribution, explecitely designed for K8S) with
-- [Cilium](https://cilium.io) as a [CNI](https://www.cni.dev)
-and
-   [IngressController](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/),
+- [Cilium](https://cilium.io) as a [CNI](https://www.cni.dev),
 - [Gateway API](https://gateway-api.sigs.k8s.io/) as next-generation
    Kubernetes Ingress,
 - [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) for providing storage,

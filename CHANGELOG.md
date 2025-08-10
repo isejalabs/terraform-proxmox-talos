@@ -5,13 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased 2.1]
+
 ### Problem
 
 ## [Unreleased]
 
+- docs: documented variables incl. examples in docs/ folder
+
 ### Changed
 
 - Removed unused `ingressController` config in cilium defaults;
+  as `ingressController` was disabled anyway, this is a cosmetic change (#48)
 - Disable Talos' `forwardKubeDNSToHost` setting b/c it's incompatible with the
   cilium's `bpf.masquerade` option (#77).
   This change is only required for consumers who have `bpf.masquerade` option
@@ -22,6 +27,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   consumers depend on a decent default configuration of the module.  Hence,
   altering the default setting in this module and planning to make the Talos
   machine configurable per module (#79).
+
+### Dependencies
+
+- update cilium/cilium v1.16.5 → v1.18.0 (#74 et al.)
+- update terraform kubernetes v2.35.1 → v2.38.0 (#73 et al.)
+- update terraform proxmox v0.69.0 → v0.81.0 (#75 et al.)
 
 ## [2.0.1] - 2025-01-16
 
