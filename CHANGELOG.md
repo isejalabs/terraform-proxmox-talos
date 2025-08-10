@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased 2.1]
 
-### Problem
+### Upgrade Note
 
-## [Unreleased]
+Ensure to use Talos version `v1.9.3` at minimum (cf. #20).
+
+### Added
 
 - docs: documented variables incl. examples in docs/ folder
 
