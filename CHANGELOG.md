@@ -12,7 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Removed unused `ingressController` config in cilium defaults;
-  as `ingressController` was disabled anyway, this is a cosmetic change
+- Disable Talos' `forwardKubeDNSToHost` setting b/c it's incompatible with the
+  cilium's `bpf.masquerade` option (#77).
+  This change is only required for consumers who have `bpf.masquerade` option
+  enabled in their cilium `values.yaml` -- which it is not in this module's
+  default version supplied (which can get overriden per input variable
+  `cilium_values` or when redeploying cilium after its installation).
+  As this module does not allow altering the Talos machine configuration, yet,
+  consumers depend on a decent default configuration of the module.  Hence,
+  altering the default setting in this module and planning to make the Talos
+  machine configurable per module (#79).
 
 ## [2.0.1] - 2025-01-16
 

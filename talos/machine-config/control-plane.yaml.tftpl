@@ -6,6 +6,10 @@ machine:
     topology.kubernetes.io/zone: ${node_name}
   kubelet:
     registerWithFQDN: true
+  features:
+    hostDNS:
+      enabled: true
+      forwardKubeDNSToHost: false
 
 cluster:
   allowSchedulingOnControlPlanes: true
