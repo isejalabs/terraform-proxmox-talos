@@ -38,6 +38,10 @@ resource "talos_image_factory_schematic" "updated" {
   schematic = local.update_schematic
 }
 
+# Note the ellipsis (...) after the for-loop. This collects values with same keys into a list.
+# The key is purposefully made up of the values (image_id contains both schematic id and version),
+# since all values under a key therefore are the same, we can simply select the first element of the value list.
+# Improvements are welcome!
 resource "proxmox_virtual_environment_download_file" "this" {
   for_each = {
     for k, v in var.nodes :
