@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+**BREAKING CHANGE**:
+
+- The VM file image now respects the schematic id and thus allows safe
+  changes/upgrades of the schematic definition gooing further.  While this
+  fixes the workaround introduced in v0.0.1, it is a breaking change, needing
+  a rebuild of the cluster.  This is due to the change of the filename and
+  schematic resource id, causing terraform/tofu to rebuild every VM at the same
+  time -- without safeguarding mechanisms known from
+  `update_version`/`update_schematic`. 
 
 ## [2.1.0] - 2025-08-10
 
