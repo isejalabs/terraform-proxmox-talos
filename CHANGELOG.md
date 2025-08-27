@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 
 - update GW API version v1.1.0 → v1.2.1 (#85)
+  see also [GW API v1.2 upgrade notes](https://gateway-api.sigs.k8s.io/guides/#v12-upgrade-notes)
 
 ## [3.0.0] - 2025-08-23
 
