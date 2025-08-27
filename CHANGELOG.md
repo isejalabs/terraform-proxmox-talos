@@ -6,16 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+### Added
+### Removed
+### Fixed
+### Dependencies
 
-**BREAKING CHANGE**:
+## [3.0.0] - 2025-08-23
 
-- The VM file image now respects the schematic id and thus allows safe
-  changes/upgrades of the schematic definition gooing further.  While this
+:boom: **BREAKING CHANGE** :boom:
+
+### Changed
+
+- **Breaking:** The VM image now respects the schematic id and thus allows safe
+  changes/upgrades of the schematic definition going further.  While this
   fixes the workaround introduced in v0.0.1, it is a breaking change, needing
   a rebuild of the cluster.  This is due to the change of the filename and
   schematic resource id, causing terraform/tofu to rebuild every VM at the same
   time -- without safeguarding mechanisms known from
-  `update_version`/`update_schematic`. 
+  `update_version`/`update_schematic` (#106). 
+  
+### Dependencies
+
+- update `cilium/cilium` v1.18.0 → v1.18.1 (#82)
+- update `terraform proxmox` v0.81.0 → v0.82.0 (#100)
 
 ## [2.1.0] - 2025-08-10
 
