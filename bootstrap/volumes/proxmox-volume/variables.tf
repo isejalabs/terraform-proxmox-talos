@@ -19,7 +19,7 @@ variable "volume" {
     node    = string
     size    = string
     format  = optional(string, "raw")
-    storage = optional(string, "local-enc")
+    storage = optional(string, "local-zfs")
     vmid    = optional(number, 9999)
   })
 }
