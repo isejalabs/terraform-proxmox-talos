@@ -106,6 +106,7 @@ The `nodes` variable defines the Talos VMs that form the cluster.  It consists o
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                                             |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`   | `false`                                          |
 | mac_address   | Custom MAC address                                                                                         | `string` | `null`                                           |
+| on_boot       | Specifies whether a VM will be started during system boot                                                  | `bool`   | `true`                                           |
 | update        | If set to `true`, the node will get updated to the `image.update_version` and/or `image.update_schematic`. | `bool`   | `false`                                          |
 | vlan_id       | Network VLAN ID                                                                                            | `number` | `0`                                              |
 ### Example
@@ -121,6 +122,7 @@ nodes = {
 
     # optional
     dns           = ["1.1.1.1", "8.8.8.8"]
+    on_boot       = false
   }
   "worker1" = {
     cpu           = 4
@@ -132,6 +134,7 @@ nodes = {
     
     # optional
     dns           = ["8.8.8.8", "9.9.9.9"]
+    on_boot       = false
   }
 }
 ```

@@ -50,6 +50,7 @@ variable "nodes" {
     dns           = optional(list(string))
     igpu          = optional(bool, false)
     mac_address   = optional(string, null)
+    on_boot       = optional(bool, true)
     update        = optional(bool, false)
     vlan_id       = optional(number, 0)
   }))

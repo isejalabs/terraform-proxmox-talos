@@ -1,8 +1,14 @@
+variable "env" {
+  description = "environment (e.g. prod, qa, dev)"
+  type        = string
+  default     = ""
+}
+
 variable "proxmox_api" {
   type = object({
+    api_token = string
     endpoint  = string
     insecure  = bool
-    api_token = string
   })
   sensitive = true
 }
@@ -12,14 +18,8 @@ variable "volume" {
     name    = string
     node    = string
     size    = string
-    storage = optional(string, "local-enc")
-    vmid    = optional(number, 9999)
     format  = optional(string, "raw")
+    storage = optional(string, "local-zfs")
+    vmid    = optional(number, 9999)
   })
-}
-
-variable "env" {
-  description = "environment (e.g. prod, qa, dev)"
-  type        = string
-  default     = ""
 }
