@@ -36,6 +36,7 @@ variable "nodes" {
     cpu_type      = optional(string, "x86-64-v2-AES")
     datastore_id  = optional(string, "local-zfs")
     disk_size     = optional(number, 20)
+    dns           = optional(list(string))
     igpu          = optional(bool, false)
     mac_address   = optional(string, null)
     update        = optional(bool, false)

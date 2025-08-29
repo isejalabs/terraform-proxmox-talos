@@ -103,6 +103,7 @@ The `nodes` variable defines the Talos VMs that form the cluster.  It consists o
 | cpu_type      | Proxmox [CPU type](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_cpu_type)                        | `string` | `"x86-64-v2-AES"` / `"custom-x86-64-v2-AES-AVX"` |
 | datastore_id  | The Proxmox datastore used to store the VM                                                                 | `string` | `"local-zfs"`                                    |
 | disk_size     | VM disk size in GB                                                                                         | `number` | `20`                                             |
+| dns           | List of DNS servers                                                                                        | `list(string)` | `null`                                             |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`   | `false`                                          |
 | mac_address   | Custom MAC address                                                                                         | `string` | `null`                                           |
 | update        | If set to `true`, the node will get updated to the `image.update_version` and/or `image.update_schematic`. | `bool`   | `false`                                          |
@@ -117,6 +118,9 @@ nodes = {
     machine_type  = "controlplane"
     ram_dedicated = 4096
     vm_id         = 141
+
+    # optional
+    dns           = ["1.1.1.1", "8.8.8.8"]
   }
   "worker1" = {
     cpu           = 4
@@ -125,6 +129,9 @@ nodes = {
     machine_type  = "worker"
     ram_dedicated = 16384
     vm_id         = 142
+    
+    # optional
+    dns           = ["8.8.8.8", "9.9.9.9"]
   }
 }
 ```
