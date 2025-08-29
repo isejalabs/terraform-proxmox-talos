@@ -105,6 +105,7 @@ The `nodes` variable defines the Talos VMs that form the cluster.  It consists o
 | disk_size     | VM disk size in GB                                                                                         | `number` | `20`                                             |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`   | `false`                                          |
 | mac_address   | Custom MAC address                                                                                         | `string` | `null`                                           |
+| on_boot       | Specifies whether a VM will be started during system boot                                                  | `bool`   | `true`                                           |
 | update        | If set to `true`, the node will get updated to the `image.update_version` and/or `image.update_schematic`. | `bool`   | `false`                                          |
 | vlan_id       | Network VLAN ID                                                                                            | `number` | `0`                                              |
 ### Example
@@ -117,6 +118,9 @@ nodes = {
     machine_type  = "controlplane"
     ram_dedicated = 4096
     vm_id         = 141
+
+    # optional
+    on_boot       = false
   }
   "worker1" = {
     cpu           = 4
@@ -125,6 +129,9 @@ nodes = {
     machine_type  = "worker"
     ram_dedicated = 16384
     vm_id         = 142
+
+    # optional
+    on_boot       = false
   }
 }
 ```

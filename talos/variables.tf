@@ -53,6 +53,7 @@ variable "nodes" {
     disk_size     = optional(number, 20)
     igpu          = optional(bool, false)
     mac_address   = optional(string, null)
+    on_boot       = optional(bool, true)
     update        = optional(bool, false)
     vlan_id       = optional(number, 0)
   }))
