@@ -1,17 +1,17 @@
 variable "volume" {
   description = "Volume configuration"
   type = object({
-    name               = string
     capacity           = string
+    name               = string
     volume_handle      = string
     access_modes       = optional(list(string), ["ReadWriteOnce"])
-    storage_class_name = optional(string, "proxmox-csi")
-    fs_type            = optional(string, "ext4")
-    driver             = optional(string, "csi.proxmox.sinextra.dev")
-    volume_mode        = optional(string, "Filesystem")
-    mount_options      = optional(list(string), ["noatime"])
     cache              = optional(string, "writethrough")
+    driver             = optional(string, "csi.proxmox.sinextra.dev")
+    fs_type            = optional(string, "ext4")
+    mount_options      = optional(list(string), ["noatime"])
     ssd                = optional(bool, true)
     storage            = optional(string, "local-enc")
+    storage_class_name = optional(string, "proxmox-csi")
+    volume_mode        = optional(string, "Filesystem")
   })
 }
