@@ -26,6 +26,7 @@ The Kubernetes cluster configuration defines its version and network configurati
 | name            | **Required** name                                                                                                                                                                                                                   | `string` | e.g. `"talos"`      |
 | proxmox_cluster | **Required** an arbitrary name for the Talos cluster<br>**will get *DEPRECATED* in a future version**                                                                                                                               | `string` | e.g. `"proxmox"`    |
 | talos_version   | **Required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"`.  Changing this value after cluster creation will destroy the cluster.<br>**will get *DEPRECATED* in a future version** | `string` | e.g. `"v1.2.3"`     |
+| on_boot         | Specifies whether all VMs will be started during system boot of the Proxmox server                                                                                                                                                  | `bool`   | `true`              |
 ### Example
 ```terraform
 cluster = {
@@ -34,6 +35,9 @@ cluster = {
   name            = "talos"
   proxmox_cluster = "homelab"
   talos_version   = "v1.2.3"
+
+  # optional
+  on_boot         = false
 }
 ```
 ## env
@@ -106,7 +110,6 @@ The `nodes` variable defines the Talos VMs that form the cluster.  It consists o
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                                             |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`   | `false`                                          |
 | mac_address   | Custom MAC address                                                                                         | `string` | `null`                                           |
-| on_boot       | Specifies whether a VM will be started during system boot                                                  | `bool`   | `true`                                           |
 | update        | If set to `true`, the node will get updated to the `image.update_version` and/or `image.update_schematic`. | `bool`   | `false`                                          |
 | vlan_id       | Network VLAN ID                                                                                            | `number` | `0`                                              |
 ### Example
@@ -122,7 +125,6 @@ nodes = {
 
     # optional
     dns           = ["1.1.1.1", "8.8.8.8"]
-    on_boot       = false
   }
   "worker1" = {
     cpu           = 4
@@ -134,7 +136,6 @@ nodes = {
     
     # optional
     dns           = ["8.8.8.8", "9.9.9.9"]
-    on_boot       = false
   }
 }
 ```
