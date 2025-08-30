@@ -8,15 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 ### Added
-
-- **Breaking:** The `on_boot` parameter got moved from the `nodes` variable to
-  the `cluster` variable for controlling VM startup during boot (#PR).  It
-  makes more sense setting it for all VMs used in a cluster.
-
 ### Removed
 ### Fixed
 ### Dependencies
 
+## [4.0.0] - 2025-08-30
+
+:boom: **BREAKING CHANGE** :boom:
+
+### Added
+
+- **Breaking:** The `on_boot` parameter got moved from the `nodes` variable to
+  the `cluster` variable for controlling VM startup during boot (#115).  It
+  makes more sense setting it for all VMs used in a cluster.
 
 ## [3.0.0] - 2025-08-29
 
