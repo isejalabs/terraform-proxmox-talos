@@ -11,6 +11,7 @@ variable "cluster" {
   type = object({
     endpoint        = string
     gateway         = string
+    kubernetes_version = string
     name            = string
     proxmox_cluster = string
     talos_version   = string
