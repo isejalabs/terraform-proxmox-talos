@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 ### Added
+
+- Added (mandatory) variable `cluster.kubernetes_version` to track k8s version
+
 ### Removed
 ### Fixed
 ### Dependencies

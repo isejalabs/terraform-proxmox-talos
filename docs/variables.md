@@ -23,6 +23,7 @@ The Kubernetes cluster configuration defines its version and network configurati
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------- |
 | endpoint        | **Required** [Kubernetes endpoint address](https://www.talos.dev/v1.10/introduction/prodnotes/#decide-the-kubernetes-endpoint)                                                                                                      | `string` | e.g. `"10.1.2.34"`  |
 | gateway         | **Required** network gateway                                                                                                                                                                                                        | `string` | e.g. `"10.1.2.254"` |
+| kubernetes_version | **Required** Kubernetes version to set independent from Talos image inbuilt version | `string` | e.g. `"v1.33.0"` |
 | name            | **Required** name                                                                                                                                                                                                                   | `string` | e.g. `"talos"`      |
 | proxmox_cluster | **Required** an arbitrary name for the Talos cluster<br>**will get *DEPRECATED* in a future version**                                                                                                                               | `string` | e.g. `"proxmox"`    |
 | talos_version   | **Required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"`.  Changing this value after cluster creation will destroy the cluster.<br>**will get *DEPRECATED* in a future version** | `string` | e.g. `"v1.2.3"`     |
@@ -30,14 +31,15 @@ The Kubernetes cluster configuration defines its version and network configurati
 ### Example
 ```terraform
 cluster = {
-  endpoint        = "10.1.2.34"
-  gateway         = "10.1.2.254"
-  name            = "talos"
-  proxmox_cluster = "homelab"
-  talos_version   = "v1.2.3"
+  endpoint           = "10.1.2.34"
+  gateway            = "10.1.2.254"
+  kubernetes_version = "v1.33.0"
+  name               = "talos"
+  proxmox_cluster    = "homelab"
+  talos_version      = "v1.2.3"
 
   # optional
-  on_boot         = false
+  on_boot            = false
 }
 ```
 ## env
