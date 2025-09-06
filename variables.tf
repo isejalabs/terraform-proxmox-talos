@@ -55,6 +55,12 @@ variable "nodes" {
     update        = optional(bool, false)
     vlan_id       = optional(number, 0)
   }))
+  validation {
+    // @formatter:off
+    condition     = length([for n in var.nodes : n if contains(["controlplane", "worker"], n.machine_type)]) == length(var.nodes)
+    error_message = "Node machine_type must be either 'controlplane' or 'worker'."
+    // @formatter:on
+  }
 }
 
 variable "proxmox" {
