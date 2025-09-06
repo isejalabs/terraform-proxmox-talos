@@ -7,13 +7,13 @@ variable "cilium_values" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    endpoint        = string
-    gateway         = string
+    endpoint           = string
+    gateway            = string
     kubernetes_version = string
-    name            = string
-    proxmox_cluster = string
-    talos_version   = string
-    on_boot         = optional(bool, true)
+    name               = string
+    proxmox_cluster    = string
+    talos_version      = string
+    on_boot            = optional(bool, true)
   })
 }
 

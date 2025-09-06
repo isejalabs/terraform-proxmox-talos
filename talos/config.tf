@@ -10,12 +10,12 @@ data "talos_client_configuration" "this" {
 }
 
 data "talos_machine_configuration" "this" {
-  for_each         = var.nodes
-  cluster_name     = var.cluster.name
-  cluster_endpoint = "https://${var.cluster.endpoint}:6443"
-  talos_version    = var.cluster.talos_version
-  machine_type     = each.value.machine_type
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
+  for_each           = var.nodes
+  cluster_name       = var.cluster.name
+  cluster_endpoint   = "https://${var.cluster.endpoint}:6443"
+  talos_version      = var.cluster.talos_version
+  machine_type       = each.value.machine_type
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
   kubernetes_version = var.cluster.kubernetes_version
   config_patches = each.value.machine_type == "controlplane" ? [
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {

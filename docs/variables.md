@@ -57,7 +57,7 @@ Setting the `env` variable, to e.g. `"dev"`, has an effect on the following reso
 | ---------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | Proxmox role for CSI         | `CSI`                                   | `dev-CSI`                                                                                                                                 |
 | Proxmox user for CSI plugin  | `kubernetes-csi@pve`                    | `dev-kubernetes-csi@pve`                                                                                                                  |
-| Proxmox volume names for CSI | `vm-9999-pv-example`                    | `vm-9999-dev-pv-example`<br><br>another option is adjusting the `vmid` parameter (default `"9999"`) of the [`volumes`](#volumes) variable |
+| Proxmox volume names for CSI | `vm-<vmid>-pv-<pvname>`<br><br>e.g. `vm-9999-pv-foo`                    | `vm-9999-dev-pv-foo`<br><br>another option is adjusting the `vmid` parameter (default `"9999"`) of the [`volumes`](#volumes) variable |
 | Downloaded image file        | `talos-ce..15-v1.2.3-nocloud-amd64.img` | `dev-talos-ce..15-v1.2.3-nocloud-amd64.img`                                                                                               |
 ### Example
 ```terraform
