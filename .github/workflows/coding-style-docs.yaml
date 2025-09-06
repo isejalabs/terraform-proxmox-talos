@@ -36,3 +36,4 @@ jobs:
           output-format: markdown table
           indention: 2
           git-push: "true"
+          git-commit-message: "docs: automated terraform docs update"
