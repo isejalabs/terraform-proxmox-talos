@@ -1,5 +1,6 @@
 # ToC
-- [cilium_values](#cilium_values)
+
+- [cilium_config](#cilium_config)
 - [cluster](#cluster)
 - [env](#env)
 - [image](#image)
@@ -8,13 +9,28 @@
 - [volumes](#volumes)
 
 # Variables
-## cilium_values
-The `cilium_values` variable lets you provide a custom Helm values file. See [cilium documentation](https://docs.cilium.io/en/stable/helm-reference/) for the Helm reference.
-If no file is provided, a default configuration defined in `talos/inline-manifests/cilium-values.default.yaml` is used.
 
-| Description                                        | Type     | Default / Example                                   |
-| -------------------------------------------------- | -------- | --------------------------------------------------- |
-| Path to Helm `values.yaml` file for cilium install | `string` | `talos/inline-manifests/cilium-values.default.yaml` |
+## cilium_config
+
+The `cilium_config` variable lets you set a paths to custom configuration files for the [cilium Helm values file](https://docs.cilium.io/en/stable/helm-reference/) and
+cilium bootstrap manifest (installation), respectively.
+
+If no files are provided, a decent default configuration is used.
+
+### Definition
+
+| Key | Description | Type     | Default / Example                                   |
+| ----| ----------- | -------- | --------------------------------------------------- |
+| bootstrap_manifest_path | Path to Cilium `install.yaml` manifest for cilium install | `string` | [`talos/inline-manifests/cilium-install.yaml`](../talos/inline-manifests/cilium-install.yaml) |
+| values_file_path | Path to Helm `values.yaml` file for cilium install | `string` | [`talos/inline-manifests/cilium-values.default.yaml`](../talos/inline-manifests/cilium-values.default.yaml) |
+
+### Example
+
+```terraform
+bootstrap_manifest_path = "assets/cilium/install.yaml"
+values_file_path        = "assets/cilium/values.yaml"
+```
+
 ## cluster
 ### Definition
 The Kubernetes cluster configuration defines its version and network configuration mainly.
