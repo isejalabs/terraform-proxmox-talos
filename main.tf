@@ -24,11 +24,7 @@ module "sealed_secrets" {
     kubernetes = kubernetes
   }
 
-  // openssl req -x509 -days 365 -nodes -newkey rsa:4096 -keyout sealed-secrets.key -out sealed-secrets.cert -subj "/CN=sealed-secret/O=sealed-secret"
-  cert = {
-    cert = file("${path.module}/assets/sealed-secrets/certificate/sealed-secrets.cert")
-    key  = file("${path.module}/assets/sealed-secrets/certificate/sealed-secrets.key")
-  }
+  cert = var.sealed_secrets_config
 }
 
 module "proxmox_csi_plugin" {

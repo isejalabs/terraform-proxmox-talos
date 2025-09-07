@@ -71,7 +71,18 @@ variable "proxmox" {
     insecure     = bool
     username     = string
   })
-  sensitive = true
+}
+
+variable "sealed_secrets_config" {
+  description = "Sealed-secrets configuration"
+  type = object({
+    certificate_path = string
+    key_path         = string
+  })
+  default = {
+    certificate_path = "assets/sealed-secrets/certificate/sealed-secrets.cert"
+    key_path         = "assets/sealed-secrets/certificate/sealed-secrets.key"
+  }
 }
 
 variable "volumes" {

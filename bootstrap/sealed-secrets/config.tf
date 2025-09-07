@@ -17,7 +17,7 @@ resource "kubernetes_secret" "sealed-secrets-key" {
   }
 
   data = {
-    "tls.crt" = var.cert.cert
-    "tls.key" = var.cert.key
+    "tls.crt" = file("${path.root}/${var.cert.certificate_path}")
+    "tls.key" = file("${path.root}/${var.cert.key_path}")
   }
 }

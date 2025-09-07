@@ -1,6 +1,6 @@
 variable "cert" {
   type = object({
-    cert = string
-    key  = string
+    certificate_path = string
+    key_path         = string
   })
 }
