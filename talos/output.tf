@@ -1,3 +1,8 @@
+output "machine_secrets" {
+  value     = talos_machine_secrets.this.machine_secrets
+  sensitive = true
+}
+
 output "machine_config" {
   value = data.talos_machine_configuration.this
 }
