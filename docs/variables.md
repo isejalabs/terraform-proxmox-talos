@@ -6,6 +6,7 @@
 - [image](#image)
 - [nodes](#nodes)
 - [proxmox](#proxmox)
+- [proxmox_api_token](#proxmox_api_token)
 - [sealed_secrets_config](#sealed_secrets_config)
 - [volumes](#volumes)
 
@@ -190,7 +191,6 @@ Configuration for the connection to the Proxmox cluster, according to [bgp/terra
 
 | Key          | Description                                                                                                                                                      | Type     | Default / Example                                                      |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
-| api_token    | **Required** name                                                                                                                                                | `string` | e.g. `"terraform@pve!killertofu=01234567-89ab-cdef-0123-456789abcdef"` |
 | cluster_name | **Required** name of the talos cluster<br>**will get _DEPRECATED_ in a future version**                                                                          | `string` | e.g. `"foo"`                                                           |
 | endpoint     | **Required** Proxmox endpoint to connect to                                                                                                                      | `string` | e.g. `"https://pve.example.com:8006"`                                  |
 | insecure     | **Required** Skip endpoint TLS verification if set to `true`                                                                                                     | `bool`   | e.g. `false`                                                           |
@@ -214,6 +214,22 @@ Another approach could be:
 
 - Define all proxmox configuration in a `*.auto.tfvars` (or `*.auto.tfvars.json`) variable definitions files, cf. [Variable Definitions (`.tfvars`) Files documentation](https://developer.hashicorp.com/terraform/language/values/variables#variable-definitions-tfvars-files), and `gitignore`the file(s).
 - Same as above but encrypt the files with e.g. [SOPS](https://github.com/getsops/sops) so they can be kept in a VCS.
+
+## proxmox_api_token
+
+Configuration of the Proxmox API token needed for authorization with the Proxmox cluster. See also the [bgp/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) module's [authentication documentation](https://registry.terraform.io/providers/bpg/proxmox/latest/docs#api-token-authentication) for further instructions.
+
+### Definition
+
+| Key | Type | Default / Example |
+| --- | ---- | ----------------- |
+| proxmox_api_token | `string` | `null` |
+
+### Example
+
+```terraform
+proxmox_api_token = "terraform@pve!killertofu=01234567-89ab-cdef-0123-456789abcdef"
+```
 
 ## sealed_secrets_config
 

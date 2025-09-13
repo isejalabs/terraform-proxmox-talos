@@ -64,13 +64,19 @@ variable "nodes" {
 }
 
 variable "proxmox" {
+  description = "Proxmox provider configuration"
   type = object({
-    api_token    = string
     cluster_name = string
     endpoint     = string
     insecure     = bool
     username     = string
   })
+}
+
+variable "proxmox_api_token" {
+  description = "API token for Proxmox"
+  type        = string
+  sensitive   = true
 }
 
 variable "sealed_secrets_config" {
