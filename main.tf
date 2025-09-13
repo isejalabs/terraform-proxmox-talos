@@ -5,11 +5,7 @@ module "talos" {
     proxmox = proxmox
   }
 
-  cilium = {
-    values  = file(var.cilium_values)
-    install = file("${path.module}//talos/inline-manifests/cilium-install.yaml")
-  }
-
+  cilium_config = var.cilium_config
   cluster = var.cluster
   image   = var.image
   nodes   = var.nodes

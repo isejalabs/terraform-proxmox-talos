@@ -2,12 +2,13 @@ locals {
   env_prefix = var.env == "" ? "" : "${var.env}-"
 
   version      = var.image.version
-  schematic    = var.image.schematic
+  schematic    = file("${path.root}/${var.image.schematic_path}")
   schematic_id = jsondecode(data.http.schematic_id.response_body)["id"]
 
-  update_version      = coalesce(var.image.update_version, var.image.version)
-  update_schematic    = coalesce(var.image.update_schematic, local.schematic)
-  update_schematic_id = jsondecode(data.http.updated_schematic_id.response_body)["id"]
+  update_version        = coalesce(var.image.update_version, var.image.version)
+  update_schematic_path = coalesce(var.image.update_schematic_path, var.image.schematic_path)
+  update_schematic      = file("${path.root}/${local.update_schematic_path}")
+  update_schematic_id   = jsondecode(data.http.updated_schematic_id.response_body)["id"]
 
   image_id        = "${local.schematic_id}_${local.version}"
   update_image_id = "${local.update_schematic_id}_${local.update_version}"
