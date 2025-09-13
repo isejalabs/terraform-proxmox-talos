@@ -1,40 +1,33 @@
+# https://www.talos.dev/v1.10/reference/configuration/v1alpha1/config/
 machine:
   network:
-    hostname: ${hostname}
-  nodeLabels:
-    topology.kubernetes.io/region: ${cluster_name}
-    topology.kubernetes.io/zone: ${node_name}
-  kubelet:
-    registerWithFQDN: true
-  features:
-    hostDNS:
-      enabled: true
-      forwardKubeDNSToHost: false
+    interfaces:
+      - deviceSelector:
+          hardwareAddr: ${mac_address}
+        addresses:
+          - ${ip}/${subnet_mask}
+        routes:
+          - network: 0.0.0.0/0
+            gateway: ${gateway}
+        dhcp: false
+%{ if vip != null }
+        vip:
+          ip: ${vip}
+%{ endif }
 
 cluster:
   allowSchedulingOnControlPlanes: true
+  apiServer:
+    ${indent(4, api_server)}
   network:
     cni:
       name: none
   proxy:
     disabled: true
-  # cherry-picking https://github.com/vehagn/homelab/pull/78/commits
-  #need to install gateway api manifests before cilium deployment. GatewayClass acceptance 
-  extraManifests:
-    - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.1/standard-install.yaml
-    - https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/v1.2.1/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml
-  inlineManifests:
-  - name: cilium-values
-    contents: |
-      ---
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: cilium-values
-        namespace: kube-system
-      data:
-        values.yaml: |-
-          ${indent(10, cilium_values)}
-  - name: cilium-bootstrap
-    contents: |
-      ${indent(6, cilium_install)}
+  discovery:
+    enabled: true
+    registries:
+      service:
+        disabled: false
+  extraManifests: ${extra_manifests}
+  inlineManifests: ${inline_manifests}

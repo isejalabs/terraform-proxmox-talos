@@ -1,12 +1,11 @@
 machine:
   network:
-    hostname: ${hostname}
-  nodeLabels:
-    topology.kubernetes.io/region: ${cluster_name}
-    topology.kubernetes.io/zone: ${node_name}
-  kubelet:
-    registerWithFQDN: true
-  features:
-    hostDNS:
-      enabled: true
-      forwardKubeDNSToHost: false
+    interfaces:
+      - deviceSelector:
+          hardwareAddr: ${mac_address}
+        addresses:
+          - ${ip}/${subnet_mask}
+        routes:
+          - network: 0.0.0.0/0
+            gateway: ${gateway}
+        dhcp: false

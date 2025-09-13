@@ -10,15 +10,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Breaking:** Moved `proxmox.api_token` variable out of `promox` struct into
   a separate variable `proxmox_api_token` (#95).
+- **Breaking:** Renamed variable `cluster.talos_version` to
+  `cluster.talos_machine_config_version` (#101).
+- **Breaking:** Renamed variable `image.schematic` to
+  `image.schematic_path`.
+- **Breaking:** Renamed variable `image.update_schematic` to
+  `image.update_schematic_path`.
+- **Breaking possibly:** Renamed variable `cilium_values` to `cilium_config`.
+  As this is an *optional* variable, it's only a breaking  change for those who
+  used the variable before.
+  Please also see below for an additional sub-variable for governing cilium
+  bootstrapping.
+- Changed variable `cluster.talos_machine_config_version` (former
+  `cluster.talos_version`) to be *optional* (#94, #98).
 
 ### Added
 
+- **Breaking:** Added *mandatory* variable `cluster.gateway_api_version` to
+  track GW API version.  Previously, the GW API version was hardcoded to
+  `v1.2.1`, and now, it can be set independent of the module version flexibly.
 - Added (mandatory) variable `cluster.kubernetes_version` to track k8s version
+- Added *optional* variable `cilium_config.bootstrap_manifest_path` allowing
+  usage of a custom Cilium bootstrapping manifest (#95).
+- Added *optional* variable `cluster.api_server` to define kube apiserver
+  options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests)
+  documentation)(#91).
+- Added *optional* variable `cluster.extra_manifests` to specify
+  [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests)
+  in Talos (#96).
+- Added *optional* variable `cluster.kubelet` to define kubelet config values
+  (cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet)
+  documentation) (#97).
+- Added *optional* variable `cluster.subnet_mask` for defining the network 
+  subnet mask (defaulting to `24`) (#86).
+- Added *optional* variable `cluster.vip` for leveraging a
+  [Virtual (shared) IP](https://www.talos.dev/v1.11/talos-guides/network/vip/)
+  (#86, #93).
+  This allows HA usage scenarios in providing only one IP to clients to reach
+  the control planes (requires all control planes residing in the same layer 2
+  subnet).
 - Added (optional) variable `sealed_secrets_config` that can be supplied with 
   alternative paths to the certificate and key for the `SealedSecrets`
   bootstrapping (#95).  The default paths equal the present behaviour.
+- Added Prometheus CRDs to allow using service monitoring.
 
 ### Removed
+
+- Removed the `cluster.endpoint` variable.  It is chosen automatically from the
+  VIP or the first control plane node.
+
 ### Fixed
 
 - Use `cilium-cli` image instead of `cilium-cli-ci` image to install cilium
@@ -26,6 +66,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove outdated `enableCiliumEndpointSlice` stanza from default cilium Helm
   configuration. This stanza got superseded by `CiliumEndpointSlice.enabled`,
   hence this should be a null-operation as it had no effect previously.
+- Changing the `cluster.talos_machine_config_version` (former
+  `cluster.talos_version) variable does not destroy all VM nodes any longer
+  (#38, #90).
+- Improved the way to install cilium with `inlineManifests` (#92).
 
 ### Dependencies
 

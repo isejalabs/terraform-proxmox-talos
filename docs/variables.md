@@ -41,27 +41,51 @@ The Kubernetes cluster configuration defines its version and network configurati
 
 | Key                | Description                                                                                                                                                                                                                        | Type     | Default / Example   |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------- |
-| endpoint           | **Required** [Kubernetes endpoint address](https://www.talos.dev/v1.10/introduction/prodnotes/#decide-the-kubernetes-endpoint)                                                                                                     | `string` | e.g. `"10.1.2.34"`  |
 | gateway            | **Required** network gateway                                                                                                                                                                                                       | `string` | e.g. `"10.1.2.254"` |
+| gateway_api_version | **Required** [GW API version](https://gateway-api.sigs.k8s.io/concepts/versioning) | `string` | e.g. `"v1.2.1"` |
 | kubernetes_version | **Required** Kubernetes version to set independent from Talos image inbuilt version                                                                                                                                                | `string` | e.g. `"v1.33.0"`    |
 | name               | **Required** name                                                                                                                                                                                                                  | `string` | e.g. `"talos"`      |
 | proxmox_cluster    | **Required** an arbitrary name for the Talos cluster<br>**will get _DEPRECATED_ in a future version**                                                                                                                              | `string` | e.g. `"proxmox"`    |
-| talos_version      | **Required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"`. Changing this value after cluster creation will destroy the cluster.<br>**will get _DEPRECATED_ in a future version** | `string` | e.g. `"v1.2.3"`     |
+| api_server | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation) | `string` | `null` |
+| extraManifests | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos | `list(string)` | `[]` |
+| kubelet | Kubelet config values(cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet) | `string` | `null` |
 | on_boot            | Specifies whether all VMs will be started during system boot of the Proxmox server                                                                                                                                                 | `bool`   | `true`              |
+| subnet_mask | Network subnet mask | `string` | `"24"` |
+| talos_machine_config_version | [Version of Talos](https://github.com/siderolabs/talos/releases) to use in generated machine configuration. Per default, the version defined in the `image` is used | `string` | `"v1.2.3"`     |
+| vip | [Virtual (shared) IP](https://www.talos.dev/v1.11/talos-guides/network/vip/) for building a high-availability controlplane | `string` | `null` |
 
 ### Example
 
 ```terraform
 cluster = {
-  endpoint           = "10.1.2.34"
   gateway            = "10.1.2.254"
-  kubernetes_version = "v1.33.0"
+  gateway_api_version          = "v1.3.0" # renovate: github-releases=kubernetes-sigs/gateway-api
+  kubernetes_version = "v1.33.3" # renovate: github-releases=kubernetes/kubernetes
   name               = "talos"
   proxmox_cluster    = "homelab"
-  talos_version      = "v1.2.3"
 
   # optional
+  api_server                   = <<-EOT
+    extraArgs:
+      oidc-issuer-url: "https://authelia.example.com"
+      oidc-client-id: "kubectl"
+      oidc-username-claim: "preferred_username"
+      oidc-username-prefix: "authelia:"
+      oidc-groups-claim: "groups"
+      oidc-groups-prefix: "authelia:"
+  EOT
+  extra_manifests              = [
+    "https://github.com/fluxcd/flux2/releases/latest/download/install.yaml"
+  ]
+  kubelet                      = <<-EOT
+    extraArgs:
+      # Needed for Netbird agent
+      # see: https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#enabling-unsafe-sysctls
+      allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
+  EOT
   on_boot            = false
+  talos_machine_config_version = "v1.2.3"
+  vip                          = "10.1.2.33"
 }
 ```
 
@@ -99,20 +123,20 @@ The `image` parameter not only allows adjusting the downloaded Talos image by de
 
 | Key                 | Description                                                                                                                                                                       | Type     | Default / Example                          |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------ |
-| `schematic`         | **Required** Schematic ID for Talos image, typically a file reference                                                                                                             | `string` | e.g. `file("assets/talos/schematic.yaml")` |
+| `schematic_path` | **Required** Path to the file defining the Schematic ID for Talos image | `string` | e.g. `"assets/talos/schematic.yaml"` |
 | `version`           | **Required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"`                                                                       | `string` | e.g. `"v1.2.3"`                            |
 | `arch`              | Architecture                                                                                                                                                                      | `string` | `"amd64"` / `"arm64"`                      |
 | `factory_url`       | Alternative [Talos Factory](https://factory.talos.dev/) URL                                                                                                                       | `string` | `"https://factory.talos.dev"`              |
 | `platform`          | Typically left set to its default (`"nocloud"`), still allowing alternative configuration for [Talos platform](https://www.talos.dev/v1.10/talos-guides/install/cloud-platforms/) | `string` | `"nocloud"`                                |
 | `proxmox_datastore` | Proxmox datastore used to store the image                                                                                                                                         | `string` | `"local"`                                  |
-| `update_schematic`  | Alternative schematic definition to be used when updating a node                                                                                                                  | `string` | `null`                                     |
+| `update_schematic_path`  | Alternative schematic definition to be used when updating a node                                                                                                                  | `string` | `null`                                     |
 | `update_version`    | Alternative version definition to be used when updating a node                                                                                                                    | `string` | `null`                                     |
 
 ### Example
 
 ```terraform
 image = {
-  schematic = file("assets/talos/schematic.yaml")
+  schematic_path = "assets/talos/schematic.yaml"
   version   = "v1.2.3"
 }
 ```

@@ -63,7 +63,7 @@ resource "proxmox_virtual_environment_vm" "this" {
 
     ip_config {
       ipv4 {
-        address = "${each.value.ip}/24"
+        address = "${each.value.ip}/${var.cluster.subnet_mask}"
         gateway = var.cluster.gateway
       }
     }
