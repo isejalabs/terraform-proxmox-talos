@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use `cilium-cli` image instead of `cilium-cli-ci` image to install cilium
   (#103).
+- Remove outdated `enableCiliumEndpointSlice` stanza from default cilium Helm
+  configuration. This stanza got superseded by `CiliumEndpointSlice.enabled`,
+  hence this should be a null-operation as it had no effect previously.
 
 ### Dependencies
 
