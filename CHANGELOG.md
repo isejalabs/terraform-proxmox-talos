@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+
+- **Breaking:** Moved `proxmox.api_token` variable out of `promox` struct into
+  a separate variable `proxmox_api_token` (#95).
+
 ### Added
 
 - Added (mandatory) variable `cluster.kubernetes_version` to track k8s version

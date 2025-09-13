@@ -6,6 +6,7 @@
 - [image](#image)
 - [nodes](#nodes)
 - [proxmox](#proxmox)
+- [proxmox_api_token](#proxmox_api_token)
 - [sealed_secrets_config](#sealed_secrets_config)
 - [volumes](#volumes)
 
@@ -190,7 +191,6 @@ Configuration for the connection to the Proxmox cluster, according to [bgp/terra
 
 | Key          | Description                                                                                                                                                      | Type     | Default / Example                                                      |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
-| api_token    | **Required** name                                                                                                                                                | `string` | e.g. `"terraform@pve!killertofu=01234567-89ab-cdef-0123-456789abcdef"` |
 | cluster_name | **Required** name of the talos cluster<br>**will get _DEPRECATED_ in a future version**                                                                          | `string` | e.g. `"foo"`                                                           |
 | endpoint     | **Required** Proxmox endpoint to connect to                                                                                                                      | `string` | e.g. `"https://pve.example.com:8006"`                                  |
 | insecure     | **Required** Skip endpoint TLS verification if set to `true`                                                                                                     | `bool`   | e.g. `false`                                                           |
@@ -198,17 +198,32 @@ Configuration for the connection to the Proxmox cluster, according to [bgp/terra
 
 ### Example
 
-Proxmox authentication configuration contains confidential data you never should add to a VCS such as git. The following example uses a simple approach by refering to a variable `proxmox_api_token` which you could set as environment variable via `export TF_VAR_proxmox_api_token="<YOUR_API_TOKEN>"`.
-
 ```terraform
 proxmox = {
-  api_token    = var.proxmox_api_token
   cluster_name = "foo"
   endpoint     = "https://pve.example.com:8006"
   insecure     = false
   username     = "terraform"
 }
 ```
+
+## proxmox_api_token
+
+Configuration of the Proxmox API token needed for authorization with the Proxmox cluster. See also the [bgp/terraform-provider-proxmox](https://github.com/bpg/terraform-provider-proxmox) module's [authentication documentation](https://registry.terraform.io/providers/bpg/proxmox/latest/docs#api-token-authentication) for further instructions.
+
+### Definition
+
+| Description | Type | Default / Example |
+| ------------| ---- | ----------------- |
+| API token for Proxmox | `string` | `null` |
+
+### Example
+
+```terraform
+proxmox_api_token = "terraform@pve!killertofu=01234567-89ab-cdef-0123-456789abcdef"
+```
+
+Proxmox authentication configuration contains confidential data you never should add to a VCS such as git. The following example uses a simple approach by refering to a variable `proxmox_api_token` which you could set as environment variable via `export TF_VAR_proxmox_api_token="<YOUR_API_TOKEN>"`.
 
 Another approach could be:
 

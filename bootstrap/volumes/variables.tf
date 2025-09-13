@@ -6,12 +6,10 @@ variable "env" {
 
 variable "proxmox_api" {
   type = object({
-    api_token    = string
     cluster_name = string
     endpoint     = string
     insecure     = bool
   })
-  sensitive = true
 }
 
 variable "volumes" {
