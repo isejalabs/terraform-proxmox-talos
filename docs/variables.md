@@ -1,14 +1,33 @@
 # ToC
 
 - [cilium_config](#cilium_config)
+  - [Definition](#definition)
+  - [Example](#example)
 - [cluster](#cluster)
+  - [Definition](#definition-1)
+  - [Example](#example-1)
 - [env](#env)
+  - [Definition](#definition-2)
+  - [Example](#example-2)
 - [image](#image)
+  - [Definition](#definition-3)
+  - [Example](#example-3)
 - [nodes](#nodes)
+  - [Definition](#definition-4)
+  - [Example](#example-4)
 - [proxmox](#proxmox)
+  - [Definition](#definition-5)
+  - [Example](#example-5)
 - [proxmox_api_token](#proxmox_api_token)
+  - [Definition](#definition-6)
+  - [Example](#example-6)
 - [sealed_secrets_config](#sealed_secrets_config)
+  - [Definition](#definition-7)
+  - [Example](#example-7)
+  - [Generate SealedSecret certificate and key](#generate-sealedsecret-certificate-and-key)
 - [volumes](#volumes)
+  - [Definition](#definition-8)
+  - [Example](#example-8)
 
 # Variables
 
