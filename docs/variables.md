@@ -66,7 +66,7 @@ The Kubernetes cluster configuration defines its version and network configurati
 | name               | **Required** name                                                                                                                                                                                                                  | `string` | e.g. `"talos"`      |
 | proxmox_cluster    | **Required** an arbitrary name for the Talos cluster<br>**will get _DEPRECATED_ in a future version**                                                                                                                              | `string` | e.g. `"proxmox"`    |
 | api_server | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation) | `string` | `null` |
-| extraManifests | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos | `list(string)` | `[]` |
+| extraManifests | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]` |
 | kubelet | Kubelet config values(cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet) | `string` | `null` |
 | on_boot            | Specifies whether all VMs will be started during system boot of the Proxmox server                                                                                                                                                 | `bool`   | `true`              |
 | subnet_mask | Network subnet mask | `string` | `"24"` |
@@ -76,9 +76,13 @@ The Kubernetes cluster configuration defines its version and network configurati
 ### Example
 
 ```terraform
+locals {
+  gateway_api_version = "v1.3.0" # renovate: github-releases=kubernetes-sigs/gateway-api
+}
+
 cluster = {
   gateway            = "10.1.2.254"
-  gateway_api_version          = "v1.3.0" # renovate: github-releases=kubernetes-sigs/gateway-api
+  gateway_api_version = local.gateway_api_version
   kubernetes_version = "v1.33.3" # renovate: github-releases=kubernetes/kubernetes
   name               = "talos"
   proxmox_cluster    = "homelab"
@@ -94,7 +98,9 @@ cluster = {
       oidc-groups-prefix: "authelia:"
   EOT
   extra_manifests              = [
-    "https://github.com/fluxcd/flux2/releases/latest/download/install.yaml"
+    "https://github.com/fluxcd/flux2/releases/latest/download/install.yaml",
+    "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.gateway_api_version}/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml",
+    "https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml",
   ]
   kubelet                      = <<-EOT
     extraArgs:
