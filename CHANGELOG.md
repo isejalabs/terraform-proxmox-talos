@@ -55,6 +55,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- **Breaking possibly:** The scope of preloaded GW API manifests changed to
+  only include CRDs with grade `standard`.  As such, the `TLSRoute`
+  experimental CRD got removed.  Please leverage the new variable
+  `cluster.extra_manifests` to include it as `extraManifest` in Talos
+  (cf. [`cluster` variable documentation](docs/variables.md#cluster) for an
+  [example](docs/variables.md#example-1)).
 - Removed the `cluster.endpoint` variable.  It is chosen automatically from the
   VIP or the first control plane node.
 
