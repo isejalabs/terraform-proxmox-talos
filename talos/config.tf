@@ -63,7 +63,7 @@ data "talos_machine_configuration" "this" {
     }), each.value.machine_type == "controlplane" ?
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
       ip               = each.value.ip
-      mac_address      = lower(each.value.mac_address)
+      mac_address      = try(lower(each.value.mac_address), null)
       gateway          = var.cluster.gateway
       subnet_mask      = var.cluster.subnet_mask
       vip              = var.cluster.vip
@@ -73,7 +73,7 @@ data "talos_machine_configuration" "this" {
     }) :
     templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
       ip          = each.value.ip
-      mac_address = lower(each.value.mac_address)
+      mac_address = try(lower(each.value.mac_address), null)
       gateway     = var.cluster.gateway
       subnet_mask = var.cluster.subnet_mask
     })
