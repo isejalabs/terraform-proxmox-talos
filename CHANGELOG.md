@@ -52,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added (optional) variable `sealed_secrets_config` that can be supplied with 
   alternative paths to the certificate and key for the `SealedSecrets`
   bootstrapping (#95).  The default paths equal the present behaviour.
-- Added Prometheus CRDs to allow using service monitoring.
+- Enable kube-controller-manager, etcd, and kube-scheduler metrics (#116).
 
 ### Removed
 
