@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking:** Renamed variable `image.update_schematic` to
   `image.update_schematic_path`.
 - **Breaking possibly:** Renamed variable `cilium_values` to `cilium_config`.
-  As this is an *optional* variable, it's only a breaking  change for those who
+  As this is an *optional* variable, it's only a breaking change for those who
   used the variable before.
   Please also see below for an additional sub-variable for governing cilium
   bootstrapping.
@@ -29,7 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking:** Added *mandatory* variable `cluster.gateway_api_version` to
   track GW API version.  Previously, the GW API version was hardcoded to
   `v1.2.1`, and now, it can be set independent of the module version flexibly.
-- Added (mandatory) variable `cluster.kubernetes_version` to track k8s version
+- **Breaking:** Added *mandatory* variable `cluster.kubernetes_version` to
+  track k8s version.
 - Added *optional* variable `cilium_config.bootstrap_manifest_path` allowing
   usage of a custom Cilium bootstrapping manifest (#95).
 - Added *optional* variable `cluster.api_server` to define kube apiserver
@@ -49,10 +50,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   This allows HA usage scenarios in providing only one IP to clients to reach
   the control planes (requires all control planes residing in the same layer 2
   subnet).
-- Added (optional) variable `sealed_secrets_config` that can be supplied with 
+- Added *optional* variable `sealed_secrets_config` that can be supplied with 
   alternative paths to the certificate and key for the `SealedSecrets`
   bootstrapping (#95).  The default paths equal the present behaviour.
-- Enable kube-controller-manager, etcd, and kube-scheduler metrics (#116).
+- Enabled kube-controller-manager, etcd, and kube-scheduler metrics (#116).
 
 ### Removed
 
@@ -73,7 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   configuration. This stanza got superseded by `CiliumEndpointSlice.enabled`,
   hence this should be a null-operation as it had no effect previously.
 - Changing the `cluster.talos_machine_config_version` (former
-  `cluster.talos_version) variable does not destroy all VM nodes any longer
+  `cluster.talos_version`) variable does not destroy all VM nodes any longer
   (#38, #90).
 - Improved the way to install cilium with `inlineManifests` (#92).
 
