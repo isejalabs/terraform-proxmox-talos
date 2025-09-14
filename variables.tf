@@ -23,6 +23,7 @@ variable "cluster" {
     vip                          = optional(string)
     extra_manifests              = optional(list(string), [])
     kubelet                      = optional(string)
+    machine_features             = optional(string)
     api_server                   = optional(string)
     talos_machine_config_version = optional(string)
   })

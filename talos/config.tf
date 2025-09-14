@@ -58,6 +58,7 @@ data "talos_machine_configuration" "this" {
       kubernetes_version = var.cluster.kubernetes_version
       hostname           = each.key
       kubelet            = var.cluster.kubelet
+      machine_features   = var.cluster.machine_features
     }), each.value.machine_type == "controlplane" ?
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
       ip               = each.value.ip
