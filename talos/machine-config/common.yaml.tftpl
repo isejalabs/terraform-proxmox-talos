@@ -9,6 +9,9 @@ machine:
     topology.kubernetes.io/zone: ${node_name}
   network:
     hostname: ${hostname}
+  features:
+    hostDNS:
+      forwardKubeDNSToHost: false
 
 cluster:
   apiServer:
