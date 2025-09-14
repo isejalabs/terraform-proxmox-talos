@@ -17,8 +17,10 @@ machine:
 
 cluster:
   allowSchedulingOnControlPlanes: true
+%{ if api_server != null }
   apiServer:
     ${indent(4, api_server)}
+%{ endif }
   network:
     cni:
       name: none

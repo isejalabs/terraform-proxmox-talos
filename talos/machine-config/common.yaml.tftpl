@@ -1,7 +1,9 @@
 machine:
   kubelet:
     image: ghcr.io/siderolabs/kubelet:${kubernetes_version}
+%{ if kubelet != null }    
     ${indent(4, kubelet)}
+%{ endif }
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
