@@ -2,7 +2,12 @@ machine:
   network:
     interfaces:
       - deviceSelector:
+%{ if mac_address != null }
           hardwareAddr: ${mac_address}
+%{ else }
+          busPath: "0*" # should select any hardware network device, if you have just one
+                        # otherwise mac_address is a must
+%{ endif }
         addresses:
           - ${ip}/${subnet_mask}
         routes:
