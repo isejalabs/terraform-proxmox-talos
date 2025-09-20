@@ -54,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   alternative paths to the certificate and key for the `SealedSecrets`
   bootstrapping (#95).  The default paths equal the present behaviour.
 - Enabled kube-controller-manager, etcd, and kube-scheduler metrics (#116).
+- Output Talos Machine Secrets (#102).
 
 ### Removed
 
