@@ -33,17 +33,15 @@
 
 ## cilium_config
 
-The `cilium_config` variable lets you set a paths to custom configuration files for the [cilium Helm values file](https://docs.cilium.io/en/stable/helm-reference/) and
-cilium bootstrap manifest (installation), respectively.
+The `cilium_config` variable lets you set a paths to custom configuration files for the [cilium Helm values file](https://docs.cilium.io/en/stable/helm-reference/) and cilium bootstrap manifest (installation), respectively.
 
 If no files are provided, a decent default configuration is used.
 
 ### Definition
-
-| Key | Description | Type     | Default / Example                                   |
-| ----| ----------- | -------- | --------------------------------------------------- |
+| Key                     | Description | Type     | Default / Example |
+| ------------------------| ----------- | -------- | ----------------- |
 | bootstrap_manifest_path | Path to Cilium `install.yaml` manifest for cilium install | `string` | [`talos/inline-manifests/cilium-install.yaml`](../talos/inline-manifests/cilium-install.yaml) |
-| values_file_path | Path to Helm `values.yaml` file for cilium install | `string` | [`talos/inline-manifests/cilium-values.default.yaml`](../talos/inline-manifests/cilium-values.default.yaml) |
+| values_file_path        | Path to Helm `values.yaml` file for cilium install | `string` | [`talos/inline-manifests/cilium-values.default.yaml`](../talos/inline-manifests/cilium-values.default.yaml) |
 
 ### Example
 
@@ -58,20 +56,20 @@ values_file_path        = "assets/cilium/values.yaml"
 
 The Kubernetes cluster configuration defines its version and network configuration mainly.
 
-| Key                | Description                                                                                                                                                                                                                        | Type     | Default / Example   |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------- |
-| gateway            | **Required** network gateway                                                                                                                                                                                                       | `string` | e.g. `"10.1.2.254"` |
-| gateway_api_version | **Required** [GW API version](https://gateway-api.sigs.k8s.io/concepts/versioning) | `string` | e.g. `"v1.2.1"` |
-| kubernetes_version | **Required** Kubernetes version to set independent from Talos image inbuilt version                                                                                                                                                | `string` | e.g. `"v1.33.0"`    |
-| name               | **Required** name                                                                                                                                                                                                                  | `string` | e.g. `"talos"`      |
-| proxmox_cluster    | **Required** an arbitrary name for the Talos cluster<br>**will get _DEPRECATED_ in a future version**                                                                                                                              | `string` | e.g. `"proxmox"`    |
-| api_server | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation) | `string` | `null` |
-| extraManifests | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]` |
-| kubelet | Kubelet config values(cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet) | `string` | `null` |
-| on_boot            | Specifies whether all VMs will be started during system boot of the Proxmox server                                                                                                                                                 | `bool`   | `true`              |
-| subnet_mask | Network subnet mask | `string` | `"24"` |
-| talos_machine_config_version | [Version of Talos](https://github.com/siderolabs/talos/releases) to use in generated machine configuration. Per default, the version defined in the `image` is used | `string` | `"v1.2.3"`     |
-| vip | [Virtual (shared) IP](https://www.talos.dev/v1.11/talos-guides/network/vip/) for building a high-availability controlplane | `string` | `null` |
+| Key                          | Description | Type | Default / Example |
+| ---------------------------- | ----------- | ---- | ----------------- |
+| gateway                      | **Required** network gateway | `string` | e.g. `"10.1.2.254"` |
+| gateway_api_version          | **Required** [GW API version](https://gateway-api.sigs.k8s.io/concepts/versioning) | `string` | e.g. `"v1.2.1"` |
+| kubernetes_version           | **Required** Kubernetes version to set independent from Talos image inbuilt version | `string` | e.g. `"v1.33.0"`    |
+| name                         | **Required** name | `string` | e.g. `"talos"`      |
+| proxmox_cluster              | **Required** an arbitrary name for the Talos cluster<br>**will get _DEPRECATED_ in a future version** | `string` | e.g. `"proxmox"`    |
+| api_server                   | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation) | `string` | `null` |
+| extraManifests               | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]` |
+| kubelet                      | Kubelet config values(cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet) | `string` | `null` |
+| on_boot                      | Specifies whether all VMs will be started during system boot of the Proxmox server | `bool`   | `true`              |
+| subnet_mask                  | Network subnet mask | `string` | `"24"` |
+| talos_machine_config_version | [Version of Talos](https://github.com/siderolabs/talos/releases) to use in generated machine configuration. Per default, the version defined in the `image` is used | `string` | `"v1.2.3"` |
+| vip                          | [Virtual (shared) IP](https://www.talos.dev/v1.11/talos-guides/network/vip/) for building a high-availability controlplane | `string` | `null` |
 
 ### Example
 
@@ -81,11 +79,11 @@ locals {
 }
 
 cluster = {
-  gateway            = "10.1.2.254"
+  gateway             = "10.1.2.254"
   gateway_api_version = local.gateway_api_version
-  kubernetes_version = "v1.33.3" # renovate: github-releases=kubernetes/kubernetes
-  name               = "talos"
-  proxmox_cluster    = "homelab"
+  kubernetes_version  = "v1.33.3" # renovate: github-releases=kubernetes/kubernetes
+  name                = "talos"
+  proxmox_cluster     = "homelab"
 
   # optional
   api_server                   = <<-EOT
@@ -108,7 +106,7 @@ cluster = {
       # see: https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#enabling-unsafe-sysctls
       allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
   EOT
-  on_boot            = false
+  on_boot                      = false
   talos_machine_config_version = "v1.2.3"
   vip                          = "10.1.2.33"
 }
@@ -127,12 +125,12 @@ While setting the `env` variable is optional, its usage is strongly recommended 
 
 Setting the `env` variable, to e.g. `"dev"`, has an effect on the following resources:
 
-| Resource                     | Default Name                                         | env-specific Name                                                                                                                     |
-| ---------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Proxmox role for CSI         | `CSI`                                                | `dev-CSI`                                                                                                                             |
-| Proxmox user for CSI plugin  | `kubernetes-csi@pve`                                 | `dev-kubernetes-csi@pve`                                                                                                              |
+| Resource                     | Default Name | env-specific Name  |
+| ---------------------------- | -------------| ------------------ |
+| Proxmox role for CSI         | `CSI`        |`dev-CSI`  |
+| Proxmox user for CSI plugin  | `kubernetes-csi@pve` | `dev-kubernetes-csi@pve` |
 | Proxmox volume names for CSI | `vm-<vmid>-pv-<pvname>`<br><br>e.g. `vm-9999-pv-foo` | `vm-9999-dev-pv-foo`<br><br>another option is adjusting the `vmid` parameter (default `"9999"`) of the [`volumes`](#volumes) variable |
-| Downloaded image file        | `talos-ce..15-v1.2.3-nocloud-amd64.img`              | `dev-talos-ce..15-v1.2.3-nocloud-amd64.img`                                                                                           |
+| Downloaded image file        | `talos-ce..15-v1.2.3-nocloud-amd64.img` | `dev-talos-ce..15-v1.2.3-nocloud-amd64.img` |
 
 ### Example
 

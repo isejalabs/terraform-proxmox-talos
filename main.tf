@@ -6,10 +6,10 @@ module "talos" {
   }
 
   cilium_config = var.cilium_config
-  cluster = var.cluster
-  image   = var.image
-  nodes   = var.nodes
-  env     = var.env
+  cluster       = var.cluster
+  image         = var.image
+  nodes         = var.nodes
+  env           = var.env
 }
 
 module "sealed_secrets" {

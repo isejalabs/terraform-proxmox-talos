@@ -13,12 +13,12 @@ variable "cilium_config" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    gateway            = string
+    gateway                      = string
     gateway_api_version          = string
-    kubernetes_version = string
-    name               = string
-    proxmox_cluster    = string
-    on_boot            = optional(bool, true)
+    kubernetes_version           = string
+    name                         = string
+    proxmox_cluster              = string
+    on_boot                      = optional(bool, true)
     subnet_mask                  = optional(string, "24")
     vip                          = optional(string)
     extra_manifests              = optional(list(string), [])
@@ -36,14 +36,14 @@ variable "env" {
 variable "image" {
   description = "Talos image configuration"
   type = object({
-    schematic_path    = string
-    version           = string
-    arch              = optional(string, "amd64")
-    factory_url       = optional(string, "https://factory.talos.dev")
-    platform          = optional(string, "nocloud")
-    proxmox_datastore = optional(string, "local")
+    schematic_path        = string
+    version               = string
+    arch                  = optional(string, "amd64")
+    factory_url           = optional(string, "https://factory.talos.dev")
+    platform              = optional(string, "nocloud")
+    proxmox_datastore     = optional(string, "local")
     update_schematic_path = optional(string)
-    update_version    = optional(string)
+    update_version        = optional(string)
   })
 }
 
