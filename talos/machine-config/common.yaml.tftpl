@@ -9,6 +9,10 @@ machine:
     topology.kubernetes.io/zone: ${node_name}
   network:
     hostname: ${hostname}
+%{ if machine_features != null }    
+  features:
+    ${indent(4, machine_features)}
+%{ endif }
 
 cluster:
   apiServer:

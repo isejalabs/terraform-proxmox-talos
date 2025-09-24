@@ -47,6 +47,7 @@ The Kubernetes cluster configuration defines its version and network configurati
 | api_server                   | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation) | `string` | `null` |
 | extraManifests               | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]` |
 | kubelet                      | Kubelet config values(cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet) | `string` | `null` |
+| machine_features             | Machine features, cf. [Talos featuresConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.features) | `string`| `null` |
 | on_boot                      | Specifies whether all VMs will be started during system boot of the Proxmox server | `bool`   | `true`              |
 | subnet_mask                  | Network subnet mask | `string` | `"24"` |
 | talos_machine_config_version | [Version of Talos](https://github.com/siderolabs/talos/releases) to use in generated machine configuration. Per default, the version defined in the `image` is used | `string` | `"v1.2.3"` |
@@ -81,6 +82,11 @@ cluster = {
     "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.gateway_api_version}/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml",
     "https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml",
   ]
+  machine_features             = <<-EOT
+    # https://www.talos.dev/v1.8/kubernetes-guides/network/deploying-cilium/#known-issues
+    hostDNS:
+      forwardKubeDNSToHost: false
+  EOT
   kubelet                      = <<-EOT
     extraArgs:
       # Needed for Netbird agent
