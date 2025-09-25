@@ -18,6 +18,7 @@ variable "cluster" {
     kubernetes_version           = string
     name                         = string
     proxmox_cluster              = string
+    allow_scheduling_on_controlplane = optional(bool, false)
     on_boot                      = optional(bool, true)
     subnet_mask                  = optional(string, "24")
     vip                          = optional(string)

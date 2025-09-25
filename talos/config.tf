@@ -61,6 +61,7 @@ data "talos_machine_configuration" "this" {
       machine_features   = var.cluster.machine_features
     }), each.value.machine_type == "controlplane" ?
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
+      allow_scheduling = var.cluster.allow_scheduling_on_controlplane
       ip               = each.value.ip
       mac_address      = try(lower(each.value.mac_address), null)
       gateway          = var.cluster.gateway
