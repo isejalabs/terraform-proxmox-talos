@@ -9,20 +9,20 @@ variable "cilium_config" {
 variable "cluster" {
   description = "Cluster configuration"
   type = object({
-    gateway                      = string
-    gateway_api_version          = string
-    kubernetes_version           = string
-    name                         = string
-    proxmox_cluster              = string
+    gateway                          = string
+    gateway_api_version              = string
+    kubernetes_version               = string
+    name                             = string
+    proxmox_cluster                  = string
     allow_scheduling_on_controlplane = optional(bool, false)
-    on_boot                      = optional(bool, true)
-    subnet_mask                  = optional(string, "24")
-    vip                          = optional(string)
-    extra_manifests              = optional(list(string), [])
-    kubelet                      = optional(string)
-    machine_features             = optional(string)
-    api_server                   = optional(string)
-    talos_machine_config_version = optional(string)
+    api_server                       = optional(string)
+    extra_manifests                  = optional(list(string), [])
+    kubelet                          = optional(string)
+    machine_features                 = optional(string)
+    on_boot                          = optional(bool, true)
+    subnet_mask                      = optional(string, "24")
+    talos_machine_config_version     = optional(string)
+    vip                              = optional(string)
   })
 }
 

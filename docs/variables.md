@@ -70,7 +70,7 @@ cluster = {
 
   # optional
   allow_scheduling_on_controlplane = true
-  api_server                   = <<-EOT
+  api_server                       = <<-EOT
     extraArgs:
       oidc-issuer-url: "https://authelia.example.com"
       oidc-client-id: "kubectl"
@@ -79,25 +79,25 @@ cluster = {
       oidc-groups-claim: "groups"
       oidc-groups-prefix: "authelia:"
   EOT
-  extra_manifests              = [
+  extra_manifests                  = [
     "https://github.com/fluxcd/flux2/releases/latest/download/install.yaml",
     "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/${local.gateway_api_version}/config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml",
     "https://raw.githubusercontent.com/prometheus-community/helm-charts/refs/heads/main/charts/kube-prometheus-stack/charts/crds/crds/crd-servicemonitors.yaml",
   ]
-  machine_features             = <<-EOT
+  machine_features                 = <<-EOT
     # https://www.talos.dev/v1.8/kubernetes-guides/network/deploying-cilium/#known-issues
     hostDNS:
       forwardKubeDNSToHost: false
   EOT
-  kubelet                      = <<-EOT
+  kubelet                          = <<-EOT
     extraArgs:
       # Needed for Netbird agent
       # see: https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#enabling-unsafe-sysctls
       allowed-unsafe-sysctls: net.ipv4.conf.all.src_valid_mark
   EOT
-  on_boot                      = false
-  talos_machine_config_version = "v1.2.3"
-  vip                          = "10.1.2.33"
+  on_boot                          = false
+  talos_machine_config_version     = "v1.2.3"
+  vip                              = "10.1.2.33"
 }
 ```
 
