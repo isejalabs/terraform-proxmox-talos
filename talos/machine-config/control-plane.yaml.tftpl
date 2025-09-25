@@ -21,7 +21,7 @@ machine:
 %{ endif }
 
 cluster:
-  allowSchedulingOnControlPlanes: true
+  allowSchedulingOnControlPlanes: ${allow_scheduling}
 %{ if api_server != null }
   apiServer:
     ${indent(4, api_server)}

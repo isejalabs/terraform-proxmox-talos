@@ -44,6 +44,7 @@ The Kubernetes cluster configuration defines its version and network configurati
 | kubernetes_version           | **Required** Kubernetes version to set independent from Talos image inbuilt version | `string` | e.g. `"v1.33.0"`    |
 | name                         | **Required** name | `string` | e.g. `"talos"`      |
 | proxmox_cluster              | **Required** an arbitrary name for the Talos cluster<br>**will get _DEPRECATED_ in a future version** | `string` | e.g. `"proxmox"`    |
+| allow_scheduling_on_controlplane | Allow scheduling of workloads on control planes | `bool`| `false` |
 | api_server                   | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation) | `string` | `null` |
 | extraManifests               | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]` |
 | kubelet                      | Kubelet config values(cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet) | `string` | `null` |
@@ -68,6 +69,7 @@ cluster = {
   proxmox_cluster     = "homelab"
 
   # optional
+  allow_scheduling_on_controlplane = true
   api_server                   = <<-EOT
     extraArgs:
       oidc-issuer-url: "https://authelia.example.com"

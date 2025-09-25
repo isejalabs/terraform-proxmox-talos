@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   used the variable before.
   Please also see below for an additional sub-variable for governing cilium
   bootstrapping.
+- **Breaking possibly:** Do not allow scheduling of workloads on control plane
+  nodes, per default.  Also made this configurable (cf. #124).
 - Changed variable `cluster.talos_machine_config_version` (former
   `cluster.talos_version`) to be *optional* (#94, #98).
 
@@ -33,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   track k8s version.
 - Added *optional* variable `cilium_config.bootstrap_manifest_path` allowing
   usage of a custom Cilium bootstrapping manifest (#95).
+- Added *optional* variable `cluster.allow_scheduling_on_controlplane` to
+  allow scheduling of workloads on control plane nodes (#124).
 - Added *optional* variable `cluster.api_server` to define kube apiserver
   options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests)
   documentation)(#91).
