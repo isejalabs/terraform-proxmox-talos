@@ -43,9 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added *optional* variable `cluster.extra_manifests` to specify
   [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests)
   in Talos (#96).
-- Added *optional* variable `cluster.kubelet` to define kubelet config values
-  (cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet)
-  documentation) (#97).
+- Added *optional* variable `cluster.kubelet` to define kubelet config values,
+  cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet)
+  documentation)(#97).
+- Added *optional* variable `cluster.machine_features` to adjust individual
+  Talos features, cf. [Talos featuresConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.features)
+  documentation)(#127).
 - Added *optional* variable `cluster.subnet_mask` for defining the network 
   subnet mask (defaulting to `24`) (#86).
 - Added *optional* variable `cluster.vip` for leveraging a
