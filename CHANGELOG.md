@@ -79,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Improved the way to install cilium with `inlineManifests` (#92).
 - Use `cilium-cli` image instead of `cilium-cli-ci` image to install cilium
   (#103).
 - Remove outdated `enableCiliumEndpointSlice` stanza from default cilium Helm
@@ -87,9 +88,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changing the `cluster.talos_machine_config_version` (former
   `cluster.talos_version`) variable does not destroy all VM nodes any longer
   (#38, #90).
-- Improved the way to install cilium with `inlineManifests` (#92).
 
 ### Dependencies
+
+| Component             | Version |
+| --------------------- | ------- |
+| cilium/cilium         | 1.18.2  |
+| cilium/cilium-cli     | 0.18.7  |
+| Mastercard/restapi    | 2.0.1   |
+| terraform kubernetes  | 2.38.0  |
+| terraform proxmox     | 0.82.0  |
+| terraform talos       | 0.9.0   |
 
 ## [4.0.0] - 2025-08-30
 
@@ -114,8 +123,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   schematic resource id, causing terraform/tofu to rebuild every VM at the same
   time -- without safeguarding mechanisms known from
   `update_version`/`update_schematic` (#106). 
-- Update GW API version v1.1.0 → v1.2.1 (#109)
-  see also [GW API v1.2 upgrade notes](https://gateway-api.sigs.k8s.io/guides/#v12-upgrade-notes)
+- Update GW API version v1.1.0 → v1.2.1 (#109).
+  See also [GW API v1.2 upgrade notes](https://gateway-api.sigs.k8s.io/guides/#v12-upgrade-notes)
 
 ### Added
 
