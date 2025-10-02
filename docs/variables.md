@@ -90,6 +90,7 @@ cluster = {
       forwardKubeDNSToHost: false
   EOT
   kubelet                          = <<-EOT
+    registerWithFQDN: true
     extraArgs:
       # Needed for Netbird agent
       # see: https://kubernetes.io/docs/tasks/administer-cluster/sysctl-cluster/#enabling-unsafe-sysctls

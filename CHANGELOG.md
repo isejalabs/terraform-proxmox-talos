@@ -62,6 +62,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- **Breaking:** Removed the `registerWithFQDN` cluster setting from the Talos
+  machine config.  You need to configure this within the new `cluster.kubelet`
+  variable, explicitely (cf. Examples section in the documentation).
 - **Breaking possibly:** The scope of preloaded GW API manifests changed to
   only include CRDs with grade `standard`.  As such, the `TLSRoute`
   experimental CRD got removed.  Please leverage the new variable
