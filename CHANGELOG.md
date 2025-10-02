@@ -62,6 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   bootstrapping (#95).  The default paths equal the present behaviour.
 - Enabled kube-controller-manager, etcd, and kube-scheduler metrics (#116).
 - Output Talos Machine Secrets (#102).
+- Provide examples also for optional variables in the respective *Examples*
+  sections.
 
 ### Removed
 
@@ -130,6 +132,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add optional `dns` configuration for cluster nodes (#110)
 - Add optional `on_boot` variable to control VM startup during boot (#112)
+- Created modules documentation (auto-generated) and a more elaborated documentation
+  for the variables, including examples (cf. `docs/` folder).
   
 ### Dependencies
 

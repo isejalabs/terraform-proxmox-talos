@@ -98,7 +98,7 @@ cluster = {
   EOT
   on_boot                          = false
   talos_machine_config_version     = "v1.2.3"
-  vip                              = "10.1.2.33"
+  vip                              = "10.20.30.40"
 }
 ```
 
@@ -141,7 +141,7 @@ The `image` parameter not only allows adjusting the downloaded Talos image by de
 | `arch`              | Architecture                                                                                                                                                                      | `string` | `"amd64"` / `"arm64"`                      |
 | `factory_url`       | Alternative [Talos Factory](https://factory.talos.dev/) URL                                                                                                                       | `string` | `"https://factory.talos.dev"`              |
 | `platform`          | Typically left set to its default (`"nocloud"`), still allowing alternative configuration for [Talos platform](https://www.talos.dev/v1.10/talos-guides/install/cloud-platforms/) | `string` | `"nocloud"`                                |
-| `proxmox_datastore` | Proxmox datastore used to store the image                                                                                                                                         | `string` | `"local"`                                  |
+| `proxmox_datastore` | Proxmox datastore used to store the image. Please do not use a shared storage as the image is expected to be downloaded for each Proxmox node separately | `string` | `"local"`                                  |
 | `update_schematic_path`  | Alternative schematic definition to be used when updating a node                                                                                                                  | `string` | `null`                                     |
 | `update_version`    | Alternative version definition to be used when updating a node                                                                                                                    | `string` | `null`                                     |
 
@@ -150,7 +150,15 @@ The `image` parameter not only allows adjusting the downloaded Talos image by de
 ```terraform
 image = {
   schematic_path = "assets/talos/schematic.yaml"
-  version   = "v1.2.3"
+  version        = "v1.2.3"
+
+  # optional
+  arch                  = "arm64"
+  factory_url           = "https://factory.example.com"
+  platform              = "hcloud"
+  proxmox_datastore     = "local-zfs"
+  update_schematic_path = "assets/talos/schematic-update.yaml"
+  update_version        = "v4.5.6"
 }
 ```
 
@@ -182,12 +190,12 @@ The `nodes` variable defines the Talos VMs that form the cluster. It consists of
 | ram_dedicated | **Required** RAM size in MB                                                                                | `number`       | e.g. `4096`                                      |
 | vm_id         | **Required** Unique VM id in Proxmox cluster                                                               | `number`       | e.g. `123`                                       |
 | bridge        | Network bridge the VM connect to                                                                           | `string`       | `"vmbr0"`                                        |
-| cpu_type      | Proxmox [CPU type](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_cpu_type)                        | `string`       | `"x86-64-v2-AES"` / `"custom-x86-64-v2-AES-AVX"` |
+| cpu_type      | Proxmox [CPU type](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_cpu_type)                        | `string`       | `"x86-64-v2-AES"` |
 | datastore_id  | The Proxmox datastore used to store the VM                                                                 | `string`       | `"local-zfs"`                                    |
 | disk_size     | VM disk size in GB                                                                                         | `number`       | `20`                                             |
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                                           |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`         | `false`                                          |
-| mac_address   | Custom MAC address                                                                                         | `string`       | `null`                                           |
+| mac_address   | Custom MAC address, if no auto-assignment desired. Can be chosen from Proxmox' `BC:24:11` range            | `string`       | `null`                                           |
 | update        | If set to `true`, the node will get updated to the `image.update_version` and/or `image.update_schematic`. | `bool`         | `false`                                          |
 | vlan_id       | Network VLAN ID                                                                                            | `number`       | `0`                                              |
 
@@ -202,9 +210,6 @@ nodes = {
     machine_type  = "controlplane"
     ram_dedicated = 4096
     vm_id         = 141
-
-    # optional
-    dns           = ["1.1.1.1", "8.8.8.8"]
   }
   "worker1" = {
     cpu           = 4
@@ -215,7 +220,15 @@ nodes = {
     vm_id         = 142
 
     # optional
-    dns           = ["8.8.8.8", "9.9.9.9"]
+    bridge        = "mybridge"
+    cpu_type      = "custom-x86-64-v2-AES-AVX"
+    datastore_id  = "nfs"
+    disksize      = 30  # 30 GB
+    dns           = ["1.1.1.1", "9.9.9.9"]
+    igpu          = true
+    mac_address   = "BC:24:11:2E:C8:02"
+    # update        = true  # leave this commented out usually!
+    vlan          = 123
   }
 }
 ```
@@ -322,6 +335,11 @@ volumes = {
   bar = {
     node = "pve1"
     size = "20G"
+
+    # optional
+    format  = "qcow"  # variable should be kept set to its default "raw" value 
+    storage = "nfs"
+    vmid    = "9876"
   }
 }
 ```
