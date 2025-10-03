@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<!---
+## [Unreleased Template]
+### Changed
+### Added
+### Removed
+### Fixed
+-->
+
 ## [Unreleased]
+### Changed
+### Added
+### Removed
+### Fixed
+
+## [5.0.0] - 2025-10-03
+
+:boom: **BREAKING CHANGE** :boom:
+
 ### Changed
 
 - **Breaking:** Moved `proxmox.api_token` variable out of `promox` struct into
@@ -43,9 +60,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added *optional* variable `cluster.extra_manifests` to specify
   [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests)
   in Talos (#96).
-- Added *optional* variable `cluster.kubelet` to define kubelet config values
-  (cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet)
-  documentation) (#97).
+- Added *optional* variable `cluster.kubelet` to define kubelet config values,
+  cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet)
+  documentation)(#97).
+- Added *optional* variable `cluster.machine_features` to adjust individual
+  Talos features, cf. [Talos featuresConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.features)
+  documentation)(#127).
 - Added *optional* variable `cluster.subnet_mask` for defining the network 
   subnet mask (defaulting to `24`) (#86).
 - Added *optional* variable `cluster.vip` for leveraging a
@@ -59,6 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   bootstrapping (#95).  The default paths equal the present behaviour.
 - Enabled kube-controller-manager, etcd, and kube-scheduler metrics (#116).
 - Output Talos Machine Secrets (#102).
+- Provide examples also for optional variables in the respective *Examples*
+  sections.
 
 ### Removed
 
@@ -76,6 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Improved the way to install cilium with `inlineManifests` (#92).
 - Use `cilium-cli` image instead of `cilium-cli-ci` image to install cilium
   (#103).
 - Remove outdated `enableCiliumEndpointSlice` stanza from default cilium Helm
@@ -84,9 +107,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changing the `cluster.talos_machine_config_version` (former
   `cluster.talos_version`) variable does not destroy all VM nodes any longer
   (#38, #90).
-- Improved the way to install cilium with `inlineManifests` (#92).
 
 ### Dependencies
+
+| Component             | Version |
+| --------------------- | ------- |
+| cilium/cilium         | 1.18.2  |
+| cilium/cilium-cli     | 0.18.7  |
+| Mastercard/restapi    | 2.0.1   |
+| terraform kubernetes  | 2.38.0  |
+| terraform proxmox     | 0.82.0  |
+| terraform talos       | 0.9.0   |
 
 ## [4.0.0] - 2025-08-30
 
@@ -111,13 +142,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   schematic resource id, causing terraform/tofu to rebuild every VM at the same
   time -- without safeguarding mechanisms known from
   `update_version`/`update_schematic` (#106). 
-- Update GW API version v1.1.0 → v1.2.1 (#109)
-  see also [GW API v1.2 upgrade notes](https://gateway-api.sigs.k8s.io/guides/#v12-upgrade-notes)
+- Update GW API version v1.1.0 → v1.2.1 (#109).
+  See also [GW API v1.2 upgrade notes](https://gateway-api.sigs.k8s.io/guides/#v12-upgrade-notes)
 
 ### Added
 
 - Add optional `dns` configuration for cluster nodes (#110)
 - Add optional `on_boot` variable to control VM startup during boot (#112)
+- Created modules documentation (auto-generated) and a more elaborated documentation
+  for the variables, including examples (cf. `docs/` folder).
   
 ### Dependencies
 
