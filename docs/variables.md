@@ -42,8 +42,8 @@ The Kubernetes cluster configuration defines its version and network configurati
 | gateway                      | **Required** network gateway | `string` | e.g. `"10.1.2.254"` |
 | gateway_api_version          | **Required** [GW API version](https://gateway-api.sigs.k8s.io/concepts/versioning) | `string` | e.g. `"v1.2.1"` |
 | kubernetes_version           | **Required** Kubernetes version to set independent from Talos image inbuilt version | `string` | e.g. `"v1.33.0"`    |
-| name                         | **Required** name | `string` | e.g. `"talos"`      |
-| proxmox_cluster              | **Required** an arbitrary name for the Talos cluster<br>**will get _DEPRECATED_ in a future version** | `string` | e.g. `"proxmox"`    |
+| name                         | **Required** Arbitrary name of the Talos cluster | `string` | e.g. `"dev-talos"`      |
+| proxmox_cluster              | **Required** Name of the Proxmox cluster used for Promox CSI<br>will get used for `topology.kubernetes.io/region` setting | `string` | e.g. `"proxmox"`    |
 | allow_scheduling_on_controlplane | Allow scheduling of workloads on control planes | `bool`| `false` |
 | api_server                   | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation) | `string` | `null` |
 | extraManifests               | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]` |
@@ -65,7 +65,7 @@ cluster = {
   gateway             = "10.1.2.254"
   gateway_api_version = local.gateway_api_version
   kubernetes_version  = "v1.33.3" # renovate: github-releases=kubernetes/kubernetes
-  name                = "talos"
+  name                = "dev-talos"
   proxmox_cluster     = "homelab"
 
   # optional
@@ -138,7 +138,7 @@ The `image` parameter not only allows adjusting the downloaded Talos image by de
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------ |
 | `schematic_path` | **Required** Path to the file defining the Schematic ID for Talos image | `string` | e.g. `"assets/talos/schematic.yaml"` |
 | `version`           | **Required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"`                                                                       | `string` | e.g. `"v1.2.3"`                            |
-| `arch`              | Architecture                                                                                                                                                                      | `string` | `"amd64"` / `"arm64"`                      |
+| `arch`              | Architecture                                                                                                                                                                      | `string` | `"amd64"`                                  |
 | `factory_url`       | Alternative [Talos Factory](https://factory.talos.dev/) URL                                                                                                                       | `string` | `"https://factory.talos.dev"`              |
 | `platform`          | Typically left set to its default (`"nocloud"`), still allowing alternative configuration for [Talos platform](https://www.talos.dev/v1.10/talos-guides/install/cloud-platforms/) | `string` | `"nocloud"`                                |
 | `proxmox_datastore` | Proxmox datastore used to store the image. Please do not use a shared storage as the image is expected to be downloaded for each Proxmox node separately | `string` | `"local"`                                  |
@@ -241,7 +241,7 @@ Configuration for the connection to the Proxmox cluster, according to [bgp/terra
 
 | Key          | Description                                                                                                                                                      | Type     | Default / Example                                                      |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
-| cluster_name | **Required** name of the talos cluster<br>**will get _DEPRECATED_ in a future version**                                                                          | `string` | e.g. `"foo"`                                                           |
+| cluster_name | **Required** Name of the talos cluster                                                                                                                           | `string` | e.g. `"proxmox"`                                                           |
 | endpoint     | **Required** Proxmox endpoint to connect to                                                                                                                      | `string` | e.g. `"https://pve.example.com:8006"`                                  |
 | insecure     | **Required** Skip endpoint TLS verification if set to `true`                                                                                                     | `bool`   | e.g. `false`                                                           |
 | username     | **Required** Username for the SSH connection. A SSH connection is used to connect to the Proxmox server for operations that are not available in the Proxmox API | `string` | e.g. `"terraform"`                                                     |
@@ -250,7 +250,7 @@ Configuration for the connection to the Proxmox cluster, according to [bgp/terra
 
 ```terraform
 proxmox = {
-  cluster_name = "foo"
+  cluster_name = "proxmox"
   endpoint     = "https://pve.example.com:8006"
   insecure     = false
   username     = "terraform"
