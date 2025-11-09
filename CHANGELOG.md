@@ -14,9 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -->
 
 ## [Unreleased]
+
 ### Changed
+
 ### Added
+
 ### Removed
+
 ### Fixed
 
 ## [5.0.0] - 2025-10-03
@@ -34,66 +38,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking:** Renamed variable `image.update_schematic` to
   `image.update_schematic_path`.
 - **Breaking possibly:** Renamed variable `cilium_values` to `cilium_config`.
-  As this is an *optional* variable, it's only a breaking change for those who
+  As this is an _optional_ variable, it's only a breaking change for those who
   used the variable before.
   Please also see below for an additional sub-variable for governing cilium
   bootstrapping.
 - **Breaking possibly:** Do not allow scheduling of workloads on control plane
-  nodes, per default.  Also made this configurable (cf. #124).
+  nodes, per default. Also made this configurable (cf. #124).
 - Changed variable `cluster.talos_machine_config_version` (former
-  `cluster.talos_version`) to be *optional* (#94, #98).
+  `cluster.talos_version`) to be _optional_ (#94, #98).
 
 ### Added
 
-- **Breaking:** Added *mandatory* variable `cluster.gateway_api_version` to
-  track GW API version.  Previously, the GW API version was hardcoded to
+- **Breaking:** Added _mandatory_ variable `cluster.gateway_api_version` to
+  track GW API version. Previously, the GW API version was hardcoded to
   `v1.2.1`, and now, it can be set independent of the module version flexibly.
-- **Breaking:** Added *mandatory* variable `cluster.kubernetes_version` to
+- **Breaking:** Added _mandatory_ variable `cluster.kubernetes_version` to
   track k8s version.
-- Added *optional* variable `cilium_config.bootstrap_manifest_path` allowing
+- Added _optional_ variable `cilium_config.bootstrap_manifest_path` allowing
   usage of a custom Cilium bootstrapping manifest (#95).
-- Added *optional* variable `cluster.allow_scheduling_on_controlplane` to
+- Added _optional_ variable `cluster.allow_scheduling_on_controlplane` to
   allow scheduling of workloads on control plane nodes (#124).
-- Added *optional* variable `cluster.api_server` to define kube apiserver
+- Added _optional_ variable `cluster.api_server` to define kube apiserver
   options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests)
   documentation)(#91).
-- Added *optional* variable `cluster.extra_manifests` to specify
+- Added _optional_ variable `cluster.extra_manifests` to specify
   [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests)
   in Talos (#96).
-- Added *optional* variable `cluster.kubelet` to define kubelet config values,
+- Added _optional_ variable `cluster.kubelet` to define kubelet config values,
   cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet)
   documentation)(#97).
-- Added *optional* variable `cluster.machine_features` to adjust individual
+- Added _optional_ variable `cluster.machine_features` to adjust individual
   Talos features, cf. [Talos featuresConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.features)
   documentation)(#127).
-- Added *optional* variable `cluster.subnet_mask` for defining the network 
+- Added _optional_ variable `cluster.subnet_mask` for defining the network
   subnet mask (defaulting to `24`) (#86).
-- Added *optional* variable `cluster.vip` for leveraging a
+- Added _optional_ variable `cluster.vip` for leveraging a
   [Virtual (shared) IP](https://www.talos.dev/v1.11/talos-guides/network/vip/)
   (#86, #93).
   This allows HA usage scenarios in providing only one IP to clients to reach
   the control planes (requires all control planes residing in the same layer 2
   subnet).
-- Added *optional* variable `sealed_secrets_config` that can be supplied with 
+- Added _optional_ variable `sealed_secrets_config` that can be supplied with
   alternative paths to the certificate and key for the `SealedSecrets`
-  bootstrapping (#95).  The default paths equal the present behaviour.
+  bootstrapping (#95). The default paths equal the present behaviour.
 - Enabled kube-controller-manager, etcd, and kube-scheduler metrics (#116).
 - Output Talos Machine Secrets (#102).
-- Provide examples also for optional variables in the respective *Examples*
+- Provide examples also for optional variables in the respective _Examples_
   sections.
 
 ### Removed
 
 - **Breaking:** Removed the `registerWithFQDN` cluster setting from the Talos
-  machine config.  You need to configure this within the new `cluster.kubelet`
+  machine config. You need to configure this within the new `cluster.kubelet`
   variable, explicitely (cf. Examples section in the documentation).
 - **Breaking possibly:** The scope of preloaded GW API manifests changed to
-  only include CRDs with grade `standard`.  As such, the `TLSRoute`
-  experimental CRD got removed.  Please leverage the new variable
+  only include CRDs with grade `standard`. As such, the `TLSRoute`
+  experimental CRD got removed. Please leverage the new variable
   `cluster.extra_manifests` to include it as `extraManifest` in Talos
   (cf. [`cluster` variable documentation](docs/variables.md#cluster) for an
   [example](docs/variables.md#example-1)).
-- Removed the `cluster.endpoint` variable.  It is chosen automatically from the
+- Removed the `cluster.endpoint` variable. It is chosen automatically from the
   VIP or the first control plane node.
 
 ### Fixed
@@ -110,14 +114,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Dependencies
 
-| Component             | Version |
-| --------------------- | ------- |
-| cilium/cilium         | 1.18.2  |
-| cilium/cilium-cli     | 0.18.7  |
-| Mastercard/restapi    | 2.0.1   |
-| terraform kubernetes  | 2.38.0  |
-| terraform proxmox     | 0.82.0  |
-| terraform talos       | 0.9.0   |
+| Component            | Version |
+| -------------------- | ------- |
+| cilium/cilium        | 1.18.2  |
+| cilium/cilium-cli    | 0.18.7  |
+| Mastercard/restapi   | 2.0.1   |
+| terraform kubernetes | 2.38.0  |
+| terraform proxmox    | 0.82.0  |
+| terraform talos      | 0.9.0   |
 
 ## [4.0.0] - 2025-08-30
 
@@ -126,7 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Breaking:** The `on_boot` parameter got moved from the `nodes` variable to
-  the `cluster` variable for controlling VM startup during boot (#115).  It
+  the `cluster` variable for controlling VM startup during boot (#115). It
   makes more sense setting it for all VMs used in a cluster.
 
 ## [3.0.0] - 2025-08-29
@@ -136,12 +140,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Breaking:** The VM image now respects the schematic id and thus allows safe
-  changes/upgrades of the schematic definition going further.  While this
+  changes/upgrades of the schematic definition going further. While this
   fixes the workaround introduced in v0.0.1, it is a breaking change, needing
-  a rebuild of the cluster.  This is due to the change of the filename and
+  a rebuild of the cluster. This is due to the change of the filename and
   schematic resource id, causing terraform/tofu to rebuild every VM at the same
   time -- without safeguarding mechanisms known from
-  `update_version`/`update_schematic` (#106). 
+  `update_version`/`update_schematic` (#106).
 - Update GW API version v1.1.0 → v1.2.1 (#109).
   See also [GW API v1.2 upgrade notes](https://gateway-api.sigs.k8s.io/guides/#v12-upgrade-notes)
 
@@ -151,7 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add optional `on_boot` variable to control VM startup during boot (#112)
 - Created modules documentation (auto-generated) and a more elaborated documentation
   for the variables, including examples (cf. `docs/` folder).
-  
+
 ### Dependencies
 
 - update `cilium/cilium` v1.18.0 → v1.18.1 (#82)
@@ -176,7 +180,7 @@ Ensure to use Talos version `v1.9.3` at minimum (cf. #20).
   default version supplied (which can get overriden per input variable
   `cilium_values` or when redeploying cilium after its installation).
   As this module does not allow altering the Talos machine configuration, yet,
-  consumers depend on a decent default configuration of the module.  Hence,
+  consumers depend on a decent default configuration of the module. Hence,
   altering the default setting in this module and planning to make the Talos
   machine configurable per module (#79).
 

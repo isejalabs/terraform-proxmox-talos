@@ -62,7 +62,7 @@ resource "proxmox_virtual_environment_download_file" "this" {
   url                     = "${var.image.factory_url}/image/${each.value[0].schematic}/${each.value[0].version}/${var.image.platform}-${var.image.arch}.raw.gz"
   decompression_algorithm = "gz"
   overwrite               = false
-  # allow overwriting of unmanaged files (files not managed by this terraform state, 
+  # allow overwriting of unmanaged files (files not managed by this terraform state,
   # e.g. from another environment using the same schematic+version) when not using the `env` prefix)
   overwrite_unmanaged = true
 }

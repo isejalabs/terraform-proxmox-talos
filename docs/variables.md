@@ -19,10 +19,11 @@ The `cilium_config` variable lets you set a paths to custom configuration files 
 If no files are provided, a decent default configuration is used.
 
 ### Definition
-| Key                     | Description | Type     | Default / Example |
-| ------------------------| ----------- | -------- | ----------------- |
-| bootstrap_manifest_path | Path to Cilium `install.yaml` manifest for cilium install | `string` | [`talos/inline-manifests/cilium-install.yaml`](../talos/inline-manifests/cilium-install.yaml) |
-| values_file_path        | Path to Helm `values.yaml` file for cilium install | `string` | [`talos/inline-manifests/cilium-values.default.yaml`](../talos/inline-manifests/cilium-values.default.yaml) |
+
+| Key                     | Description                                                | Type     | Default / Example                                                                                           |
+| ----------------------- | ---------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------- |
+| bootstrap_manifest_path |  Path to Cilium `install.yaml` manifest for cilium install | `string` | [`talos/inline-manifests/cilium-install.yaml`](../talos/inline-manifests/cilium-install.yaml)               |
+| values_file_path        | Path to Helm `values.yaml` file for cilium install         | `string` | [`talos/inline-manifests/cilium-values.default.yaml`](../talos/inline-manifests/cilium-values.default.yaml) |
 
 ### Example
 
@@ -37,22 +38,22 @@ values_file_path        = "assets/cilium/values.yaml"
 
 The Kubernetes cluster configuration defines its version and network configuration mainly.
 
-| Key                          | Description | Type | Default / Example |
-| ---------------------------- | ----------- | ---- | ----------------- |
-| gateway                      | **Required** network gateway | `string` | e.g. `"10.1.2.254"` |
-| gateway_api_version          | **Required** [GW API version](https://gateway-api.sigs.k8s.io/concepts/versioning) | `string` | e.g. `"v1.2.1"` |
-| kubernetes_version           | **Required** Kubernetes version to set independent from Talos image inbuilt version | `string` | e.g. `"v1.33.0"`    |
-| name                         | **Required** Arbitrary name of the Talos cluster | `string` | e.g. `"dev-talos"`      |
-| proxmox_cluster              | **Required** Name of the Proxmox cluster used for Promox CSI<br>will get used for `topology.kubernetes.io/region` setting | `string` | e.g. `"proxmox"`    |
-| allow_scheduling_on_controlplane | Allow scheduling of workloads on control planes | `bool`| `false` |
-| api_server                   | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation) | `string` | `null` |
-| extraManifests               | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]` |
-| kubelet                      | Kubelet config values(cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet) | `string` | `null` |
-| machine_features             | Machine features, cf. [Talos featuresConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.features) | `string`| `null` |
-| on_boot                      | Specifies whether all VMs will be started during system boot of the Proxmox server | `bool`   | `true`              |
-| subnet_mask                  | Network subnet mask | `string` | `"24"` |
-| talos_machine_config_version | [Version of Talos](https://github.com/siderolabs/talos/releases) to use in generated machine configuration. Per default, the version defined in the `image` is used | `string` | `"v1.2.3"` |
-| vip                          | [Virtual (shared) IP](https://www.talos.dev/v1.11/talos-guides/network/vip/) for building a high-availability controlplane | `string` | `null` |
+| Key                              | Description                                                                                                                                                                                          | Type           | Default / Example   |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ------------------- |
+| gateway                          | **Required** network gateway                                                                                                                                                                         | `string`       | e.g. `"10.1.2.254"` |
+| gateway_api_version              | **Required** [GW API version](https://gateway-api.sigs.k8s.io/concepts/versioning)                                                                                                                   | `string`       | e.g. `"v1.2.1"`     |
+| kubernetes_version               | **Required** Kubernetes version to set independent from Talos image inbuilt version                                                                                                                  | `string`       | e.g. `"v1.33.0"`    |
+| name                             | **Required** Arbitrary name of the Talos cluster                                                                                                                                                     | `string`       | e.g. `"dev-talos"`  |
+| proxmox_cluster                  | **Required** Name of the Proxmox cluster used for Promox CSI<br>will get used for `topology.kubernetes.io/region` setting                                                                            | `string`       | e.g. `"proxmox"`    |
+| allow_scheduling_on_controlplane | Allow scheduling of workloads on control planes                                                                                                                                                      | `bool`         | `false`             |
+| api_server                       | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation)                                      | `string`       | `null`              |
+| extraManifests                   | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]`                |
+| kubelet                          | Kubelet config values(cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet)                                                         | `string`       | `null`              |
+| machine_features                 | Machine features, cf. [Talos featuresConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.features)                                                           | `string`       | `null`              |
+| on_boot                          | Specifies whether all VMs will be started during system boot of the Proxmox server                                                                                                                   | `bool`         | `true`              |
+| subnet_mask                      | Network subnet mask                                                                                                                                                                                  | `string`       | `"24"`              |
+| talos_machine_config_version     | [Version of Talos](https://github.com/siderolabs/talos/releases) to use in generated machine configuration. Per default, the version defined in the `image` is used                                  | `string`       | `"v1.2.3"`          |
+| vip                              | [Virtual (shared) IP](https://www.talos.dev/v1.11/talos-guides/network/vip/) for building a high-availability controlplane                                                                           | `string`       | `null`              |
 
 ### Example
 
@@ -115,12 +116,12 @@ While setting the `env` variable is optional, its usage is strongly recommended 
 
 Setting the `env` variable, to e.g. `"dev"`, has an effect on the following resources:
 
-| Resource                     | Default Name | env-specific Name  |
-| ---------------------------- | -------------| ------------------ |
-| Proxmox role for CSI         | `CSI`        |`dev-CSI`  |
-| Proxmox user for CSI plugin  | `kubernetes-csi@pve` | `dev-kubernetes-csi@pve` |
+| Resource                     | Default Name                                         | env-specific Name                                                                                                                     |
+| ---------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Proxmox role for CSI         | `CSI`                                                | `dev-CSI`                                                                                                                             |
+| Proxmox user for CSI plugin  | `kubernetes-csi@pve`                                 | `dev-kubernetes-csi@pve`                                                                                                              |
 | Proxmox volume names for CSI | `vm-<vmid>-pv-<pvname>`<br><br>e.g. `vm-9999-pv-foo` | `vm-9999-dev-pv-foo`<br><br>another option is adjusting the `vmid` parameter (default `"9999"`) of the [`volumes`](#volumes) variable |
-| Downloaded image file        | `talos-ce..15-v1.2.3-nocloud-amd64.img` | `dev-talos-ce..15-v1.2.3-nocloud-amd64.img` |
+| Downloaded image file        | `talos-ce..15-v1.2.3-nocloud-amd64.img`              | `dev-talos-ce..15-v1.2.3-nocloud-amd64.img`                                                                                           |
 
 ### Example
 
@@ -134,16 +135,16 @@ env = "dev"
 
 The `image` parameter not only allows adjusting the downloaded Talos image by defining its extensions (schematic), version and other settings. The two `update_` attributes allow updating to another version or schematic definition. See the **TODO** [update process documentation].
 
-| Key                 | Description                                                                                                                                                                       | Type     | Default / Example                          |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------ |
-| `schematic_path` | **Required** Path to the file defining the Schematic ID for Talos image | `string` | e.g. `"assets/talos/schematic.yaml"` |
-| `version`           | **Required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"`                                                                       | `string` | e.g. `"v1.2.3"`                            |
-| `arch`              | Architecture                                                                                                                                                                      | `string` | `"amd64"`                                  |
-| `factory_url`       | Alternative [Talos Factory](https://factory.talos.dev/) URL                                                                                                                       | `string` | `"https://factory.talos.dev"`              |
-| `platform`          | Typically left set to its default (`"nocloud"`), still allowing alternative configuration for [Talos platform](https://www.talos.dev/v1.10/talos-guides/install/cloud-platforms/) | `string` | `"nocloud"`                                |
-| `proxmox_datastore` | Proxmox datastore used to store the image. Please do not use a shared storage as the image is expected to be downloaded for each Proxmox node separately | `string` | `"local"`                                  |
-| `update_schematic_path`  | Alternative schematic definition to be used when updating a node                                                                                                                  | `string` | `null`                                     |
-| `update_version`    | Alternative version definition to be used when updating a node                                                                                                                    | `string` | `null`                                     |
+| Key                     | Description                                                                                                                                                                       | Type     | Default / Example                    |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------ |
+| `schematic_path`        | **Required** Path to the file defining the Schematic ID for Talos image                                                                                                           | `string` | e.g. `"assets/talos/schematic.yaml"` |
+| `version`               | **Required** [Talos version](https://github.com/siderolabs/talos/releases) with `v` prefix, e.g. `"v1.2.3"`                                                                       | `string` | e.g. `"v1.2.3"`                      |
+| `arch`                  | Architecture                                                                                                                                                                      | `string` | `"amd64"`                            |
+| `factory_url`           | Alternative [Talos Factory](https://factory.talos.dev/) URL                                                                                                                       | `string` | `"https://factory.talos.dev"`        |
+| `platform`              | Typically left set to its default (`"nocloud"`), still allowing alternative configuration for [Talos platform](https://www.talos.dev/v1.10/talos-guides/install/cloud-platforms/) | `string` | `"nocloud"`                          |
+| `proxmox_datastore`     | Proxmox datastore used to store the image. Please do not use a shared storage as the image is expected to be downloaded for each Proxmox node separately                          | `string` | `"local"`                            |
+| `update_schematic_path` | Alternative schematic definition to be used when updating a node                                                                                                                  | `string` | `null`                               |
+| `update_version`        | Alternative version definition to be used when updating a node                                                                                                                    | `string` | `null`                               |
 
 ### Example
 
@@ -181,23 +182,23 @@ See the [Talos Image Factory documentation](https://github.com/siderolabs/image-
 
 The `nodes` variable defines the Talos VMs that form the cluster. It consists of a **map** with the _VM name_ as keys having the following attributes:
 
-| Key           | Description                                                                                                | Type           | Default / Example                                |
-| ------------- | ---------------------------------------------------------------------------------------------------------- | -------------- | ------------------------------------------------ |
-| cpu           | **Required** Number of CPU cores                                                                           | `number`       | e.g. `2`                                         |
-| host_node     | **Required** Hostname of the Proxmox node the Talos VM should get hosted                                   | `string`       | e.g. `"host1"`                                   |
-| ip            | **Required** IP address                                                                                    | `string`       | e.g. `"10.1.2.3"`                                |
-| machine_type  | **Required** Type of kubernetes node, must be either `"controlplane"` or `"worker"`                        | `string`       | e.g. `"controlplane"`, `"worker"`                |
-| ram_dedicated | **Required** RAM size in MB                                                                                | `number`       | e.g. `4096`                                      |
-| vm_id         | **Required** Unique VM id in Proxmox cluster                                                               | `number`       | e.g. `123`                                       |
-| bridge        | Network bridge the VM connect to                                                                           | `string`       | `"vmbr0"`                                        |
-| cpu_type      | Proxmox [CPU type](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_cpu_type)                        | `string`       | `"x86-64-v2-AES"` |
-| datastore_id  | The Proxmox datastore used to store the VM                                                                 | `string`       | `"local-zfs"`                                    |
-| disk_size     | VM disk size in GB                                                                                         | `number`       | `20`                                             |
-| dns           | List of DNS servers                                                                                        | `list(string)` | `null`                                           |
-| igpu          | Passthrough of an iGPU                                                                                     | `bool`         | `false`                                          |
-| mac_address   | Custom MAC address, if no auto-assignment desired. Can be chosen from Proxmox' `BC:24:11` range            | `string`       | `null`                                           |
-| update        | If set to `true`, the node will get updated to the `image.update_version` and/or `image.update_schematic`. | `bool`         | `false`                                          |
-| vlan_id       | Network VLAN ID                                                                                            | `number`       | `0`                                              |
+| Key           | Description                                                                                                | Type           | Default / Example                 |
+| ------------- | ---------------------------------------------------------------------------------------------------------- | -------------- | --------------------------------- |
+| cpu           | **Required** Number of CPU cores                                                                           | `number`       | e.g. `2`                          |
+| host_node     | **Required** Hostname of the Proxmox node the Talos VM should get hosted                                   | `string`       | e.g. `"host1"`                    |
+| ip            | **Required** IP address                                                                                    | `string`       | e.g. `"10.1.2.3"`                 |
+| machine_type  | **Required** Type of kubernetes node, must be either `"controlplane"` or `"worker"`                        | `string`       | e.g. `"controlplane"`, `"worker"` |
+| ram_dedicated | **Required** RAM size in MB                                                                                | `number`       | e.g. `4096`                       |
+| vm_id         | **Required** Unique VM id in Proxmox cluster                                                               | `number`       | e.g. `123`                        |
+| bridge        | Network bridge the VM connect to                                                                           | `string`       | `"vmbr0"`                         |
+| cpu_type      | Proxmox [CPU type](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_cpu_type)                        | `string`       | `"x86-64-v2-AES"`                 |
+| datastore_id  | The Proxmox datastore used to store the VM                                                                 | `string`       | `"local-zfs"`                     |
+| disk_size     | VM disk size in GB                                                                                         | `number`       | `20`                              |
+| dns           | List of DNS servers                                                                                        | `list(string)` | `null`                            |
+| igpu          | Passthrough of an iGPU                                                                                     | `bool`         | `false`                           |
+| mac_address   | Custom MAC address, if no auto-assignment desired. Can be chosen from Proxmox' `BC:24:11` range            | `string`       | `null`                            |
+| update        | If set to `true`, the node will get updated to the `image.update_version` and/or `image.update_schematic`. | `bool`         | `false`                           |
+| vlan_id       | Network VLAN ID                                                                                            | `number`       | `0`                               |
 
 ### Example
 
@@ -239,12 +240,12 @@ Configuration for the connection to the Proxmox cluster, according to [bgp/terra
 
 ### Definition
 
-| Key          | Description                                                                                                                                                      | Type     | Default / Example                                                      |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------- |
-| cluster_name | **Required** Name of the talos cluster                                                                                                                           | `string` | e.g. `"proxmox"`                                                           |
-| endpoint     | **Required** Proxmox endpoint to connect to                                                                                                                      | `string` | e.g. `"https://pve.example.com:8006"`                                  |
-| insecure     | **Required** Skip endpoint TLS verification if set to `true`                                                                                                     | `bool`   | e.g. `false`                                                           |
-| username     | **Required** Username for the SSH connection. A SSH connection is used to connect to the Proxmox server for operations that are not available in the Proxmox API | `string` | e.g. `"terraform"`                                                     |
+| Key          | Description                                                                                                                                                      | Type     | Default / Example                     |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------- |
+| cluster_name | **Required** Name of the talos cluster                                                                                                                           | `string` | e.g. `"proxmox"`                      |
+| endpoint     | **Required** Proxmox endpoint to connect to                                                                                                                      | `string` | e.g. `"https://pve.example.com:8006"` |
+| insecure     | **Required** Skip endpoint TLS verification if set to `true`                                                                                                     | `bool`   | e.g. `false`                          |
+| username     | **Required** Username for the SSH connection. A SSH connection is used to connect to the Proxmox server for operations that are not available in the Proxmox API | `string` | e.g. `"terraform"`                    |
 
 ### Example
 
@@ -263,9 +264,9 @@ Configuration of the Proxmox API token needed for authorization with the Proxmox
 
 ### Definition
 
-| Description | Type | Default / Example |
-| ------------| ---- | ----------------- |
-| API token for Proxmox | `string` | `null` |
+| Description           | Type     | Default / Example |
+| --------------------- | -------- | ----------------- |
+| API token for Proxmox | `string` | `null`            |
 
 ### Example
 
@@ -337,7 +338,7 @@ volumes = {
     size = "20G"
 
     # optional
-    format  = "qcow"  # variable should be kept set to its default "raw" value 
+    format  = "qcow"  # variable should be kept set to its default "raw" value
     storage = "nfs"
     vmid    = "9876"
   }
