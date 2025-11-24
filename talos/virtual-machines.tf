@@ -32,17 +32,35 @@ resource "proxmox_virtual_environment_vm" "this" {
     vlan_id     = each.value.vlan_id
   }
 
+  # OS Disk
   disk {
     datastore_id = each.value.datastore_id
-    interface    = "scsi0"
+    interface    = "virtio0"
     iothread     = true
     cache        = "writethrough"
     discard      = "on"
-    ssd          = true
     file_format  = "raw"
-    size         = each.value.disk_size
+    size         = 5
     file_id      = proxmox_virtual_environment_download_file.this["${each.value.host_node}_${each.value.update == true ? local.update_image_id : local.image_id}"].id
   }
+
+  # 2nd Disk for Data
+  disk {
+    datastore_id = each.value.datastore_id
+    interface    = "virtio1"
+    iothread     = true
+    cache        = "writethrough"
+    discard      = "on"
+    file_format  = "raw"
+    size         = each.value.disk_size
+  }
+
+  # # do not destroy and recreate VM if disk changes
+  # lifecycle {
+  #   ignore_changes = [
+  #     disk,
+  #   ]
+  # }
 
   boot_order = ["scsi0"]
 
