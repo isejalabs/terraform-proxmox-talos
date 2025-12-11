@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Added missing `Sys.Audit` PVE role permission, needed by `proxmox-csi-plugin`
+  version `v0.16.0` (Helm chart version `v0.5.0`) onwards (#140)
+- Added additional PVE role permissions for supporting (zfs) replication feature
+
 ## [5.0.0] - 2025-10-03
 
 :boom: **BREAKING CHANGE** :boom:
