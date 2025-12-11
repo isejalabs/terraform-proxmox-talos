@@ -23,9 +23,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.0.1] - 2025-12-11
+
+### Fixed
+
 - Added missing `Sys.Audit` PVE role permission, needed by `proxmox-csi-plugin`
   version `v0.16.0` (Helm chart version `v0.5.0`) onwards (#140)
 - Added additional PVE role permissions for supporting (zfs) replication feature
+
+### Dependencies
+
+- update `cilium/cilium` v1.18.2 → v1.18.4 (#132, #133)
+- update `cilium/cilium-cli` v0.18.7 → v0.18.9 (#131, #138)
+
+| Component            | Version |
+| -------------------- | ------- |
+| cilium/cilium        | 1.18.4  |
+| cilium/cilium-cli    | 0.18.9  |
+| Mastercard/restapi   | 2.0.1   |
+| terraform kubernetes | 2.38.0  |
+| terraform proxmox    | 0.82.0  |
+| terraform talos      | 0.9.0   |
 
 ## [5.0.0] - 2025-10-03
 
