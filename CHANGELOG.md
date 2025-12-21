@@ -15,13 +15,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+:boom: **BREAKING CHANGE** :boom:
+
+
 ### Changed
+
+- **Breaking:** Split up disk setup and VM into 2 disks and 2 VMs. This allows
+  keeping data upon Talos upgrade and VM changes.
+
+  As this change is destroying the former primary disk, you need to recreate
+  the cluster, restore `etcd` data from a backup or upgrade the nodes
+  separately one-by-one (cf. upgrade note).
+
+  Architecture:
+  - Main/Talos VM is holding primary (existing) disk with Talos OS (with EFI,
+    META and STATE) partitions.  The disk has a fixed size of `5 GB` because
+    current Talos image size is ~4 GB.
+  - (NEW) 2nd disk is holding `/var` with EPHEMERAL data (with e.g. `etcd`).
+    In addition, a new "data_vm" (which is offline and just acts as a
+    placeholder).  The VM id is the Talos VM ID suffixed by `0` and the VM name
+    ia suffixed by `-data` (e.g. VM ID `123` and VM name `k8s1.example.com`
+    become `1230` and `k8s1.example.com-data`, respectively).
+    The data disk has a variable size which is configurable.  As the new data
+    disk is not holding the OS any longer, you can decrease its size by 4 GB
+    for having a similar data usage setup as before.
+  - The data_vm's disk is attached to the main Talos VM.
 
 ### Added
 
 ### Removed
 
 ### Fixed
+
+### Upgrade Note
+
+- As one of the upgrade procedures – besides recreating the cluster or
+  restoring `etcd` from a backup – you can use *resource targeting* with
+  `terraform`/`tofu`/`terragrunt`.
+
+  The following command applies the new configuration by ommitting the change
+  for nodes with names `cp2.example.com` and `worker2.example.com`, for
+  example:
+  ```sh
+  terragrunt apply -exclude 'module.talos.proxmox_virtual_environment_vm.this["cp2.example.com"]' -exclude 'module.talos.proxmox_virtual_environment_vm.this["worker2.example.com"]'
+  ```
+  Be sure to exclude at minimum 1 control plane and a minimum of x worker nodes
+  (depending on the workload deployed and availability of services during the
+  change).  Just add additional `-exclude` parameters if needed, and replace
+  `terragrunt` by `terraform` or `tofu`, depending on your environment):
+
+  The following command gives a list of all relevant nodes to exclude
+  subsequently:
+  ```sh
+  terragrunt state list | grep module.talos.proxmox_virtual_environment_vm.this
+  ```
+- Optionally, you can decrease the data disk size by 4 GB for having a similar
+  data usage setup as before.
+- Be sure to run Talos v1.8 at minimum.
 
 ## [5.0.1] - 2025-12-11
 
