@@ -105,14 +105,33 @@ variable "sealed_secrets_config" {
 }
 
 variable "volumes" {
+  description = "Additional storage volumes available to the cluster"
   type = map(
     object({
-      node      = string
-      size      = string
+      # common
+      size = string                          # in GB (not GiB)
+      type = optional(string, "proxmox-csi") # "directory", "disk", "partition", "proxmox-csi"
+      # directory, disk and partition
+      machine_type = optional(string, "worker") # "all", "controlplane", "worker"
+      # disk and proxmox-csi
       datastore = optional(string, "local-zfs")
-      format    = optional(string, "raw")
-      vmid      = optional(number, 9999)
+      # proxmox-csi only
+      node   = optional(string)
+      format = optional(string, "raw")
+      vmid   = optional(number, 9999)
     })
   )
   default = {}
+  validation {
+    // @formatter:off
+    condition     = length([for i in var.volumes : i if contains(["directory", "disk", "partition", "proxmox-csi"], i.type)]) == length(var.volumes)
+    error_message = "Volume `type` must be either 'directory', 'disk' 'partition' or 'proxmox-csi'."
+    // @formatter:on
+  }
+  validation {
+    // @formatter:off
+    condition     = length([for i in var.volumes : i if contains(["all", "controlplane", "worker"], i.machine_type)]) == length(var.volumes)
+    error_message = "Volume `machine_type` must be either 'all', 'controlplane' or 'worker'."
+    // @formatter:on
+  }
 }

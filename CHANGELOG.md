@@ -26,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the cluster, restore `etcd` data from a backup or upgrade the nodes
   separately one-by-one (cf. upgrade note).
 
-  Architecture:
   - Main/Talos VM is holding primary (existing) disk with Talos OS (with EFI,
     META and STATE) partitions.  The disk has a fixed size of `5 GB` because
     current Talos image size is ~4 GB.
@@ -47,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Documented [how to upgrade](docs/upgrading.md) several aspects of the Talos cluster (e.g. upgrade Talos OS version, Kubernetes version, terraform module version, incl. breaking changes and resource targeting).
+- Documented the new VM architecture with [separation of Talos VM and Data VM](docs/vms.md#separation-of-talos-vm-and-data-vm).
 
 ### Removed
 
