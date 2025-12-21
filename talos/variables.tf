@@ -46,7 +46,6 @@ variable "image" {
   })
 }
 
-
 variable "nodes" {
   description = "Configuration for cluster nodes"
   type = map(object({
@@ -66,4 +65,21 @@ variable "nodes" {
     update        = optional(bool, false)
     vlan_id       = optional(number, 0)
   }))
+}
+
+variable "talos_volumes" {
+  type = map(
+    object({
+      size         = string
+      datastore    = optional(string) # default is to use the main VM's datastore
+      machine_type = optional(string, "worker") # "all", "controlplane", "worker"
+      type = optional(string, "disk") # "directory", "disk", "partition"
+    })
+  )
+  validation {
+    // @formatter:off
+    condition     = length([for i in var.talos_volumes : i if contains(["all", "controlplane", "worker"], i.machine_type)]) == length(var.talos_volumes)
+    error_message = "Volume `machine_type` must be either 'all', 'controlplane' or 'worker'."
+    // @formatter:on
+  }
 }

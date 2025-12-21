@@ -1,10 +1,13 @@
 module "talos" {
   source = "./talos"
 
+  # hand over volumes of type `disk`
+  talos_volumes = coalesce({ for k, v in var.volumes : k => v if v.type == "disk" }, {})
+
+  # take over configuration from main
   providers = {
     proxmox = proxmox
   }
-
   cilium_config = var.cilium_config
   cluster       = var.cluster
   image         = var.image

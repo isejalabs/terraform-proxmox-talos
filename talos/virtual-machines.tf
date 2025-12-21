@@ -129,5 +129,27 @@ resource "proxmox_virtual_environment_vm" "data_vm" {
     size         = each.value.disk_size
     ssd          = true
   }
-}
 
+  # Additional Data Disks only in case the disk's machine_type matches the current node's machine_type  
+  dynamic "disk" {
+    for_each = { for idx, val in var.talos_volumes : idx => val if val.machine_type == each.value.machine_type }
+    iterator = adisk
+    content {
+      # Use specified storage or fall back to main VM's datastore
+      datastore_id = coalesce(adisk.value["datastore"], each.value.datastore)
+      file_format  = "raw"
+      iothread     = true
+      cache        = "writethrough"
+      discard      = "on"
+      size         = adisk.value["size"]
+      ssd          = true
+
+      # assign from scsi1 and up
+      # Caveats:
+      # - scsiN index might change for disks if other disks are added or removed to the set of additional disks in future,
+      #   as disks' index is based on lexical order, not based on its declaration
+      # - scsi interface numbers might not be contiguous if volumes are used with different machine_types inbetween
+      interface = "scsi${index(keys(var.talos_volumes), adisk.key) + 1}"
+    }
+  }
+}

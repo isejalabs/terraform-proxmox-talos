@@ -61,6 +61,7 @@ data "talos_machine_configuration" "this" {
       machine_features   = var.cluster.machine_features
     }), each.value.machine_type == "controlplane" ?
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
+      talos_volumes = var.talos_volumes
       allow_scheduling = var.cluster.allow_scheduling_on_controlplane
       ip               = each.value.ip
       mac_address      = try(lower(each.value.mac_address), null)
@@ -72,6 +73,7 @@ data "talos_machine_configuration" "this" {
       inline_manifests = jsonencode(terraform_data.cilium_bootstrap_inline_manifests.output)
     }) :
     templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
+      talos_volumes = var.talos_volumes
       ip          = each.value.ip
       mac_address = try(lower(each.value.mac_address), null)
       gateway     = var.cluster.gateway
