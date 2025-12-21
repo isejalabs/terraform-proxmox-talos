@@ -32,6 +32,7 @@ resource "proxmox_virtual_environment_vm" "this" {
     vlan_id     = each.value.vlan_id
   }
 
+  # OS Disk
   disk {
     datastore_id = each.value.datastore_id
     interface    = "scsi0"
@@ -40,8 +41,28 @@ resource "proxmox_virtual_environment_vm" "this" {
     discard      = "on"
     ssd          = true
     file_format  = "raw"
-    size         = each.value.disk_size
+    size         = 5
     file_id      = proxmox_virtual_environment_download_file.this["${each.value.host_node}_${each.value.update == true ? local.update_image_id : local.image_id}"].id
+  }
+
+  # Attach disks from a dedicated Data VM
+  # https://registry.terraform.io/providers/bpg/proxmox/latest/docs/resources/virtual_environment_vm#example-attached-disks
+  dynamic "disk" {
+    for_each = { for idx, val in proxmox_virtual_environment_vm.data_vm["${each.key}"].disk : idx => val }
+    iterator = data_disk
+    content {
+      cache             = data_disk.value["cache"]
+      datastore_id      = data_disk.value["datastore_id"]
+      discard           = data_disk.value["discard"]
+      file_format       = data_disk.value["file_format"]
+      iothread          = data_disk.value["iothread"]
+      path_in_datastore = data_disk.value["path_in_datastore"]
+      size              = data_disk.value["size"]
+      ssd               = data_disk.value["ssd"]
+
+      # assign from scsi1 and up
+      interface = "scsi${data_disk.key + 1}"
+    }
   }
 
   boot_order = ["scsi0"]
@@ -81,3 +102,32 @@ resource "proxmox_virtual_environment_vm" "this" {
     }
   }
 }
+
+# Create a Data VM for each Talos VM to attach additional disks
+# This separation allows keeping data disks when re-creating Talos VMs upon updates where Talos VM gets destroyed, unfortunately.
+resource "proxmox_virtual_environment_vm" "data_vm" {
+  for_each = var.nodes
+
+  node_name = each.value.host_node
+
+  # append suffix "-data" and "0" to VM name and vm_id, respectively, to avoid conflicts with Talos VM
+  name        = "${each.key}-data"
+  vm_id       = "${each.value.vm_id}0"
+  description = "Data VM for ${each.value.vm_id} ${each.key} to attach additional disks"
+  tags        = ["k8s"]
+
+  started = false
+  on_boot = false
+
+  # Main Disk for EPHEMERAL
+  disk {
+    datastore_id = each.value.datastore_id
+    interface    = "scsi0"
+    iothread     = true
+    cache        = "writethrough"
+    discard      = "on"
+    size         = each.value.disk_size
+    ssd          = true
+  }
+}
+

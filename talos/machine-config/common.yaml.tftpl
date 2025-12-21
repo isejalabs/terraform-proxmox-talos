@@ -23,3 +23,11 @@ cluster:
     image: registry.k8s.io/kube-proxy:${kubernetes_version}
   scheduler:
     image: registry.k8s.io/kube-scheduler:${kubernetes_version}
+
+---
+apiVersion: v1alpha1
+kind: VolumeConfig
+name: EPHEMERAL
+provisioning:
+  diskSelector:
+    match: '!system_disk'
