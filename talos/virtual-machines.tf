@@ -61,7 +61,7 @@ resource "proxmox_virtual_environment_vm" "this" {
       ssd               = data_disk.value["ssd"]
 
       # assign from scsi1 and up
-      interface         = "scsi${data_disk.key + 1}"
+      interface = "scsi${data_disk.key + 1}"
     }
   }
 
@@ -106,9 +106,9 @@ resource "proxmox_virtual_environment_vm" "this" {
 # Create a Data VM for each Talos VM to attach additional disks
 # This separation allows keeping data disks when re-creating Talos VMs upon updates where Talos VM gets destroyed, unfortunately.
 resource "proxmox_virtual_environment_vm" "data_vm" {
-  for_each    = var.nodes
+  for_each = var.nodes
 
-  node_name   = each.value.host_node
+  node_name = each.value.host_node
 
   # append suffix "-data" and "0" to VM name and vm_id, respectively, to avoid conflicts with Talos VM
   name        = "${each.key}-data"
@@ -116,8 +116,8 @@ resource "proxmox_virtual_environment_vm" "data_vm" {
   description = "Data VM for ${each.value.vm_id} ${each.key} to attach additional disks"
   tags        = ["k8s"]
 
-  started   = false
-  on_boot   = false
+  started = false
+  on_boot = false
 
   # Main Disk for EPHEMERAL
   disk {
