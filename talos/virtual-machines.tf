@@ -35,14 +35,14 @@ resource "proxmox_virtual_environment_vm" "this" {
   # OS Disk
   disk {
     datastore   = each.value.datastore_id
-    interface    = "scsi0"
-    iothread     = true
-    cache        = "writethrough"
-    discard      = "on"
-    ssd          = true
-    file_format  = "raw"
-    size         = 5
-    file_id      = proxmox_virtual_environment_download_file.this["${each.value.host_node}_${each.value.update == true ? local.update_image_id : local.image_id}"].id
+    interface   = "scsi0"
+    iothread    = true
+    cache       = "writethrough"
+    discard     = "on"
+    ssd         = true
+    file_format = "raw"
+    size        = 5
+    file_id     = proxmox_virtual_environment_download_file.this["${each.value.host_node}_${each.value.update == true ? local.update_image_id : local.image_id}"].id
   }
 
   # Attach disks from a dedicated Data VM
@@ -122,12 +122,12 @@ resource "proxmox_virtual_environment_vm" "data_vm" {
   # Main Disk for EPHEMERAL
   disk {
     datastore = each.value.datastore
-    interface    = "scsi0"
-    iothread     = true
-    cache        = "writethrough"
-    discard      = "on"
-    size         = each.value.disk_size
-    ssd          = true
+    interface = "scsi0"
+    iothread  = true
+    cache     = "writethrough"
+    discard   = "on"
+    size      = each.value.disk_size
+    ssd       = true
   }
 }
 
