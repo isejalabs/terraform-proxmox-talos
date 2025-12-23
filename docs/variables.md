@@ -142,7 +142,7 @@ The `image` parameter not only allows adjusting the downloaded Talos image by de
 | `arch`                  | Architecture                                                                                                                                                                      | `string` | `"amd64"`                            |
 | `factory_url`           | Alternative [Talos Factory](https://factory.talos.dev/) URL                                                                                                                       | `string` | `"https://factory.talos.dev"`        |
 | `platform`              | Typically left set to its default (`"nocloud"`), still allowing alternative configuration for [Talos platform](https://www.talos.dev/v1.10/talos-guides/install/cloud-platforms/) | `string` | `"nocloud"`                          |
-| `proxmox_datastore`     | Proxmox datastore used to store the image. Please do not use a shared storage as the image is expected to be downloaded for each Proxmox node separately                          | `string` | `"local"`                            |
+| `datastore`             | Proxmox datastore used to store the image. Please do not use a shared storage as the image is expected to be downloaded for each Proxmox node separately                          | `string` | `"local"`                            |
 | `update_schematic_path` | Alternative schematic definition to be used when updating a node                                                                                                                  | `string` | `null`                               |
 | `update_version`        | Alternative version definition to be used when updating a node                                                                                                                    | `string` | `null`                               |
 
@@ -157,7 +157,7 @@ image = {
   arch                  = "arm64"
   factory_url           = "https://factory.example.com"
   platform              = "hcloud"
-  proxmox_datastore     = "local-zfs"
+  datastore             = "local-zfs"
   update_schematic_path = "assets/talos/schematic-update.yaml"
   update_version        = "v4.5.6"
 }
@@ -192,7 +192,7 @@ The `nodes` variable defines the Talos VMs that form the cluster. It consists of
 | vm_id         | **Required** Unique VM id in Proxmox cluster                                                               | `number`       | e.g. `123`                        |
 | bridge        | Network bridge the VM connect to                                                                           | `string`       | `"vmbr0"`                         |
 | cpu_type      | Proxmox [CPU type](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_cpu_type)                        | `string`       | `"x86-64-v2-AES"`                 |
-| datastore_id  | The Proxmox datastore used to store the VM                                                                 | `string`       | `"local-zfs"`                     |
+| datastore     | The Proxmox datastore used to store the VM                                                                 | `string`       | `"local-zfs"`                     |
 | disk_size     | VM disk size in GB                                                                                         | `number`       | `20`                              |
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                            |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`         | `false`                           |
@@ -223,7 +223,7 @@ nodes = {
     # optional
     bridge        = "mybridge"
     cpu_type      = "custom-x86-64-v2-AES-AVX"
-    datastore_id  = "nfs"
+    datastore     = "nfs"
     disksize      = 30  # 30 GB
     dns           = ["1.1.1.1", "9.9.9.9"]
     igpu          = true

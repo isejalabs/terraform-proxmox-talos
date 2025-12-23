@@ -43,7 +43,7 @@ variable "image" {
     arch                  = optional(string, "amd64")
     factory_url           = optional(string, "https://factory.talos.dev")
     platform              = optional(string, "nocloud")
-    proxmox_datastore     = optional(string, "local")
+    datastore             = optional(string, "local")
     update_schematic_path = optional(string)
     update_version        = optional(string)
   })
@@ -60,7 +60,7 @@ variable "nodes" {
     vm_id         = number
     bridge        = optional(string, "vmbr0")
     cpu_type      = optional(string, "x86-64-v2-AES")
-    datastore_id  = optional(string, "local-zfs")
+    datastore     = optional(string, "local-zfs")
     disk_size     = optional(number, 20)
     dns           = optional(list(string))
     igpu          = optional(bool, false)

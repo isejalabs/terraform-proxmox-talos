@@ -55,7 +55,7 @@ resource "proxmox_virtual_environment_download_file" "this" {
 
   node_name    = each.value[0].host_node
   content_type = "iso"
-  datastore_id = var.image.proxmox_datastore
+  datastore    = var.image.datastore
 
   # ex.: talos-ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515-v1.8.1-nocloud-amd64.img
   file_name               = "${local.env_prefix}talos-${each.value[0].schematic}-${each.value[0].version}-${var.image.platform}-${var.image.arch}.img"
