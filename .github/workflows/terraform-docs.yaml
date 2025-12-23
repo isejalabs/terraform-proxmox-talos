@@ -1,24 +1,14 @@
-name: Terraform formatting and docs generation
+name: Terraform docs generation
 on:
-  pull_request: {}
+  # only run on commit and not on PRs to not interfere with renovate PRs
+  # contributors' PRs will get updated docs when merged to main
+  # pull_request: {}
   push:
     branches:
       - main
 jobs:
-  formatting:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-      - name: terraform fmt
-        uses: dflook/terraform-fmt-check@10eaa13fa61437aa51be2d12fafe95f152e3512d
-        with:
-          path: .
   docs:
-    needs: formatting
-    runs-on: ubuntu-24.04
+    runs-on: latest
     permissions:
       contents: write
       pull-requests: write
