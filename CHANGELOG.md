@@ -41,6 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     for having a similar data usage setup as before.
   - The data_vm's disk is attached to the main Talos VM.
 
+- **Breaking:** Renamed variable `image.proxmox_datastore` to `image.datastore`
+- **Breaking:** Renamed variable `nodes.datastore_id` to `nodes.datastore`
+
 ### Added
 
 ### Removed
