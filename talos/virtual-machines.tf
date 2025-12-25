@@ -34,7 +34,7 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   # OS Disk
   disk {
-    datastore_id = each.value.datastore_id
+    datastore_id = each.value.datastore
     interface    = "scsi0"
     iothread     = true
     cache        = "writethrough"
@@ -72,7 +72,7 @@ resource "proxmox_virtual_environment_vm" "this" {
   }
 
   initialization {
-    datastore_id = each.value.datastore_id
+    datastore_id = each.value.datastore
 
     # Optional DNS Block.  Update Nodes with a list value to use.
     dynamic "dns" {
@@ -121,7 +121,7 @@ resource "proxmox_virtual_environment_vm" "data_vm" {
 
   # Main Disk for EPHEMERAL
   disk {
-    datastore_id = each.value.datastore_id
+    datastore_id = each.value.datastore
     interface    = "scsi0"
     iothread     = true
     cache        = "writethrough"
