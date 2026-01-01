@@ -21,9 +21,15 @@ jobs:
         with:
           path: .
       - name: Create Pull Request
+        id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "docs: automated terraform docs update"
-          title: "docs: automated terraform docs update"
+          commit-message: "style: automated terraform formatting"
+          title: "style: automated terraform formatting"
           body: Update Terraform files to canonical format using `terraform fmt`
           branch: style/automated-terraform-fmt
+          delete-branch: true
+      - name: Create PR output
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
