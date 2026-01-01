@@ -8,11 +8,11 @@ module "proxmox-volume" {
 
   volume = {
     datastore = each.value.datastore
-    format  = each.value.format
-    name    = each.key
-    node    = each.value.node
-    size    = each.value.size
-    vmid    = each.value.vmid
+    format    = each.value.format
+    name      = each.key
+    node      = each.value.node
+    size      = each.value.size
+    vmid      = each.value.vmid
   }
   env = var.env
 }
