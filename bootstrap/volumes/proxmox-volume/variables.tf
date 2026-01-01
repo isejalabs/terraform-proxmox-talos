@@ -6,11 +6,11 @@ variable "env" {
 
 variable "volume" {
   type = object({
+    datastore = optional(string, "local-zfs")
+    format  = optional(string, "raw")
     name    = string
     node    = string
     size    = string
-    format  = optional(string, "raw")
-    storage = optional(string, "local-zfs")
     vmid    = optional(number, 9999)
   })
 }

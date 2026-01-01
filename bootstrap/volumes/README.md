@@ -2,7 +2,7 @@
 pvesm alloc local-zfs 8000 vm-8000-app-config 1G
 ```
 
-https://pve.proxmox.com/pve-docs/api-viewer/#/nodes/{node}/storage/{storage}/content
+https://pve.proxmox.com/pve-docs/api-viewer/#/nodes/{node}/storage/{datastore}/content
 
 ```shell
 curl --request POST \
@@ -107,5 +107,5 @@ root@abel:~# zfs send rpool/data/<NAME>@backup | zfs receive -F -u rpool/data/<N
 ## Manually mount disk
 
 ```shell
-qm set <vmid> -<disk_type> <storage>:<volume>
+qm set <vmid> -<disk_type> <datastore>:<volume>
 ```

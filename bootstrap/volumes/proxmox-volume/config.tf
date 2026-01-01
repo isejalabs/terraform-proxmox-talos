@@ -4,7 +4,7 @@ locals {
 }
 
 resource "restapi_object" "proxmox-volume" {
-  path = "/api2/json/nodes/${var.volume.node}/storage/${var.volume.storage}/content"
+  path = "/api2/json/nodes/${var.volume.node}/storage/${var.volume.datastore}/content"
 
   id_attribute = "data"
 
@@ -37,8 +37,8 @@ output "node" {
   value = var.volume.node
 }
 
-output "storage" {
-  value = var.volume.storage
+output "datastore" {
+  value = var.volume.datastore
 }
 
 output "filename" {
