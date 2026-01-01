@@ -50,7 +50,7 @@ For the [input variables](#inputs) see also the dedicated [Variables Documentati
 | <a name="input_proxmox"></a> [proxmox](#input\_proxmox) | Proxmox provider configuration | <pre>object({<br/>    cluster_name = string<br/>    endpoint     = string<br/>    insecure     = bool<br/>    username     = string<br/>  })</pre> | n/a | yes |
 | <a name="input_proxmox_api_token"></a> [proxmox\_api\_token](#input\_proxmox\_api\_token) | API token for Proxmox | `string` | n/a | yes |
 | <a name="input_sealed_secrets_config"></a> [sealed\_secrets\_config](#input\_sealed\_secrets\_config) | Sealed-secrets configuration | <pre>object({<br/>    certificate_path = string<br/>    key_path         = string<br/>  })</pre> | <pre>{<br/>  "certificate_path": "assets/sealed-secrets/certificate/sealed-secrets.cert",<br/>  "key_path": "assets/sealed-secrets/certificate/sealed-secrets.key"<br/>}</pre> | no |
-| <a name="input_volumes"></a> [volumes](#input\_volumes) | n/a | <pre>map(<br/>    object({<br/>      node    = string<br/>      size    = string<br/>      datastore = optional(string, "local-zfs")<br/>      format  = optional(string, "raw")<br/>      vmid    = optional(number, 9999)<br/>    })<br/>  )</pre> | n/a | yes |
+| <a name="input_volumes"></a> [volumes](#input\_volumes) | n/a | <pre>map(<br/>    object({<br/>      node      = string<br/>      size      = string<br/>      datastore = optional(string, "local-zfs")<br/>      format    = optional(string, "raw")<br/>      vmid      = optional(number, 9999)<br/>    })<br/>  )</pre> | n/a | yes |
 
 ## Outputs
 
