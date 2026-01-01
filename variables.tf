@@ -107,11 +107,11 @@ variable "sealed_secrets_config" {
 variable "volumes" {
   type = map(
     object({
-      node    = string
-      size    = string
+      node      = string
+      size      = string
       datastore = optional(string, "local-zfs")
-      format  = optional(string, "raw")
-      vmid    = optional(number, 9999)
+      format    = optional(string, "raw")
+      vmid      = optional(number, 9999)
     })
   )
 }
