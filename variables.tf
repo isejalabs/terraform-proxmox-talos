@@ -109,8 +109,8 @@ variable "volumes" {
     object({
       node    = string
       size    = string
+      datastore = optional(string, "local-zfs")
       format  = optional(string, "raw")
-      storage = optional(string, "local-zfs")
       vmid    = optional(number, 9999)
     })
   )

@@ -18,7 +18,7 @@ resource "kubernetes_persistent_volume" "pv" {
         volume_attributes = {
           cache   = var.volume.cache
           ssd     = var.volume.ssd == true ? "true" : "false"
-          storage = var.volume.storage
+          storage = var.volume.datastore
         }
       }
     }

@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Breaking:** Renamed variable `image.proxmox_datastore` to `image.datastore`
 - **Breaking:** Renamed variable `nodes.datastore_id` to `nodes.datastore`
+- **Breaking:** Renamed variable `volumes.storage` to `volumes.datastore`
 
 ### Added
 

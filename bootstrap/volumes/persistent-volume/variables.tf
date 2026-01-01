@@ -10,7 +10,7 @@ variable "volume" {
     fs_type            = optional(string, "ext4")
     mount_options      = optional(list(string), ["noatime"])
     ssd                = optional(bool, true)
-    storage            = optional(string, "local-zfs")
+    datastore          = optional(string, "local-zfs")
     storage_class_name = optional(string, "proxmox-csi")
     volume_mode        = optional(string, "Filesystem")
   })
