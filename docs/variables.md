@@ -317,13 +317,13 @@ The command given above places the files in the default path (`"assets/sealed...
 
 Configuration for Persistent Volumes (PV) using the [proxmox-csi-plugin](https://github.com/sergelogvinov/proxmox-csi-plugin). The `volumes` variable is formed of a **map** consisting of the _volume name_ as key and the following attributes:
 
-| Key     | Description                                                                                                                                                                                                                                                                  | Type     | Default / Example |
-| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------- |
-| node    | **Required** Hostname of the Proxmox node where the volume should get stored                                                                                                                                                                                                 | `string` | e.g. `"host1"`    |
-| size    | **Required** Volume size with                                                                                                                                                                                                                                                | `string` | e.g. `100M`       |
-| format  | Disk format (`"raw"`, `"qcow"`)                                                                                                                                                                                                                                              | `string` | `"raw"`           |
-| storage | Proxmox datastore used to store the volume                                                                                                                                                                                                                                   | `string` | `"local-zfs"`     |
-| vmid    | Alternative VM ID for naming the volume.<br>When using the module in multiple instances in the same Proxmox environment (host), e.g. for `prod` and `qa` instances, you need to set this parameter different per instance. Otherwise, volumes with the same name will clash. | `number` | `9999`            |
+Key | Description | Type | Default / Example
+-|-|-|-
+node | **Required** Hostname of the Proxmox node where the volume should get stored | `string` | e.g. `"host1"` |
+size | **Required** Volume size with | `string` | e.g. `100M` |
+format | Disk format (`"raw"`, `"qcow"`) | `string` | `"raw"`           |
+datastore | Proxmox datastore used to store the volume | `string` | `"local-zfs"`     |
+vmid | Alternative VM ID for naming the volume.<br>When using the module in multiple instances in the same Proxmox environment (host), e.g. for `prod` and `qa` instances, you need to set this parameter different per instance. Otherwise, volumes with the same name will clash. | `number` | `9999`            |
 
 ### Example
 
@@ -338,9 +338,9 @@ volumes = {
     size = "20G"
 
     # optional
-    format  = "qcow"  # variable should be kept set to its default "raw" value
-    storage = "nfs"
-    vmid    = "9876"
+    format    = "qcow"  # variable should be kept set to its default "raw" value
+    datastore = "nfs"
+    vmid      = "9876"
   }
 }
 ```
