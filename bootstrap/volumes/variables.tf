@@ -22,4 +22,5 @@ variable "volumes" {
       vmid      = optional(number, 9999)
     })
   )
+  default = {}
 }
