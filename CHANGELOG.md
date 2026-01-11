@@ -17,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 :boom: **BREAKING CHANGE** :boom:
 
-
 ### Changed
 
 - **Breaking:** Split up disk setup and VM into 2 disks and 2 VMs. This allows
@@ -47,32 +46,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Documented [how to upgrade](docs/upgrading.md) several aspects of the Talos cluster (e.g. upgrade Talos OS version, Kubernetes version, terraform module version, incl. breaking changes and resource targeting).
+
 ### Removed
 
 ### Fixed
 
 ### Upgrade Note
 
-- As one of the upgrade procedures – besides recreating the cluster or
-  restoring `etcd` from a backup – you can use *resource targeting* with
-  `terraform`/`tofu`/`terragrunt`.
-
-  The following command applies the new configuration by ommitting the change
-  for nodes with names `cp2.example.com` and `worker2.example.com`, for
-  example:
-  ```sh
-  terragrunt apply -exclude 'module.talos.proxmox_virtual_environment_vm.this["cp2.example.com"]' -exclude 'module.talos.proxmox_virtual_environment_vm.this["worker2.example.com"]'
-  ```
-  Be sure to exclude at minimum 1 control plane and a minimum of x worker nodes
-  (depending on the workload deployed and availability of services during the
-  change).  Just add additional `-exclude` parameters if needed, and replace
-  `terragrunt` by `terraform` or `tofu`, depending on your environment):
-
-  The following command gives a list of all relevant nodes to exclude
-  subsequently:
-  ```sh
-  terragrunt state list | grep module.talos.proxmox_virtual_environment_vm.this
-  ```
+- As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade documentation](docs/upgrading.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
 - Optionally, you can decrease the data disk size by 4 GB for having a similar
   data usage setup as before.
 - Be sure to run Talos v1.8 at minimum.
@@ -217,11 +199,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Breaking:** The VM image now respects the schematic id and thus allows safe
   changes/upgrades of the schematic definition going further. While this
-  fixes the workaround introduced in v0.0.1, it is a breaking change, needing
-  a rebuild of the cluster. This is due to the change of the filename and
-  schematic resource id, causing terraform/tofu to rebuild every VM at the same
-  time -- without safeguarding mechanisms known from
-  `update_version`/`update_schematic` (#106).
+  fixes the workaround introduced in v0.0.1, it is a breaking change, which destroys and recreates all Talos VMs. See the upgrade notes how to apply a rolling upgrade.
 - Update GW API version v1.1.0 → v1.2.1 (#109).
   See also [GW API v1.2 upgrade notes](https://gateway-api.sigs.k8s.io/guides/#v12-upgrade-notes)
 
@@ -236,6 +214,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - update `cilium/cilium` v1.18.0 → v1.18.1 (#82)
 - update `terraform proxmox` v0.81.0 → v0.82.0 (#100)
+
+### Upgrade Note
+
+- As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade documentation](docs/upgrading.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
 
 ## [2.1.0] - 2025-08-10
 
@@ -314,16 +296,17 @@ transitional release `vehagn-k8s-v2.0.0` already.
 
 **BREAKING CHANGE:**
 
-- proxmox volume and downloaded file (talos image) respect
+- Proxmox volume and downloaded file (talos image) respect
   the environment (`var.env`) in the volume (e.g. `vm-9999-dev-foo`) and
   filename (e.g. `dev-talos-<schematic>-v1.8.4-nocloud-amd64.img`) if specified
-  (optionally); there's no known and tested upgrade path other than destroying
-  the whole custer as a change to the download image will re-trigger creation of
-  all VMs: `terragrunt` doesn't have a parameter `-target` for `plan`/`apply`
-  for targeting individual machines instead of all machines affected by a
-  changed image, and there's also no resource `import` function available for
-  the talos provider; for `terraform`/`tofu`-only setups the `-target` approach
-  could be an alternative (untested)
+  (optionally).
+  This allows multiple environments (e.g. `dev`, `staging`,
+  `prod`) on the same Proxmox VE host without colliding volume names or image
+  filenames.
+
+  Unfortunately, this is a breaking change as it changes the names of the
+  volumes and downloaded image files and thus forces recreation of all VMs.
+  See the upgrade notes how to apply a rolling upgrade.
 
 ### Dependencies
 
@@ -332,6 +315,10 @@ transitional release `vehagn-k8s-v2.0.0` already.
 - update dependency cilium/cilium v1.16.4 → v1.16.5;
   beware potential issue with DNS, see siderolabs/talos#10002: Cilium 1.16.5
   breaks external DNS resolution with forwardKubeDNSToHost enabled)
+
+### Upgrade Note
+
+- As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade documentation](docs/upgrading.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
 
 ## [0.3.0] - 2024-12-14
 
