@@ -26,6 +26,7 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 
 - [Module Technical Documentation](docs/module.md)
 - [Input Variables Documentation](docs/variables.md)
+- [Upgrade Instructions](docs/upgrading.md)
 
 ### Example
 
