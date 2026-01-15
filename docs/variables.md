@@ -1,4 +1,12 @@
-# ToC
+# Input Variables Documentation
+
+This documentation describes all input variables for the `terraform-proxmox-talos` module. You will be given detailed description of each variable, its type, default value (if any) and an example usage.
+
+For further usage instructions on using `terraform-proxmox-talos` module, please be referred to the [README](../README.md) file. There's also a [technical module documentation](module.md) available.
+
+## ToC
+
+For a quick overview of all variables, please see the following Table of Contents, linking to the sections with detailed description of the respective variable.
 
 - [cilium_config](#cilium_config)
 - [cluster](#cluster)
@@ -14,7 +22,7 @@
 
 ## cilium_config
 
-The `cilium_config` variable lets you set a paths to custom configuration files for the [cilium Helm values file](https://docs.cilium.io/en/stable/helm-reference/) and cilium bootstrap manifest (installation), respectively.
+The `cilium_config` variable lets you set paths to custom configuration files for the [cilium Helm values file](https://docs.cilium.io/en/stable/helm-reference/) and cilium bootstrap manifest (installation), respectively.
 
 If no files are provided, a decent default configuration is used.
 
