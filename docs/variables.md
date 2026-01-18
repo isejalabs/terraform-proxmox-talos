@@ -201,7 +201,7 @@ The `nodes` variable defines the Talos VMs that form the cluster. It consists of
 | bridge        | Network bridge the VM connect to                                                                           | `string`       | `"vmbr0"`                         |
 | cpu_type      | Proxmox [CPU type](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_cpu_type)                        | `string`       | `"x86-64-v2-AES"`                 |
 | datastore     | The Proxmox datastore used to store the VM                                                                 | `string`       | `"local-zfs"`                     |
-| disk_size     | VM disk size in GB                                                                                         | `number`       | `20`                              |
+| disk_size     | VM disk size in GB, i.e. _without_ Unit of Measure suffix                                                  | `number`       | `20`                              |
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                            |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`         | `false`                           |
 | mac_address   | Custom MAC address, if no auto-assignment desired. Can be chosen from Proxmox' `BC:24:11` range            | `string`       | `null`                            |
@@ -352,7 +352,7 @@ The `volumes` variable is formed of a **map** consisting of the _volume name_ as
 | format       | Disk format (`"raw"`, `"qcow"`)<br><br>Optional for: proxmox-csi                                                                                                                                                                                                                                              | `string` | `"raw"`           |
 | machine_type | Type of kubernetes node, must be either `"all"`, `"controlplane"` or `"worker"` (default)<br><br>Optional for: directory, disk, partition                                                                                                                                                                                  | `string` | `"worker"`        |
 | node         | Hostname of the Proxmox node where the volume should get stored<br><br>Needed for: proxmox-csi                                                                                                                                                                                                                | `string` | e.g. `"host1"`    |
-| size         | Volume size in GB _without_ unit suffix (e.g. `"3"` for "3 GB", `"0.5"` for "0.5 GB"/"500 MB")<br><br>Needed for: all types                                                                                                                                                                                     | `string` | e.g. `"10"`       |
+| size         | Volume size _with_ unit suffix. In the case of `disk` type, only `GB` (or `G`) can be used<br><br>Needed for: all types                                                                                                                                                                                     | `string` | e.g. `"10"`       |
 | type         | Typ of volume (`directory`, `disk`, `partition`, `proxmox-volume` (default))<br><br>Needed for: all types                                                                                                                                                                                                     | `string` | `"proxmox-csi"`   |
 | vmid         | Alternative VM ID for naming the volume.<br>When using the module in multiple instances in the same Proxmox environment (host), e.g. for `prod` and `qa` instances, you need to set this parameter different per instance. Otherwise, volumes with the same name will clash.<br><br>Optional for: proxmox-csi | `number` | `9999`            |
 
@@ -380,7 +380,7 @@ volumes = {
   # a simple proxmox-csi volume with the bare minimum
   foo = {
     node = "pve1"
-    size = "100M"
+    size = "100M"               # size with unit suffix other than 'G' possible for proxmox-csi
   }
 
   # or more enhanced proxmox-csi volume
@@ -397,7 +397,7 @@ volumes = {
 
   # additional data disk
   longhorn = {
-    size = "50G"
+    size = "50G"                # size must be given with 'G'/'GB' suffix for 'disk' type
     type = "disk"
   }
 }
