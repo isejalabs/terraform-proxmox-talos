@@ -55,7 +55,7 @@ provisioning:
     match: '!system_disk'
   # `disk` type does not support size-related selection as of Talos v1.12
   %{ if v.type != "disk" }
-  minSize: ${v.size}GB
+  minSize: ${v.size}
   %{ endif }
 %{ endif }
 %{ endfor }
