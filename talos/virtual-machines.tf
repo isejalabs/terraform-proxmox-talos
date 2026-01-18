@@ -142,8 +142,8 @@ resource "proxmox_virtual_environment_vm" "data_vm" {
       cache        = "writethrough"
       discard      = "on"
       # convert size from string to number by removing UoM (cf. #171)
-      size         = tonumber(replace(adisk.value["size"], "/[^0-9]/", ""))
-      ssd          = true
+      size = tonumber(replace(adisk.value["size"], "/[^0-9]/", ""))
+      ssd  = true
 
       # assign from scsi1 and up
       # Caveats:
