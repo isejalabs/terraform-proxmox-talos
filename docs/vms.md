@@ -116,6 +116,6 @@ provisioning:
 ### Rationale
 
 The separation of Talos OS and data disks has the following advantages:
-- **Easier upgrades** of Talos OS by just replacing the Talos VM's disk while keeping the data disks untouched (similar to a `talosctl upgrade --preserve=true`).
+- **Easier upgrades** of Talos OS by just replacing the Talos VM's disk with the new OS image while keeping the data disks untouched (similar to a `talosctl upgrade --preserve=true`).
 - **Flexibility** in defining different sizes for additional data disks without touching the Talos OS disk or sharing the same space with the EPHEMERAL data space.
 - **Backup/Restore**: In case of a disaster recovery, it's easier to just restore the data disks while attaching them to a new Talos OS VM. 

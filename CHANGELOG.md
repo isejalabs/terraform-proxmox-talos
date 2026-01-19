@@ -8,23 +8,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!---
 ## [Unreleased Template]
 ### Changed
+
 ### Added
+
 ### Removed
+
 ### Fixed
+
+## [X.Y.Z] - YYYY-MM-DD
 -->
 
 ## [Unreleased]
 
+### Changed
+
+### Added
+
+### Removed
+
+### Fixed
+
+## [6.0.0] - 2026-01-19
+
 :boom: **BREAKING CHANGE** :boom:
+
+This release introduces a major change in the VM and disk architecture by separating the Talos OS disk from the EPHEMERAL and additional data disks, among some name harmonizations of variables. While coming along with several breaking changes, this release enhances upgradeability, flexibility, maintainability and storage options.
+
+It is an interim release as it still depends on Talos v1.11 due to a bug in the Terraform Talos provider v0.10.0 (cf. [siderolabs/terraform-provider-talos#293](https://redirect.github.com/siderolabs/terraform-provider-talos/issues/293)). Future releases will support Talos v1.12 and newer once the provider bug is fixed and released (v0.10.1?).
 
 ### Changed
 
-- **Breaking:** Split up disk setup and VM into 2 disks and 2 VMs. This allows
-  keeping data upon Talos upgrade and VM changes.
+- **Breaking:** Split up disk setup and VM into 2 disks and 2 VMs (#144). As this change is destroying the former primary disk, please consult the **Upgrade Note** below for further instructions.
 
-  As this change is destroying the former primary disk, you need to recreate
-  the cluster, restore `etcd` data from a backup or upgrade the nodes
-  separately one-by-one (cf. upgrade note).
+  The new VM and disk architecture is as follows (cf. [VM architecture documentation](docs/vms.md#separation-of-talos-vm-and-data-vm)):
 
   - Main/Talos VM is holding primary (existing) disk with Talos OS (with EFI,
     META and STATE) partitions.  The disk has a fixed size of `5 GB` because
@@ -39,25 +55,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     for having a similar data usage setup as before.
   - The data_vm's disk is attached to the main Talos VM.
 
-- **Breaking:** Renamed variable `image.proxmox_datastore` to `image.datastore`
-- **Breaking:** Renamed variable `nodes.datastore_id` to `nodes.datastore`
-- **Breaking:** Renamed variable `volumes.storage` to `volumes.datastore`
+  While being a dramatic change, it has the following benefits:
+  - Easier upgrades of Talos OS by just replacing the Talos VM's disk while keeping the data disks untouched (similar to a `talosctl upgrade --preserve=true`). Hence, Talos OS upgrades do not destroy `etcd` or any other data any longer.
+  - No need for more than one controlplane node as `etcd` is kept in a single CP node setup.
+
+
+- **Breaking:** Renamed variable `image.proxmox_datastore` to `image.datastore` (#148, #153).
+- **Breaking:** Renamed variable `nodes[].datastore_id` to `nodes[].datastore` (#148, #153).
+- **Breaking:** Renamed variable `volumes[].storage` to `volumes[].datastore` (#154).
 
 ### Added
 
+- Added possibility to define addtional **data disks** (#175). An additional data disk can be be used e.g. for `hostPath` or for additional space for other CSI solutions (e.g. OpenEBS, Longhorn). This feature leverages the `User Volume` feature introduced in [Talos v1.11](https://docs.siderolabs.com/talos/v1.11/configure-your-talos-cluster/storage-and-disk-management/disk-management/user). See the enriched [`volumes` variable documentation](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) – which, BTW, is indicating support for further Volume Types `directory` (#161) and `partition` (#162) in future releases (#159) based on Talos v1.12.
 - Documented [how to upgrade](docs/upgrading.md) several aspects of the Talos cluster (e.g. upgrade Talos OS version, Kubernetes version, terraform module version, incl. breaking changes and resource targeting).
 - Documented the new VM architecture with [separation of Talos VM and Data VM](docs/vms.md#separation-of-talos-vm-and-data-vm).
 
-### Removed
-
 ### Fixed
+
+- Fixed definition of `volumes` variable to allow no volume getting specified (#166).
 
 ### Upgrade Note
 
-- As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade documentation](docs/upgrading.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
+- Rename variables as indicated above.
+- For tackling the VM destruction caused by breaking change of separating Talos OS and EPHEMERAL disks you have several options:
+  1. Recreate the cluster, or
+  1. Restore `etcd` data from a backup, or
+  1. (Recommeded) leverage **resource targeting** (cf. [upgrade documentation](docs/upgrading.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
 - Optionally, you can decrease the data disk size by 4 GB for having a similar
   data usage setup as before.
-- Be sure to run Talos v1.8 at minimum.
+
+### Compatibility Note
+
+- Be sure to run **Talos v1.11** which forms the minimum and maximum version number supported. This is due to the new disk management feature introduced in Talos v1.11 which is required for separating the EPHEMERAL partition from the OS disk. You cannot use Talos v1.12 and newer with this module version due to bug [#293](https://redirect.github.com/siderolabs/terraform-provider-talos/issues/293) in [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos).
+
+### Dependencies
+
+- update `terraform talos` v0.82.0 → v0.89.1 (#143)
+
+| Component            | Version |
+| -------------------- | ------- |
+| cilium/cilium        | 1.18.4  |
+| cilium/cilium-cli    | 0.18.9  |
+| Mastercard/restapi   | 2.0.1   |
+| terraform kubernetes | 2.38.0  |
+| terraform proxmox    | 0.89.1  |
+| terraform talos      | 0.9.0   |
 
 ## [5.0.1] - 2025-12-11
 
