@@ -1,7 +1,7 @@
 module "talos" {
   source = "./talos"
 
-  # hand over volumes of type `disk`
+  # hand over volumes of type `disk` only, else an empty list
   talos_volumes = coalesce({ for k, v in var.volumes : k => v if v.type == "disk" }, {})
 
   # take over configuration from main
@@ -48,6 +48,6 @@ module "volumes" {
     kubernetes = kubernetes
   }
   proxmox_api = var.proxmox
-  volumes     = var.volumes
+  volumes     = coalesce({ for k, v in var.volumes : k => v if v.type == "proxmox-csi" }, {})
   env         = var.env
 }
