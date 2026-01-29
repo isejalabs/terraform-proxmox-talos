@@ -114,7 +114,7 @@ variable "volumes" {
       # directory, disk and partition
       machine_type = optional(string, "worker") # "all", "controlplane", "worker"
       # disk and proxmox-csi
-      datastore = optional(string, "local-zfs")
+      datastore = optional(string) # default is to use the main VM's datastore  
       # proxmox-csi only
       node   = optional(string)
       format = optional(string, "raw")
