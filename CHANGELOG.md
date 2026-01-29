@@ -28,7 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Fixed an issue for `disk` type where `volumes[].datastore` was not properly defaulting to the VM's datastore (`nodes[].datastore`) if not specified.
+## [6.0.2] - 2026-01-29
+
+### Fixed
+
+- Fixed an issue for `disk` type where `volumes[].datastore` was not properly defaulting to the VM's datastore (`nodes[].datastore`) if not specified (#179).
 
   See *Upgrade Note* section for further instructions.
 
@@ -41,7 +45,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Previously, when not specifying a specific `datastore` for `disk` type volumes, the module defaulted to `local-zfs` datastore erroneously. This is not the desired and documented behaviour (instead, the VM's datastore should be taken when no datastore is specified). As such, a module upgrade will recitify the situation by moving the disk(s) to the same datastore the VM is using.
 
 The following is required to avoid errors during `terraform plan` and `terraform apply`:
-
 
 While the disk(s) will get moved from `local-zfs` (the former datastore) to the VM's datastore without data loss, special care is required to avoid `terraform plan/apply` errors due to the dynamic behaviour of the VM disk handling logic.
 
@@ -98,6 +101,7 @@ Should you forget to detach an additional `disk` type volume from the Main Talos
 ```
 
 ## [6.0.1] - 2026-01-26
+
 ### Fixed
 
 - Fixed issue #177 where a `disk` type volume got interpreted as proxmox-csi volume, causing an error during `terraform plan` (#178).
