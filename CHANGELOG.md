@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [6.0.2] - 2026-01-29
 
+This is a patch release fixing an issue with `disk` type volumes. The module is still limited to Talos v1.11 due to the reasons mentioned below.
+
 ### Fixed
 
 - Fixed an issue for `disk` type where `volumes[].datastore` was not properly defaulting to the VM's datastore (`nodes[].datastore`) if not specified (#179).
@@ -100,11 +102,21 @@ Should you forget to detach an additional `disk` type volume from the Main Talos
   exit status 1
 ```
 
+### Compatibility Note
+
+- Be sure to run **Talos v1.11** which forms the minimum and maximum version number supported. This is due to the new disk management feature introduced in Talos v1.11 which is required for separating the EPHEMERAL partition from the OS disk. You cannot use Talos v1.12 and newer with this module version due to bug [#293](https://redirect.github.com/siderolabs/terraform-provider-talos/issues/293) in [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos).
+
 ## [6.0.1] - 2026-01-26
+
+This is a patch release fixing an issue with `disk` type volumes. The module is still limited to Talos v1.11 due to the reasons mentioned below.
 
 ### Fixed
 
 - Fixed issue #177 where a `disk` type volume got interpreted as proxmox-csi volume, causing an error during `terraform plan` (#178).
+
+### Compatibility Note
+
+- Be sure to run **Talos v1.11** which forms the minimum and maximum version number supported. This is due to the new disk management feature introduced in Talos v1.11 which is required for separating the EPHEMERAL partition from the OS disk. You cannot use Talos v1.12 and newer with this module version due to bug [#293](https://redirect.github.com/siderolabs/terraform-provider-talos/issues/293) in [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos).
 
 ## [6.0.0] - 2026-01-19
 
