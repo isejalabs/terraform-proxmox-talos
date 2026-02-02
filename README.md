@@ -23,6 +23,7 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 ### Documentation
 
 - [Input Variables Documentation](docs/variables.md)
+- [Storage Options Documentation](docs/storage.md)
 - [Upgrade Instructions](docs/upgrading.md)
 - [Changelog](CHANGELOG.md)
 
