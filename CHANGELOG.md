@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [6.0.2] - 2026-01-29
 
-This is a patch release fixing an issue with `disk` type volumes. The module is still limited to Talos v1.11 due to the reasons mentioned below.
+This is a patch release fixing an issue with `disk` type volumes. The module is still limited to Talos v1.10 (or v1.11 when using the `disk` feature) as minimum versions and v1.11 as maximum supported version.
 
 ### Fixed
 
@@ -104,11 +104,11 @@ Should you forget to detach an additional `disk` type volume from the Main Talos
 
 ### Compatibility Note
 
-- Be sure to run **Talos v1.11** which forms the minimum and maximum version number supported. This is due to the new disk management feature introduced in Talos v1.11 which is required for separating the EPHEMERAL partition from the OS disk. You cannot use Talos v1.12 and newer with this module version due to bug [#293](https://redirect.github.com/siderolabs/terraform-provider-talos/issues/293) in [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos).
+The minimum (and maximum) supported Talos versions are still the same as mentioned for the v6.0.0 major release, as patch releases do not change functionality. It will stay this way within the v6.0 minor series (as any v6.0.x patch version will not alter functionality). Only v6.1 of this Terraform Talos provider will support Talos v1.12 and newer.
 
 ## [6.0.1] - 2026-01-26
 
-This is a patch release fixing an issue with `disk` type volumes. The module is still limited to Talos v1.11 due to the reasons mentioned below.
+This is a patch release fixing an issue with `disk` type volumes. The module is still limited to Talos v1.10 (or v1.11 when using the `disk` feature) as minimum versions and v1.11 as maximum supported version.
 
 ### Fixed
 
@@ -116,7 +116,7 @@ This is a patch release fixing an issue with `disk` type volumes. The module is 
 
 ### Compatibility Note
 
-- Be sure to run **Talos v1.11** which forms the minimum and maximum version number supported. This is due to the new disk management feature introduced in Talos v1.11 which is required for separating the EPHEMERAL partition from the OS disk. You cannot use Talos v1.12 and newer with this module version due to bug [#293](https://redirect.github.com/siderolabs/terraform-provider-talos/issues/293) in [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos).
+The minimum (and maximum) supported Talos versions are still the same as mentioned for the v6.0.0 major release, as patch releases do not change functionality. It will stay this way within the v6.0 minor series (as any v6.0.x patch version will not alter functionality). Only v6.1 of this Terraform Talos provider will support Talos v1.12 and newer.
 
 ## [6.0.0] - 2026-01-19
 
@@ -124,7 +124,7 @@ This is a patch release fixing an issue with `disk` type volumes. The module is 
 
 This release introduces a major change in the VM and disk architecture by separating the Talos OS disk from the EPHEMERAL and additional data disks, among some name harmonizations of variables. While coming along with several breaking changes, this release enhances upgradeability, flexibility, maintainability and storage options.
 
-It is an interim release as it still depends on Talos v1.11 due to a bug in the Terraform Talos provider v0.10.0 (cf. [siderolabs/terraform-provider-talos#293](https://redirect.github.com/siderolabs/terraform-provider-talos/issues/293)). Future releases will support Talos v1.12 and newer once the provider bug is fixed and released (v0.10.1?).
+The module is limited to Talos v1.10 (or v1.11 when using the `disk` feature) as minimum versions and v1.11 as maximum supported version. It will stay this way within the v6.0 minor series (as any v6.0.x patch version will not alter functionality). Only v6.1 of this Terraform Talos provider will support Talos v1.12 and newer. See *Compatibility Note* section below for further details.
 
 ### Changed
 
@@ -148,7 +148,6 @@ It is an interim release as it still depends on Talos v1.11 due to a bug in the 
   While being a dramatic change, it has the following benefits:
   - Easier upgrades of Talos OS by just replacing the Talos VM's disk while keeping the data disks untouched (similar to a `talosctl upgrade --preserve=true`). Hence, Talos OS upgrades do not destroy `etcd` or any other data any longer.
   - No need for more than one controlplane node as `etcd` is kept in a single CP node setup.
-
 
 - **Breaking:** Renamed variable `image.proxmox_datastore` to `image.datastore` (#148, #153).
 - **Breaking:** Renamed variable `nodes[].datastore_id` to `nodes[].datastore` (#148, #153).
@@ -176,7 +175,17 @@ It is an interim release as it still depends on Talos v1.11 due to a bug in the 
 
 ### Compatibility Note
 
-- Be sure to run **Talos v1.11** which forms the minimum and maximum version number supported. This is due to the new disk management feature introduced in Talos v1.11 which is required for separating the EPHEMERAL partition from the OS disk. You cannot use Talos v1.12 and newer with this module version due to bug [#293](https://redirect.github.com/siderolabs/terraform-provider-talos/issues/293) in [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos).
+The minimum Talos version requirement changed due to the new disk management features leveraged here:
+
+- If *not* using `disk` feature, Talos v1.10 is required at minimum nevertheless (due to separating EPHEMERAL partition from OS disk). It appears that 6.0.x module version is supported by newer Talos versions, e.g. v1.12.
+- If using `disk` feature, Talos v1.11 is required at minimum (due to leveraging `User Volume` feature). Talos v1.12 forms the *maximum* supported version due to incompatible changes introduced in Talos v1.12.
+- When requiring Talos v1.12, you have the option of not using the `disk` feature or waiting for module version v6.1 which is supposed to support Talos v1.12 and newer.
+
+| Module/Talos Version | not using `disk` feature | using `disk` feature |
+| -------------------- | ------------------------ | -------------------- |
+| v5.0                 | >=1.8                    | not available        |
+| v6.0                 | >=1.10                   | >=1.11, <=1.12       |
+| v6.1                 | >=1.12                   | >=1.12               |
 
 ### Dependencies
 
