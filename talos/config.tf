@@ -53,6 +53,7 @@ data "talos_machine_configuration" "this" {
   machine_secrets = talos_machine_secrets.this.machine_secrets
   config_patches = [
     templatefile("${path.module}/machine-config/common.yaml.tftpl", {
+      dns                = each.value.dns
       node_name          = each.value.host_node
       cluster_name       = var.cluster.proxmox_cluster
       kubernetes_version = var.cluster.kubernetes_version
