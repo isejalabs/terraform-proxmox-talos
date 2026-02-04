@@ -13,16 +13,16 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: terraform fmt
-        uses: dflook/terraform-fmt@v2
+        uses: dflook/terraform-fmt@90fc9225b4c109d9a6bb0b2ca0faa89490c0ba95 # v2
         with:
           path: .
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
         with:
           commit-message: "style: automated terraform formatting"
           title: "style: automated terraform formatting"
