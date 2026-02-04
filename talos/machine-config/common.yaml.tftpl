@@ -7,8 +7,6 @@ machine:
   nodeLabels:
     topology.kubernetes.io/region: ${cluster_name}
     topology.kubernetes.io/zone: ${node_name}
-  network:
-    hostname: ${hostname}
 %{ if machine_features != null }
   features:
     ${indent(4, machine_features)}
@@ -23,6 +21,23 @@ cluster:
     image: registry.k8s.io/kube-proxy:${kubernetes_version}
   scheduler:
     image: registry.k8s.io/kube-scheduler:${kubernetes_version}
+
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off
+hostname: ${hostname}
+
+%{ if dns != null }
+---
+apiVersion: v1alpha1
+kind: ResolverConfig
+# A list of nameservers (DNS servers) to use for resolving domain names.
+nameservers:
+    %{ for i in dns }
+    - address: ${i}
+    %{ endfor }
+%{ endif }
 
 ---
 apiVersion: v1alpha1
