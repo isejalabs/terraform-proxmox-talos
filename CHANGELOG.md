@@ -22,11 +22,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The compatibility changed for this module minor version. The minimum Talos version supported is now v1.12 (#182). See the *Upgrade Note* and *Compatibility Note* sections below for further details.
+
 ### Added
 
 ### Removed
 
 ### Fixed
+
+### Upgrade Note
+
+> **Important Note**:
+> 
+> As this module version requires Talos v1.12 at minimum, please ensure to upgrade your Talos cluster to v1.12 beforehand.
+
+The safest upgrade path is not having a volume with type `disk` yet. The steps for upgrading are as follows:
+
+1. Upgrade your Talos cluster to v1.12 (cf. [Talos upgrade documentation](docs/upgrading.md#talos-os-upgrade)).
+1. Upgrade this Terraform Talos module to v6.1.x or newer (cf. [Module upgrade documentation](docs/upgrading.md#terraform-module-version-upgrade)).
+
+If you happen to running your cluster with a `disk`-type volume, you have the following options:
+
+1. Remove the `disk`-type volume(s) temporarily (you already have a backup, haven't you), upgrade Talos to v1.12, upgrade this module to v6.1.x or newer, and re-add the `disk`-type volume(s) again.
+1. Keep the `disk`-type volume(s) and use [resource targeting](docs/upgrading.md#resource-targeting), excluding the following terraform resource types for each `terraform apply` run sequentially per node:
+   - `module.talos.proxmox_virtual_environment_vm.this["node1"]`
+   - `module.talos.talos_machine_configuration_apply.this["node1"]`
+
+
+### Compatibility Note
+
+With this minor release, the minimum supported Talos version changed due to the new disk management features leveraged here:
+
+| Module/Talos Version | not using `disk` feature | using `disk` feature |
+| -------------------- | ------------------------ | -------------------- |
+| v5.0                 | >=1.8                    | not available        |
+| v6.0                 | >=1.10                   | >=1.11, <=1.12       |
+| v6.1 (unreleased)    | >=1.12                   | >=1.12               |
 
 ## [6.0.2] - 2026-01-29
 
