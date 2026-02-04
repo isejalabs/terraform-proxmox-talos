@@ -53,7 +53,7 @@ If you happen to running your cluster with a `disk`-type volume, you have the fo
 
 ### Compatibility Note
 
-With this minor release, the minimum supported Talos version changed due to the new disk management features leveraged here:
+The module now supports Talos v1.12 and newer, and is incompatible with Talos v1.11 (and below).
 
 | Module/Talos Version | not using `disk` feature | using `disk` feature |
 | -------------------- | ------------------------ | -------------------- |

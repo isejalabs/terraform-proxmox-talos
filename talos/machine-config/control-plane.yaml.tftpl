@@ -49,16 +49,13 @@ cluster:
 apiVersion: v1alpha1
 kind: UserVolumeConfig
 name: ${k}
-# volumeType only supported in Talos v1.12+
-# for v1.11 disabling it
-# volumeType: ${v.type}
+volumeType: ${v.type}
 provisioning:
   diskSelector:
     match: '!system_disk'
   # `disk` type does not support size-related selection as of Talos v1.12
-  # for v1.11 we can keep it, hence disabling the check
-  #{ if v.type != "disk" }
+  %{ if v.type != "disk" }
   minSize: ${v.size}
-  #{ endif }
+  %{ endif }
 %{ endif }
 %{ endfor }
