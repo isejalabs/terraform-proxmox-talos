@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added functionality to apply the DNS configuration in Talos via Machine Config (#185). Previously, DNS was configured via Proxmox only. While this looks redundant, it ensures that Talos itself has a proper DNS configuration, too, and it prepares this module for a potential hybrid scenario.
+
 ### Removed
 
 ### Fixed
