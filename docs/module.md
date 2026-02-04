@@ -12,7 +12,7 @@ For the [input variables](#inputs) see also the dedicated [Variables Documentati
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.38.0 |
 | <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) | 0.89.1 |
 | <a name="requirement_restapi"></a> [restapi](#requirement\_restapi) | 2.0.1 |
-| <a name="requirement_talos"></a> [talos](#requirement\_talos) | 0.9.0 |
+| <a name="requirement_talos"></a> [talos](#requirement\_talos) | 0.10.1 |
 
 ## Providers
 
