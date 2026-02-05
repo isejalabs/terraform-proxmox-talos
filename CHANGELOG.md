@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added functionality to apply the DNS configuration in Talos via Machine Config (#185). Previously, DNS was configured via Proxmox only. While this looks redundant, it ensures that Talos itself has a proper DNS configuration, too, and it prepares this module for a potential hybrid scenario.
+- Added support for `directory` type [`volumes`](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) (#186). This is a new volume type introduced in Talos v1.12 (besides `partition` type which is not supported by this module version, yet). This allows to use storage space on the EPHEMERAL partition as volumes in Talos, which can be used for various use cases (e.g. for `hostPath` or for additional space for other CSI solutions (e.g. OpenEBS, Longhorn)). See the [`volumes` variable documentation](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) for further details and examples.
 
 ### Removed
 
