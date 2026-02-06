@@ -143,7 +143,7 @@ resource "proxmox_virtual_environment_vm" "data_vm" {
       cache        = "writethrough"
       discard      = "on"
       size         = adisk.value["size_gb"] # size in GB, converted from string with UoM to number 
-      ssd  = true
+      ssd          = true
 
       # assign from scsi1 and up
       # Caveats:
