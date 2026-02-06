@@ -62,25 +62,25 @@ data "talos_machine_configuration" "this" {
       machine_features   = var.cluster.machine_features
     }), each.value.machine_type == "controlplane" ?
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
-      talos_volumes = var.talos_volumes
+      talos_volumes      = var.talos_volumes
       talos_disk_volumes = var.talos_disk_volumes
-      allow_scheduling = var.cluster.allow_scheduling_on_controlplane
-      ip               = each.value.ip
-      mac_address      = try(lower(each.value.mac_address), null)
-      gateway          = var.cluster.gateway
-      subnet_mask      = var.cluster.subnet_mask
-      vip              = var.cluster.vip
-      extra_manifests  = jsonencode(local.extra_manifests)
-      api_server       = var.cluster.api_server
-      inline_manifests = jsonencode(terraform_data.cilium_bootstrap_inline_manifests.output)
+      allow_scheduling   = var.cluster.allow_scheduling_on_controlplane
+      ip                 = each.value.ip
+      mac_address        = try(lower(each.value.mac_address), null)
+      gateway            = var.cluster.gateway
+      subnet_mask        = var.cluster.subnet_mask
+      vip                = var.cluster.vip
+      extra_manifests    = jsonencode(local.extra_manifests)
+      api_server         = var.cluster.api_server
+      inline_manifests   = jsonencode(terraform_data.cilium_bootstrap_inline_manifests.output)
     }) :
     templatefile("${path.module}/machine-config/worker.yaml.tftpl", {
-      talos_volumes = var.talos_volumes
+      talos_volumes      = var.talos_volumes
       talos_disk_volumes = var.talos_disk_volumes
-      ip            = each.value.ip
-      mac_address   = try(lower(each.value.mac_address), null)
-      gateway       = var.cluster.gateway
-      subnet_mask   = var.cluster.subnet_mask
+      ip                 = each.value.ip
+      mac_address        = try(lower(each.value.mac_address), null)
+      gateway            = var.cluster.gateway
+      subnet_mask        = var.cluster.subnet_mask
     })
   ]
 }

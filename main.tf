@@ -9,7 +9,7 @@ module "talos" {
       machine_type = v.machine_type
       # convert size from string to number by removing UoM (cf. #171)
       # strip only "GiB" suffix, whereas for other UoMs an error should be thrown
-      size_gb      = tonumber(replace(v.size, "/[GiB]/", ""))
+      size_gb = tonumber(replace(v.size, "/[GiB]/", ""))
     } if v.type == "disk"
   }
   # hand over volumes of type `directory` only, else an empty list
