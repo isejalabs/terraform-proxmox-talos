@@ -12,6 +12,8 @@ module "talos" {
       size_gb      = tonumber(replace(v.size, "/[GiB]/", ""))
     } if v.type == "disk"
   }
+  # hand over volumes of type `directory` only, else an empty list
+  talos_volumes = coalesce({ for k, v in var.volumes : k => v if v.type == "directory" }, {})
 
   # take over configuration from main
   providers = {

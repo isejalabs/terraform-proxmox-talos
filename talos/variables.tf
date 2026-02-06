@@ -85,8 +85,8 @@ variable "talos_volumes" {
   }
   validation {
     // @formatter:off
-    condition     = length([for i in var.talos_volumes : i if contains(["disk", "proxmox-csi"], i.type)]) == length(var.talos_volumes)
-    error_message = "Volume `type` can be 'disk' or 'proxmox-csi' only; 'directory', 'partition' and other types not supported by this module version."
+    condition     = length([for i in var.talos_volumes : i if contains(["directory", "disk", "proxmox-csi"], i.type)]) == length(var.talos_volumes)
+    error_message = "Volume `type` can be 'directory', 'disk' or 'proxmox-csi' only; other types not supported by this module version."
     // @formatter:on
   }
 }

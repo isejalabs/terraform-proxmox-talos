@@ -28,5 +28,16 @@ provisioning:
     # https://docs.siderolabs.com/talos/v1.12/configure-your-talos-cluster/storage-and-disk-management/disk-management/common#disk-selector
     # use disk size in GB as pure number w/o UoM, as unsigned INT and append `GiB`
     match: disk.size == ${v.size_gb}u * GiB
-%{ endif }
+%{ endif }  # v.machine_type "worker || all"
+%{ endfor }
+
+# iterate over `directory`-type volumes
+%{ for k, v in talos_volumes } 
+%{ if v.type == "directory" && (v.machine_type == "worker" || v.machine_type == "all") }
+---
+apiVersion: v1alpha1
+kind: UserVolumeConfig
+name: ${k}
+volumeType: ${v.type}
+%{ endif }  # v.machine_type "worker || all"
 %{ endfor }
