@@ -130,9 +130,10 @@ resource "proxmox_virtual_environment_vm" "data_vm" {
     ssd          = true
   }
 
-  # Additional Data Disks only in case the disk's machine_type matches the current node's machine_type  
+  # Additional Data Disks for `disk`-type volumes
+  # only in case the disk's machine_type matches the current node's machine_type or is set to "all"
   dynamic "disk" {
-    for_each = { for idx, val in var.talos_volumes : idx => val if val.machine_type == each.value.machine_type }
+    for_each = { for idx, val in var.talos_disk_volumes : idx => val if val.machine_type == each.value.machine_type || val.machine_type == "all" }
     iterator = adisk
     content {
       # Use specified storage or fall back to main VM's datastore
@@ -141,8 +142,7 @@ resource "proxmox_virtual_environment_vm" "data_vm" {
       iothread     = true
       cache        = "writethrough"
       discard      = "on"
-      # convert size from string to number by removing UoM (cf. #171)
-      size = tonumber(replace(adisk.value["size"], "/[^0-9]/", ""))
+      size         = adisk.value["size_gb"] # size in GB, converted from string with UoM to number 
       ssd  = true
 
       # assign from scsi1 and up
@@ -150,7 +150,7 @@ resource "proxmox_virtual_environment_vm" "data_vm" {
       # - scsiN index might change for disks if other disks are added or removed to the set of additional disks in future,
       #   as disks' index is based on lexical order, not based on its declaration
       # - scsi interface numbers might not be contiguous if volumes are used with different machine_types inbetween
-      interface = "scsi${index(keys(var.talos_volumes), adisk.key) + 1}"
+      interface = "scsi${index(keys(var.talos_disk_volumes), adisk.key) + 1}"
     }
   }
 }

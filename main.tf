@@ -1,8 +1,17 @@
 module "talos" {
   source = "./talos"
 
-  # hand over volumes of type `disk` only, else an empty list
-  talos_volumes = coalesce({ for k, v in var.volumes : k => v if v.type == "disk" }, {})
+  # use a dedicated variable for disk volumes only, with size as number in GB with UoM
+  talos_disk_volumes = {
+    for k, v in var.volumes :
+    k => {
+      datastore    = v.datastore
+      machine_type = v.machine_type
+      # convert size from string to number by removing UoM (cf. #171)
+      # strip only "GiB" suffix, whereas for other UoMs an error should be thrown
+      size_gb      = tonumber(replace(v.size, "/[GiB]/", ""))
+    } if v.type == "disk"
+  }
 
   # take over configuration from main
   providers = {

@@ -76,9 +76,33 @@ variable "talos_volumes" {
       type         = optional(string, "disk")   # "directory", "disk", "partition"
     })
   )
+  default = {}
   validation {
     // @formatter:off
     condition     = length([for i in var.talos_volumes : i if contains(["all", "controlplane", "worker"], i.machine_type)]) == length(var.talos_volumes)
+    error_message = "Volume `machine_type` must be either 'all', 'controlplane' or 'worker'."
+    // @formatter:on
+  }
+  validation {
+    // @formatter:off
+    condition     = length([for i in var.talos_volumes : i if contains(["disk", "proxmox-csi"], i.type)]) == length(var.talos_volumes)
+    error_message = "Volume `type` can be 'disk' or 'proxmox-csi' only; 'directory', 'partition' and other types not supported by this module version."
+    // @formatter:on
+  }
+}
+
+variable "talos_disk_volumes" {
+  type = map(
+    object({
+      size_gb      = number
+      datastore    = optional(string)           # default is to use the main VM's datastore
+      machine_type = optional(string, "worker") # "all", "controlplane", "worker"
+    })
+  )
+  default = {}
+  validation {
+    // @formatter:off
+    condition     = length([for i in var.talos_disk_volumes : i if contains(["all", "controlplane", "worker"], i.machine_type)]) == length(var.talos_disk_volumes)
     error_message = "Volume `machine_type` must be either 'all', 'controlplane' or 'worker'."
     // @formatter:on
   }

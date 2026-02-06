@@ -124,7 +124,7 @@ variable "volumes" {
   default = {}
   validation {
     // @formatter:off
-    condition     = length([for i in var.volumes : i if contains(["directory", "disk", "partition", "proxmox-csi"], i.type)]) == length(var.volumes)
+    condition     = length([for i in var.volumes : i if contains(["disk", "proxmox-csi"], i.type)]) == length(var.volumes)
     error_message = "Volume `type` can be 'disk' or 'proxmox-csi' only; 'directory', 'partition' and other types not supported by this module version."
     // @formatter:on
   }
