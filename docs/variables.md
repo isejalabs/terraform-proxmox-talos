@@ -24,7 +24,7 @@ For a quick overview of all variables, please see the following Table of Content
 
 The `cilium_config` variable lets you set paths to custom configuration files for the [cilium Helm values file](https://docs.cilium.io/en/stable/helm-reference/) and cilium bootstrap manifest (installation), respectively.
 
-If no files are provided, a decent default configuration is used.
+If no files are provided, a decent [default configuration](../talos/inline-manifests/) is used.
 
 ### Definition
 
@@ -116,26 +116,27 @@ cluster = {
 ### Definition
 
 By setting the `env` variable (to e.g. `prod`, `qa`, `dev`), resources created by `terraform`/`tofu` will be prefixed with this value, thus ensuring names are not clashing when instantiating the module multiple times for establishing a multi-environment system. If no `env` value is provided, no prefixing is done.
-While setting the `env` variable is optional, its usage is strongly recommended when using the `terraform-proxmox-talos` module in parallel in the same Proxmox envorinment.
+
+While setting the `env` variable is optional, its usage is strongly recommended when using the `terraform-proxmox-talos` module in parallel in the same Proxmox environment.
 
 | Description                            | Type     | Default / Example |
 | -------------------------------------- | -------- | ----------------- |
 | environment (e.g. `prod`, `qa`, `dev`) | `string` | `""` / `"dev"`    |
-
-Setting the `env` variable, to e.g. `"dev"`, has an effect on the following resources:
-
-| Resource                     | Default Name                                         | env-specific Name                                                                                                                     |
-| ---------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| Proxmox role for CSI         | `CSI`                                                | `dev-CSI`                                                                                                                             |
-| Proxmox user for CSI plugin  | `kubernetes-csi@pve`                                 | `dev-kubernetes-csi@pve`                                                                                                              |
-| Proxmox volume names for CSI | `vm-<vmid>-pv-<pvname>`<br><br>e.g. `vm-9999-pv-foo` | `vm-9999-dev-pv-foo`<br><br>another option is adjusting the `vmid` parameter (default `"9999"`) of the [`volumes`](#volumes) variable |
-| Downloaded image file        | `talos-ce..15-v1.2.3-nocloud-amd64.img`              | `dev-talos-ce..15-v1.2.3-nocloud-amd64.img`                                                                                           |
 
 ### Example
 
 ```terraform
 env = "dev"
 ```
+
+Setting the `env` variable, to e.g. `"dev"`, has an effect on the following resources:
+
+| Resource                     | Default Name (without `env` set) | `env`-specific Name |
+| ---------------------------- | -------------------------------- | ------------------- |
+| Proxmox role for CSI:<br>`<env>-CSI` | `CSI`                    | `dev-CSI`           |
+| Proxmox user for CSI plugin:<br>`<env>-kubernetes-csi@pve` | `kubernetes-csi@pve` | `dev-kubernetes-csi@pve`|
+| Proxmox disk names for CSI:<br>`vm-<vmid>-<env>-<volname>` | `vm-9999-foo` | `vm-9999-dev-pv-foo`<br><br>While adjusting the [`volumes.vmid`](#definition-8) parameter (default `"9999"`) variable looks like another option to prevent name clashes in a multi-environment, the recommended way is using the `env` variable for separating *multiple environments* and using the `volumes.vmid` for separating proxmox-csi volumes/disks from a potential *VM with the same ID* (where this VM's ID cannot get changed) |
+| Downloaded image file        | `talos-ce..15-v1.2.3-nocloud-amd64.img` | `<env>-talos-<schematic>-<version>-<platform>-<arch>.img`<br>e.g. `dev-talos-ce..15-v1.2.3-nocloud-amd64.img` |
 
 ## image
 
@@ -232,7 +233,7 @@ nodes = {
     bridge        = "mybridge"
     cpu_type      = "custom-x86-64-v2-AES-AVX"
     datastore     = "nfs"
-    disksize      = 30  # 30 GB
+    disk_size     = 30      # 30 GB
     dns           = ["1.1.1.1", "9.9.9.9"]
     igpu          = true
     mac_address   = "BC:24:11:2E:C8:02"
@@ -322,25 +323,8 @@ The command given above places the files in the default path (`"assets/sealed...
 
 ## volumes
 
-The `volumes` variable lets you configure additional storage volumes available to the cluster. The `type`s of storage volumes can be divided into two categories:
+The `volumes` variable lets you configure additional storage volumes available to the cluster. The supported storage options are described in the [storage documentation](storage.md).
 
-1. **CSI**: A [Container Storage Interface (CSI)](https://kubernetes.io/docs/concepts/storage/volumes/#csi) is a standardized API that enables the cluster to communicate with external storage systems. For the CSI to be usable, a CSI plugin needs to be set up in the cluster (similarly to a CNI). By defining a volume with the CSI category, a CSI plugin will get installed (currently, [proxmox-csi-plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) only supported) and a [`PersistentVolume`](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) [pre-provisioned](https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/#pre-provisioned-volumes). You then only need to define a `PersistentVolumeClaim` in Kubernetes.
-
-   If no CSI volume gets defined, the CSI plugin will get installed nevertheless. You then can leverage [dynamic volume provisioning](https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/#dynamic-provisioning).
-
-2. **Talos Volume Mounts**: Talos v1.11 and v1.12 introduced so called [User Volumes](https://docs.siderolabs.com/talos/v1.12/configure-your-talos-cluster/storage-and-disk-management/disk-management/user) to treat local disk space specifically. They allow defining a `directory`, additional `disk` or `partition` to be mounted at `/var/mnt/<volume-name>`. The user volumes can be used simply for `hostPath` mounts in Kubernetes, but they can be used for other purposes as well, e.g. for [installing other CSI plugins in Talos](https://docs.siderolabs.com/kubernetes-guides/csi/storage#storage-clusters) (e.g. Longhorn, OpenEBS Mayastor).  
-  This gives the possibility to use other storage backends than the inbuilt Proxmox CSI plugin.
-
-### Types
-
-The following volume types are supported:
-
-| Type        | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| directory   | A `directory` volume is simply a directory on the host filesystem mounted at `/var/mnt/<volume name>`. Hence, it's limited by the host’s EPHEMERAL partition. It is _not_ suitable for workloads that require predictable or enforceable storage quotas. |
-| disk        | Creates a separate data disk in Proxmox which gets attached to the VM and mounted at `/var/mnt/<volume name>`. The Proxmox datastore to store the disk can be defined separately to the Talos VM. Due to its separate nature, the `disk` volume type is well suited for workloads that require predictable or enforceable storage quotas, e.g. a CSI.                                                                                                                      |
-| partition   | **Not available currently**. Maybe subject for a later implementation. ([Issue #162](https://github.com/isejalabs/terraform-proxmox-talos/issues/162))<br><br>Usage of a dedicated partition on the underlying storage device.                                                                                                                                                                                                                                                                                                                             |
-| proxmox-csi | Creation of a Persistent Volume (PV) using the [proxmox-csi-plugin](https://github.com/sergelogvinov/proxmox-csi-plugin). Creates a dedicated disk in Proxmox and a `PersistentVolume` in Kubernetes cluster for each volume. The volume's location needs to get specified in the `nodes` parameter to reflect Proxmox node the VM disk needs to be created. Also creates a corresponding `PersistentVolume` in Kubernetes with the same volume name.                      |
 
 ### Definition
 
@@ -348,91 +332,72 @@ The `volumes` variable is formed of a **map** consisting of the _volume name_ as
 
 | Key          | Description                                                                                                                                                                                                                                                                                                   | Type     | Default / Example |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------- |
+| size         | **Required** Volume size with unit suffix, with _differing_ Unit of Measure (UoM) handling per volume `type`:<br>- `directory`: size can have any value and will be ignored as it's not relevant<br>- `disk`: only `GB` (or `G` and `GiB`) can be used, no `M`, `T` or other magnitude<br>- `proxmox-csi`: UoM needs to omit the `B`(Byte) suffix, i.e. `10G` mean `10GB`<br><br>Needed for: all types (can't get omited for `directory` type) | `string` | e.g. `"10G"`       |
 | datastore    | Proxmox datastore used to store the volume<br><br>Optional for: disk, proxmox-csi                                                                                                                                                                                                                             | `string` | `"local-zfs"`     |
 | format       | Disk format (`"raw"`, `"qcow"`)<br><br>Optional for: proxmox-csi                                                                                                                                                                                                                                              | `string` | `"raw"`           |
-| machine_type | Type of kubernetes node, must be either `"all"`, `"controlplane"` or `"worker"` (default)<br><br>Optional for: directory, disk, partition                                                                                                                                                                                  | `string` | `"worker"`        |
+| machine_type | Type of kubernetes node, where the Talos [User Volume](https://docs.siderolabs.com/talos/v1.12/configure-your-talos-cluster/storage-and-disk-management/disk-management/user) should get created. Must be either `"all"`, `"controlplane"` or `"worker"` (default)<br><br>Optional for: directory, disk, partition                                                                                                                                                                     | `string` | `"worker"`        |
 | node         | Hostname of the Proxmox node where the volume should get stored<br><br>Needed for: proxmox-csi                                                                                                                                                                                                                | `string` | e.g. `"host1"`    |
-| size         | Volume size _with_ unit suffix. In the case of `disk` type, only `GB` (or `G`) can be used<br><br>Needed for: all types                                                                                                                                                                                     | `string` | e.g. `"10"`       |
-| type         | Typ of volume (`directory`, `disk`, `partition`, `proxmox-volume` (default))<br><br>Needed for: all types                                                                                                                                                                                                     | `string` | `"proxmox-csi"`   |
-| vmid         | Alternative VM ID for naming the volume.<br>When using the module in multiple instances in the same Proxmox environment (host), e.g. for `prod` and `qa` instances, you need to set this parameter different per instance. Otherwise, volumes with the same name will clash.<br><br>Optional for: proxmox-csi | `number` | `9999`            |
+| type         | Type of volume (`directory`, `disk`, `proxmox-volume` (default)). See the [storage documentation](storage.md) for more details.<br><br>Needed for: all types                                                                                                                                                                                                     | `string` | `"proxmox-csi"`   |
+| vmid         | Alternative VM ID for *naming* the volume. Do not mix up with the VM ID the volume gets bound to – which is driven by the proxmox-csi plugin dynamically.<br><br>When using a volume in multiple instances in the same Proxmox environment, e.g. for `prod` and `qa` instances, you need to use the [`env`](#env) variable for proper separation. The purpose of the `vmid` attribute is separation from a potential unrelated VM with the same ID (where the VM's ID cannot get changed) – or where the default `9999` is not your liking.<br><br>Optional for: proxmox-csi | `number` | `9999`            |
 
 ### Usage of variables per volume `type`
 
-| Variable     | default       | directory | disk | partition | proxmox-csi |
-| ------------ | ------------- | :-------: | :--: | :-------: | :---------: |
-| size         | –             |     X     |  X   |     X     |      X      |
-| type         | `proxmox-csi` |     O     |  O   |     O     |      O      |
-| machine_type | `worker`      |     O     |  O   |     O     |      –      |
-| datastore    | `local-zfs`   |     –     |  O   |     –     |      O      |
-| format       | `raw`         |     –     |  –   |     –     |      O      |
-| node         | –             |     –     |  –   |     –     |      X      |
-| vmid         | `9999`        |     –     |  –   |     –     |      O      |
+| Variable     | default       | directory | disk | partition* | proxmox-csi |
+| ------------ | ------------- | :-------: | :--: | :--------: | :---------: |
+| size         | –             |     X     |  X   |     X      |      X      |
+| type         | `proxmox-csi` |     X     |  X   |     X      |      O      |
+| machine_type | `worker`      |     O     |  O   |     O      |      –      |
+| datastore    | `local-zfs`   |     –     |  O   |     –      |      O      |
+| format       | `raw`         |     –     |  –   |     –      |      O      |
+| node         | –             |     –     |  –   |     –      |      X      |
+| vmid         | `9999`        |     –     |  –   |     –      |      O      |
 
 > **Legend**:  
 > **X** Required variable  
 > **O** Optional variable  
-> **–** Not used<br>
+> **–** Not used  
+> _*_ Not available currently  
 
 ### Example
 
 ```terraform
 volumes = {
-  # a simple proxmox-csi volume with the bare minimum
-  foo = {
+  # proxmox-csi volume
+  my-pv = {
     node = "pve1"
-    size = "100M"               # size with unit suffix other than 'G' possible for proxmox-csi
-  }
-
-  # or more enhanced proxmox-csi volume
-  bar = {
-    node = "pve1"
-    size = "20G"
+    size = "100M"               # size UoM without 'B' (Byte)
 
     # optional
-    format    = "qcow"          # variable should be kept set to its default "raw" value
+    format    = "raw"           # in most cases variable should be kept to its default "raw" value
     datastore = "nfs"
     type      = "proxmox-csi"   # default is "proxmox-csi" anyway
     vmid      = "9876"
   }
 
   # additional data disk
-  longhorn = {
-    size = "50G"                # size must be given with 'G'/'GB' suffix for 'disk' type
+  test-disk = {
+    size = "50GB"               # size must be given with 'G' ('GB'/`GiB`) suffix for 'disk' type
     type = "disk"
+    
+    # optional
+    machine_type = "all"
+    datastore    = "local-ssd"
+  }
+
+  # directory volume mount
+  host-dir = {
+    size = "0GB"                # size attribute is mandatory, though will be ignored
+    type = "directory"
+    
+    # optional
+    machine_type = "controlplane"
   }
 }
 ```
 
-### VM Disks Architecture
+### Additional Configuration
 
-Depending on the volume `type` chosen, the volume space get created differently in Proxmox.
-
-#### `directory` and `partition` volume types
-
-> **Note**: The `partition` volume type is currently not implemented due to pending issue [#293](https://redirect.github.com/siderolabs/terraform-provider-talos/issues/293) in [siderolabs/terraform-provider-talos](https://github.com/siderolabs/terraform-provider-talos) module. They are mentioned here for completeness and future reference.
-
-For `directory`, the volume is simply a directory on the host filesystem mounted at `/var/mnt/<volume name>`. Hence, it's limited by the host’s EPHEMERAL partition. The `directory` volume will get created for _all_ Talos VMs in the cluster, depending of their `machine_type` (i.e. `controlplane` or `worker` or `all`).
-
-#### `disk` volume type
-
-For `disk` type, a separate data disk gets created for each Talos VM matching the `machine_type` of the volume definition. For example, if a volume named `data-volume` of type `disk` is defined with `machine_type` set to `worker`, and there are 3 Talos VMs of type `worker` in the cluster, then 3 separate disks named `data-volume` will be created in Proxmox – one for each worker VM. Each disk gets attached to its respective VM and mounted at `/var/mnt/data-volume`. Likewise, multiple disks get created when multiple Talos VMs of the same `machine_type` exist, e.g. `controlplane` or `all` (for both `controlplane`s and `worker`s).
-
-The disks get created and owned by a separate "data VM" as described in the [VMs documentation](vms.md#separation-of-talos-vm-and-data-vm).
-
-#### `proxmox-csi` volume type
-
-When using the `proxmox-csi` volume type, the volume disks get created on the Proxmox node where the Talos VM is hosted. This is because the Proxmox CSI plugin requires local storage access to create and manage the volume disks. Hence, the `node` parameter needs to be set accordingly. Still, the `datastore` parameter can be set to a _shared storage_ (e.g. NFS, CephFS) if desired.
-
-Other than for other volume types, the volume disks for `proxmox-csi` volumes are created only _once_ in Proxmox, thus consuming storage space only _once_ – even when multiple Talos VMs get created.
-
-The respective disk gets attached to the Talos VMs automatically, depending where the `Pod` gets scheduled. However, the disks can be attached only to _one_ Talos VM at a time, as the Proxmox CSI plugin creates `ReadWriteOnce` `PersistentVolume`s only.
-
-Depending on the underlying storage (local or shared), this has the following implications:
-
-- **Local storage**: When using local storage (e.g. `local-zfs`), the volume disk can be attached only to Talos VMs hosted on the same Proxmox node. If the Talos VM hosting the workload using the volume gets migrated to another Proxmox node, the volume will become unavailable until the VM gets migrated back to the original Proxmox node. Still, the volume can be used by other Talos VMs hosted on the same Proxmox node. 
-This setup can be useful for workloads that do not require high availability, e.g. for development or testing purposes, or where local storage performance is critical.  
-
-- **Shared storage**: When using shared storage (e.g. NFS, CephFS), the volume disk can be attached to any Talos VM in the cluster, regardless of the Proxmox node hosting the VM. This allows for high availability of workloads using the volume, as the Talos VM can be migrated to any Proxmox node without losing access to the volume. However, performance may be lower compared to local storage, depe  nding on the shared storage solution used.
+Both CSI and Talos Volumes require additional configuration *outside* of this terraform module, i.e. in your Kubernetes cluster. You will need to setup a CSI (also in the case of proxmox-csi) and declare `PersistentVolumeClaim`s. Please refer to the [storage documentation](storage.md#additional-configuration) for more details.
 
 # Useful Links
 
