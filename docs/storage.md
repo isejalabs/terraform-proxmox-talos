@@ -14,7 +14,7 @@ The [`volumes`](variables.md#volumes) variable lets you configure additional sto
 
    By defining a volume with the CSI category, a CSI plugin will get installed (currently, [proxmox-csi-plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) only supported) and a [`PersistentVolume`](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) [pre-provisioned](https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/#pre-provisioned-volumes). You then only need to define a `PersistentVolumeClaim` in Kubernetes.
 
-   If no CSI volume gets defined, the CSI plugin will get installed nevertheless. You then can leverage [dynamic volume provisioning](https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/#dynamic-provisioning).
+   If no CSI volume gets defined, you then can leverage [dynamic volume provisioning](https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/#dynamic-provisioning) – by completing the [user-configured requirements](#user-configured-requirements).
 
 2. **Talos Volume**: Talos v1.11 and v1.12 introduced so called [User Volumes](https://docs.siderolabs.com/talos/v1.12/configure-your-talos-cluster/storage-and-disk-management/disk-management/user) to treat local disk space specifically. They allow defining a `directory`, additional `disk` or `partition` to be mounted at `/var/mnt/<volume-name>`. The user volumes can be used simply for `hostPath` mounts in Kubernetes, but they can be used for other purposes as well, e.g. for [installing other CSI plugins in Talos](https://docs.siderolabs.com/kubernetes-guides/csi/storage#storage-clusters) (e.g. Longhorn, OpenEBS Mayastor).  
    This gives the possibility to use other storage backends than the inbuilt Proxmox CSI option.
@@ -36,9 +36,11 @@ This section covers important information about the `proxmox-csi` volume type, w
 
 ### Additional Configuration
 
-The [Proxmox-CSI](https://github.com/sergelogvinov/proxmox-csi-plugin) driver needs the following configuration. The check-marked items are done by the terraform module already while the remaining items need to be setup outside of the terraform module.
+The [Proxmox-CSI](https://github.com/sergelogvinov/proxmox-csi-plugin) driver needs the following configuration. The check-marked items are done by the terraform module already while the remaining items need to be setup outside of the terraform module. See the official [Proxmox-CSI documentation](https://github.com/sergelogvinov/proxmox-csi-plugin?tab=readme-ov-file#installation) for further details on the configuration and installation of the driver. The following sections also include examples for the driver installation and storage class definition.
 
 #### Pre-configured Requirements
+
+The following requirements are pre-configured by the terraform module, so you don't need to worry about them:
 
 - [x] **Proxmox _User_ with API Access**: A Proxmox user with sufficient permissions to create and manage storage volumes via the Proxmox API. The user credentials need to get provided to the Proxmox-CSI driver.
       The terraform module creates a Proxmox user named `<env>-kubernetes-csi@pve` and a role `<env>-CSI` with the required permissions automatically.
@@ -48,11 +50,17 @@ The [Proxmox-CSI](https://github.com/sergelogvinov/proxmox-csi-plugin) driver ne
 
   The namespace created by terraform module is named `csi-proxmox` and needs to be used for the driver installation.
 
-- [x] **Kubernetes _Persistent Volume_ for Proxmox-CSI Volumes**: For each volume of type `proxmox-csi` defined in the `volumes` variable, a corresponding Kubernetes `PersistentVolume` will get created in the Kubernetes cluster. The `PersistentVolume` will have the same name as the volume name defined in the terraform configuration and is referring a `StorageClass` named `proxmox-csi` – which needs to get created in order to use preprovisioning.
+- [x] **Kubernetes _Topology Labels_**: To enable topology-aware volume provisioning and scheduling, the Proxmox-CSI driver relies on Kubernetes topology labels that represent the Proxmox node's topology (e.g. region, zone, etc.). These labels need to get defined on the Kubernetes nodes to allow the Proxmox-CSI driver to make informed decisions about where to provision volumes and schedule pods based on the underlying Proxmox node's topology.
 
-  If you don't specify any `proxmox-csi` volumes in the `volumes` variable, no `PersistentVolume`s will get created by the terraform module. However, the Proxmox-CSI driver will still get installed and you can leverage [dynamic volume provisioning](https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/#dynamic-provisioning).
+  The terraform module automatically adds the following labels `topology.kubernetes.io/zone=<proxmox_node_name>` and `topology.kubernetes.io/region=<proxmox_cluster_name>` to each Kubernetes node, where `<proxmox_node_name>` is the name of the respective Proxmox node (used by `volumes[].node`) and `<proxmox_cluster_name>` is formed of the Proxmox cluster name (`cluster.proxmox_cluster`), as the driver can be used for multiple Proxmox clusters.
+
+- [x] (Optional) **Kubernetes _Persistent Volume_ for Proxmox-CSI Volumes**: For each volume of type `proxmox-csi` defined in the `volumes` variable, a corresponding Kubernetes `PersistentVolume` will get created in the Kubernetes cluster. The `PersistentVolume` will have the same name as the volume name defined in the terraform configuration and is referring a `StorageClass` named `proxmox-csi` – which needs to get created in order to use preprovisioning.
+
+  If you don't specify any `proxmox-csi` volumes in the `volumes` variable, no `PersistentVolume`s will get created by the terraform module. However, you can leverage [dynamic volume provisioning](https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/#dynamic-provisioning).
 
 #### User-Configured Requirements
+
+The following requirements need to get configured by the user to be able to use the Proxmox-CSI driver and the `proxmox-csi` volume type (see also the official [Proxmox-CSI documentation](https://github.com/sergelogvinov/proxmox-csi-plugin?tab=readme-ov-file#installation) for further details):
 
 - [ ] **Proxmox-CSI _Driver_ Installation**: The Proxmox-CSI driver needs to get installed in the Kubernetes cluster to be able to use the `proxmox-csi` volume type.
 
@@ -60,7 +68,7 @@ The [Proxmox-CSI](https://github.com/sergelogvinov/proxmox-csi-plugin) driver ne
 
 - [ ] **_Storage Class_ Definition**: One or more `StorageClass`es need to get defined in the Kubernetes cluster to specify the Proxmox-CSI driver as the provisioner for volume provisioning. The `StorageClass` can include parameters such as `datastore`, `fstype`, `reclaimPolicy`, etc.
 
-  You need to define at minimum a `StorageClass` named `proxmox-csi` used for `PersisventVolume`s preprovisioned by the `volumes` variable.
+  You need to define at minimum a `StorageClass` named `proxmox-csi` used for `PersisentVolume`s preprovisioned by the `volumes` variable.
 
   The `StorageClass` definition is out-of-scope of this terraform module. It can be defined via Helm chart values (cf. [`values.yaml` example](#valuesyaml-example) below) or via separate Kubernetes manifests.
 
@@ -283,7 +291,7 @@ The best way to deal with the issues is to **combine manual handling and terrafo
 
 A future version of the terraform provider might solve the issue with removing the disks properly, which would allow to remove disk volumes with terraform only without manual intervention.
 
-## VM Disks Architecture
+## Architecture of the Volumes in Proxmox and Talos
 
 Depending on the volume [`type`](#types) chosen, the volume space get created differently in Proxmox.
 
@@ -297,12 +305,54 @@ The `partition` volume type would require a separate partition on the underlying
 
 By default, the volume types `directory` (and `disk`) get created for all _Worker_ Kubernetes nodes (Talos VMs with [`nodes[].machine_type="worker"`](variables.md#definition-4)) in the cluster. You can adjust the volume creation to specific Talos VM types by setting the optional `machine_type` parameter to `controlplane`, `worker` (default) or `all` in the [`volumes[]`](variables.md#definition-8) definition. This might be useful for special use cases, when workloads are supposed to run on control plane nodes as well (which can get achieved by setting [`cluster.allow_scheduling_on_controlplane="true"`](variables.md#definition-1)).
 
+You can list the created volumes in Talos with the `talosctl get mountstatus` command, which will show the respective mountpoints (e.g. `/var/mnt/test-dir1`).
+
+```sh
+❯ talosctl get mountstatus -n 10.7.8.195
+NODE         NAMESPACE   TYPE          ID              VERSION   SOURCE      TARGET               FILESYSTEM   VOLUME
+...
+10.7.8.195   runtime     MountStatus   /var/mnt        5                     /var/mnt             none         /var/mnt
+10.7.8.195   runtime     MountStatus   /var/run        3                     /var/run             none         /var/run
+10.7.8.195   runtime     MountStatus   /var/run/lock   2                     /var/run/lock        none         /var/run/lock
+10.7.8.195   runtime     MountStatus   EPHEMERAL       5         /dev/sdb1   /var                 xfs          EPHEMERAL
+10.7.8.195   runtime     MountStatus   u-test-dir1     2                     /var/mnt/test-dir1   none         u-test-dir1
+```
 
 ### `disk` volume type
 
 For `disk` type, a separate data disk gets created for each Talos VM matching the `machine_type` – similar to the `directory` and `partition` volume types. However, unlike those types, the `disk` type creates a separate disk in Proxmox for each Talos VM with the respecitve `machine_type`.
 
-The disks get created and owned by a separate "data VM" as described in the [VMs documentation](vms.md#separation-of-talos-vm-and-data-vm) and attached to their respective worker and/or controlplane VMs. The mountpoint is derived from the volume name, here `/var/mnt/myvolume`.
+The disks get created and owned by a separate "data VM" as described in the [VMs documentation](vms.md#separation-of-talos-vm-and-data-vm) and attached to their respective worker and/or controlplane VMs.The disks get formatted with the XFS filesystem automatically and mounted at the respective mountpoint here `/var/mnt/<volume_name>`. 
+
+You can list the created volumes in Talos with the `talosctl disk list` command (for seeing the disks) and the `talosctl get mountstatus` command, which will show the respective mountpoints (e.g. `/var/mnt/test-disk1`) and their size.
+
+The **disks** created (here with `sdc` as the disk for the `disk` volume type and `sda` and `sdb` as the OS and EPHEMERAL disks, see [separation of Talos VM and data VM](vms.md#separation-of-talos-vm-and-data-vm)):
+
+```sh
+❯ talosctl get disks -n 10.7.8.155
+NODE         NAMESPACE   TYPE   ID      VERSION   SIZE     READ ONLY   TRANSPORT   ROTATIONAL   WWID   MODEL           SERIAL
+10.7.8.155   runtime     Disk   loop0   2         4.1 kB   true
+10.7.8.155   runtime     Disk   loop1   2         692 kB   true
+10.7.8.155   runtime     Disk   loop2   2         75 MB    true
+10.7.8.155   runtime     Disk   sda     2         5.4 GB   false       virtio                          QEMU HARDDISK          <-- OS disk
+10.7.8.155   runtime     Disk   sdb     2         6.4 GB   false       virtio                          QEMU HARDDISK          <-- EPHEMERAL disk
+10.7.8.155   runtime     Disk   sdc     4         1.1 GB   false       virtio                          QEMU HARDDISK          <-- data disk disk
+10.7.8.155   runtime     Disk   sr0     2         4.2 MB   false       sata        true                QEMU DVD-ROM
+```
+
+Likewise, the **mountpoints** created (here with `/var/mnt/test-disk1` as the mountpoint for the `disk` volume type, and also showing an example mountpoint for the `directory` volume type):
+
+```sh
+❯ talosctl get mountstatus -n 10.7.8.155
+NODE         NAMESPACE   TYPE          ID              VERSION   SOURCE      TARGET                FILESYSTEM   VOLUME
+...
+10.7.8.155   runtime     MountStatus   /var/mnt        8                     /var/mnt              none         /var/mnt
+10.7.8.155   runtime     MountStatus   /var/run        3                     /var/run              none         /var/run
+10.7.8.155   runtime     MountStatus   /var/run/lock   2                     /var/run/lock         none         /var/run/lock
+10.7.8.155   runtime     MountStatus   EPHEMERAL       7         /dev/sdb1   /var                  xfs          EPHEMERAL
+10.7.8.155   runtime     MountStatus   u-test-dir1     2                     /var/mnt/test-dir1    none         u-test-dir1
+10.7.8.155   runtime     MountStatus   u-test-disk1    2         /dev/sdc    /var/mnt/test-disk1   xfs          u-test-disk1
+```
 
 ### `proxmox-csi` volume type
 
@@ -316,6 +366,10 @@ The scheduling of the `Pod` using the volume is determined by Kubernetes and dep
   This setup can be useful for workloads that do not require high availability or where local storage performance is critical.
 
 - **Shared storage**: When using shared storage (e.g. NFS, CephFS), the volume disk can be attached to any Talos VM in the cluster, regardless of the Proxmox node hosting the VM. This allows for high availability of workloads using the volume, as the Talos VM can be migrated to any Proxmox node without losing access to the volume. However, performance may be lower compared to local storage, depending on the shared storage solution used.
+
+The [Proxmox CSI documentation](https://github.com/sergelogvinov/proxmox-csi-plugin?tab=readme-ov-file) provides further details on the implications of using local vs. shared storage with the Proxmox-CSI driver: 
+
+![ProxmoxClusers!](https://github.com/sergelogvinov/proxmox-csi-plugin/blob/main/docs/proxmox-regions.gif)
 
 ## Further Reading
 
