@@ -280,16 +280,16 @@ There's no real solution to the issue with the current implementation, as it is 
 When a disk volume of type `disk` gets removed from the `volumes` variable, terraform will attempt to remove the respective disk from Proxmox. Besides the general potential issue of data loss, this can lead to two issues in the current implementation:
 
 1. **Issue with disk attachment to Talos VM**: When removing a disk volume, terraform will attempt to remove the respective disk from both the data VM and the Talos VM in Proxmox. Unfortunately, terraform is not able to remove the disk from both VMs properly because it is trying the removal in the wrong order (data VM before Talos VM instead of from Talos VM first).
-1. **Issue with terraform not removing the disks according the plan**: When removing a disk volume, terraform will show in the plan that the respective disk gets removed from Proxmox. However, when applying the changes, terraform will not carry out the changes accordingly. This looks like an issue in the terraform provider, as it is not able to remove the disk from Proxmox as planned and also not detecting that the disks are still present in Proxmox after the pseudo-apply.
+1. **Issue with terraform not removing the disks according the plan**: When removing a disk volume, terraform will show in the plan that the respective disk gets removed from Proxmox. However, when applying the changes, terraform will not carry out the changes accordingly. This looks like an issue in the terraform provider, as it is not able to remove the disk from Proxmox as planned and also not detecting that the disks are still present in Proxmox after the pseudo-apply (see upstream issue [bpg/terraform-provider-proxmox#2596](https://redirect.github.com/bpg/terraform-provider-proxmox/issues/2596), tracked internally as [#197](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/197)).
 
 #### How to deal with the issues arising from terraform's handling of removing disk volumes
 
 The best way to deal with the issues is to **combine manual handling and terraform** when removing a disk volume of type `disk`:
 
 1. First, **manually remove the disk from Proxmox** via the Proxmox UI or API. Make sure to remove the disk from  the Talos VM first and then from the data VM to avoid issues with disk attachment. 
-1. Then, remove the disk volume from the `volumes` variable in your terraform configuration and apply the changes with terraform.
+1. Then, remove the disk volume from the `volumes` variable in your terraform configuration and **apply the changes with terraform**.
 
-A future version of the terraform provider might solve the issue with removing the disks properly, which would allow to remove disk volumes with terraform only without manual intervention.
+A future version of the terraform provider might solve the issue [#197](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/197) with removing the disks properly, which would allow to remove disk volumes with terraform without manual intervention.
 
 ## Architecture of the Volumes in Proxmox and Talos
 

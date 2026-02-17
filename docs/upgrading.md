@@ -15,8 +15,8 @@ Upgrades can involve changes to the Talos OS version, Kubernetes version, VM con
 | [**Talos Schematic Version Upgrade**](#talos-schematic-upgrade)           | Upgrading the **Talos schematic version** used for generating node configurations.                                                  |
 | [**Kubernetes Version Upgrade**](#kubernetes-version-upgrade)             | Upgrading the **Kubernetes version** managed by Talos.                                                                              |
 | [**VM Configuration Changes**](#vm-configuration-changes)                 | Apply changes to **VM configurations** (e.g. CPU, memory), or **scale the cluster** (by adding or removing nodes from the cluster). |
-| [**Terraform Module Version Upgrade**](#terraform-module-version-upgrade) | Upgrading the underlying `terraform-proxmox-talos` module version.                                                                  |
-| [**Upgrade of inbuilt components**](#upgrade-of-inbuilt-components)       | Upgrading components like CNI, CSI, etc., which are shipped with this terraform module (e.g. Cilium, Gateway API, Proxmox CSI).     |
+| [**Terraform Module Version Upgrade**](#terraform-module-version-upgrade) | Upgrading the underlying `terraform-proxmox-talos` **module version**.                                                              |
+| [**Upgrade of inbuilt components**](#upgrade-of-inbuilt-components)       | Upgrading **inbuilt components** like CNI, CSI, etc., which are shipped with this terraform module (e.g. Cilium, Gateway API).      |
 
 These use cases will get described in the following sections.
 
@@ -209,7 +209,7 @@ terraform state list | grep module.talos.proxmox_virtual_environment_vm.this
 
 ## Upgrade of inbuilt components
 
-This section will handle the upgrade procedures of inbuilt components shipped with this terraform module, like Cilium CNI, Gateway API, Proxmox CSI Plugin, etc.
+This section will handle the upgrade procedures of inbuilt components shipped with this terraform module, like Cilium CNI and Gateway API. It also covers [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) which is really shipped with this module, rather it needs to installed on-top.
 
 | Component                                                                 | Version configurable | Upgrade procedure                        |
 | ------------------------------------------------------------------------- | -------------------- | ---------------------------------------- |
@@ -243,8 +243,4 @@ See the [Gateway API installation documentation](https://gateway-api.sigs.k8s.io
 
 ### Proxmox CSI Plugin Upgrade
 
-> **Note**
->
-> The Proxmox CSI Plugin version is hardcoded in the module and documented in the [Changelog](../CHANGELOG.md).
-
-The [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) version is not directly configurable through a variable in this module. Instead, you will have to install another [Proxmox CSI Plugin Helm chart](https://artifacthub.io/packages/helm/proxmox-csi/proxmox-csi-plugin).
+While being crucial to get [`proxmox-csi`-type volumes](storage.md#types) working, the [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) is not shipped with this module. You will have to install and configure the Proxmox CSI Plugin [Helm chart](https://artifacthub.io/packages/helm/proxmox-csi/proxmox-csi-plugin) as part of your Kubernetes management, outside of terraform. You will find instructions in the storage documentation for the [proxmox-csi configuration](storage.md#additional-configuration).
