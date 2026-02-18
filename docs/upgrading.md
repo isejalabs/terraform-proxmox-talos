@@ -219,11 +219,11 @@ This section will handle the upgrade procedures of inbuilt components shipped wi
 
 ### Cilium Upgrade
 
-> **Note**
->
-> The Cilium version is hardcoded in the module and documented in the [Changelog](../CHANGELOG.md).
+Out of the [3 stable branches](https://docs.cilium.io/en/stable/contributing/release/organization/) of [Cilium CNI](https://cilium.io/) (say 1.0, 1.1 and 1.2), this module is shipping with the most recent previous minor version of Cilium (here 1.1, i.e. X.Y-1.Z). This ensures that the Cilium version is stable and well tested, while still being relatively up-to-date, including bug fixes (cf. Cilium's [backporting process](https://docs.cilium.io/en/stable/contributing/release/backports/)). 
 
-The [Cilium CNI](https://cilium.io/) version is not directly configurable through a variable in this module. Instead, you will have to install another [Cilium Helm chart](https://docs.cilium.io/en/stable/installation/k8s-install-helm/) on-top to upgrade the Cilium to another version.
+The Cilium version used is hardcoded in the module and documented in the [Changelog](../CHANGELOG.md).
+
+Thus, if you want to upgrade to another version of Cilium, you will have to install the [Cilium Helm chart](https://docs.cilium.io/en/stable/installation/k8s-install-helm/) on-top to upgrade the Cilium to another version.
 
 ### Gateway API Upgrade
 
