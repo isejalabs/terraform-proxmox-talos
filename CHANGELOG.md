@@ -22,23 +22,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The compatibility changed for this module minor version. The minimum Talos version supported is now v1.12 (#182). See the *Upgrade Note* and *Compatibility Note* sections below for further details.
-
 ### Added
-
-- Added functionality to apply the DNS configuration in Talos via Machine Config (#185). Previously, DNS was configured via Proxmox only. While this looks redundant, it ensures that Talos itself has a proper DNS configuration, too, and it prepares this module for a potential hybrid scenario.
-- Added support for `directory` type [`volumes`](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) (#186). This is a new volume type introduced in Talos v1.12 (besides `partition` type which is not supported by this module version, yet). This allows to use storage space on the EPHEMERAL partition as volumes in Talos, which can be used for various use cases (e.g. for `hostPath` or for additional space for other CSI solutions (e.g. OpenEBS, Longhorn)). See the [`volumes` variable documentation](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) for further details and examples.
-- Added a dedicated [storage documentation](docs/storage.md) covering the different storage options supported by this module, including their additional configuration needed and special handling.
 
 ### Removed
 
 ### Fixed
 
-### Upgrade Note
+## [6.1.0] - 2026-02-19
 
 > **Important Note**:
 > 
-> As this module version requires Talos v1.12 at minimum, please ensure to upgrade your Talos cluster to v1.12 beforehand.
+> As this module version requires Talos v1.12 at minimum, please ensure to upgrade your Talos cluster to v1.12 beforehand, cf. *Upgrade Note*.
+
+This module minor version adds support for Talos v1.12, which comes along with an incompatibility with Talos v1.11 and below, unfortunately. Besides increasing Talos compatibility, also the `directory` type for `volumes` got added, which is a new feature introduced in Talos v1.12. A new and enriched [storage documentation](docs/storage.md) explains the 3 storage options available in this terraform module and their usage.
+
+### Changed
+
+- The compatibility changed for this module minor version. The minimum Talos version supported is now v1.12 (#182, #187). See the *Upgrade Note* and *Compatibility Note* sections below for further details.
+
+### Added
+
+- Added functionality to apply the DNS configuration in Talos via Machine Config (#185). Previously, DNS was configured via Cloud Init in Proxmox only. While this looks redundant, it ensures that Talos itself has a proper DNS configuration, too, and it prepares this module for a potential hybrid scenario.
+- Added support for `directory` type [`volumes`](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) (#188). This is a new volume type introduced in Talos v1.12 (besides `partition` type which is not supported by this module version, yet). This allows to use storage space on the EPHEMERAL partition as volumes in Talos, which can be used for various use cases (e.g. for `hostPath` or for additional space for other CSI solutions (e.g. OpenEBS, Longhorn)). See the [`volumes` variable documentation](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) for further details and examples.
+- Added a dedicated [storage documentation](docs/storage.md) covering the different storage options supported by this module, including their additional configuration needed and special handling (#194, #198).
+
+### Upgrade Note
 
 The safest upgrade path is not having a volume with type `disk` yet. The steps for upgrading are as follows:
 
@@ -48,7 +56,7 @@ The safest upgrade path is not having a volume with type `disk` yet. The steps f
 If you happen to running your cluster with a `disk`-type volume, you have the following options:
 
 1. Remove the `disk`-type volume(s) temporarily (you already have a backup, haven't you), upgrade Talos to v1.12, upgrade this module to v6.1.x or newer, and re-add the `disk`-type volume(s) again.
-1. Keep the `disk`-type volume(s) and use [resource targeting](docs/upgrading.md#resource-targeting), excluding the following terraform resource types for each `terraform apply` run sequentially per node:
+1. Alternatively, keep the `disk`-type volume(s) and use [resource targeting](docs/upgrading.md#resource-targeting), excluding the following terraform resource types for each `terraform apply` run sequentially per node:
    - `module.talos.proxmox_virtual_environment_vm.this["node1"]`
    - `module.talos.talos_machine_configuration_apply.this["node1"]`
 
@@ -61,7 +69,22 @@ The module now supports Talos v1.12 and newer, and is incompatible with Talos v1
 | -------------------- | ------------------------ | -------------------- |
 | v5.0                 | >=1.8                    | not available        |
 | v6.0                 | >=1.10                   | >=1.11, <=1.12       |
-| v6.1 (unreleased)    | >=1.12                   | >=1.12               |
+| v6.1                 | >=1.12                   | >=1.12               |
+
+### Dependencies
+
+- update `cilium/cilium` v1.18.4 → v1.18.7 (#201)
+- update `terraform proxmox` v0.89.1 → v0.96.0 (#199)
+- update `terraform talos` v0.9.0 → v0.10.1 (#185)
+
+| Component            | Version |
+| -------------------- | ------- |
+| cilium/cilium        | 1.18.7  |
+| cilium/cilium-cli    | 0.18.9  |
+| Mastercard/restapi   | 2.0.1   |
+| terraform kubernetes | 2.38.0  |
+| terraform proxmox    | 0.96.0  |
+| terraform talos      | 0.10.1  |
 
 ## [6.0.2] - 2026-01-29
 
