@@ -1,9 +1,9 @@
 resource "proxmox_virtual_environment_vm" "this" {
   for_each = var.nodes
 
-  node_name = each.value.host_node
 
   name        = each.key
+  node_name = each.value.host_node
   description = each.value.machine_type == "controlplane" ? "Talos Control Plane" : "Talos Worker"
   tags        = each.value.machine_type == "controlplane" ? ["k8s", "control-plane"] : ["k8s", "worker"]
   on_boot     = var.cluster.on_boot
@@ -12,6 +12,7 @@ resource "proxmox_virtual_environment_vm" "this" {
   machine       = "q35"
   scsi_hardware = "virtio-scsi-single"
   bios          = "seabios"
+  stop_on_destroy = true
 
   agent {
     enabled = true
