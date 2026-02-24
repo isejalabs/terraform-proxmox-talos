@@ -101,6 +101,12 @@ resource "proxmox_virtual_environment_vm" "this" {
       xvga    = false
     }
   }
+
+  smbios {
+    # use host_node (pve host) and vm_id (numeric) to create a unique serial number for each VM, so that Proxmox CSI Driver can identify nodes correctly
+    # format: "h={host_node};i={vm_id}" e.g., "h=pve1;i=123"
+    serial = "h=${each.key};i=${each.value.vm_id}"
+  }
 }
 
 # Create a Data VM for each Talos VM to attach additional disks
