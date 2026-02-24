@@ -35,6 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `smbios` configuration to the VM resource. This helps the Proxmox CSI Driver to identify nodes correctly, thus the plugin will work more reliably and faster (cf. #180). Note: It doesn't remove the need for node labels, and it doesn't free you up guiding deployments with node selectors and affinities, which are still required for the Proxmox CSI Driver to work correctly. 
+
 ### Removed
 
 ### Fixed
