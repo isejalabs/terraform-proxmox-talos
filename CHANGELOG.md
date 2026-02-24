@@ -22,8 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Stop VMs on destroy to avoid issues with dangling VMs in Proxmox VE when destroying the cluster with `terraform destroy` (cf. #114).
-
 ### Added
 
 ### Removed
