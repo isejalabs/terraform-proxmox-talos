@@ -31,18 +31,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Stop VMs on destroy to avoid issues with dangling VMs in Proxmox VE when destroying the cluster with `terraform destroy` (cf. #114).
-
 ### Added
-
-- Added `smbios` configuration to the VM resource. This helps the Proxmox CSI Driver to identify nodes correctly, thus the plugin will work more reliably and faster (cf. #180). Note: It doesn't remove the need for node labels, and it doesn't free you up guiding deployments with node selectors and affinities, which are still required for the Proxmox CSI Driver to work correctly. 
 
 ### Removed
 
 ### Fixed
 
-## [7.0.0] - 2026-02-24
+## [7.1.0] - 2026-02-24
 
+### Changed
+
+- Stop VMs on destroy instead of shutting them down to avoid issues with dangling VMs in Proxmox VE when destroying the cluster with `terraform destroy` (cf. #114).
+
+### Added
+
+- Added `smbios` configuration to the VM resource. This helps the Proxmox CSI Driver to identify nodes correctly, thus the plugin will work more reliably and faster (cf. #180). Note: It doesn't remove the need for node labels, and it doesn't free you up guiding deployments with node selectors and affinities, which are still required for the Proxmox CSI Driver to work correctly. 
+
+## [7.0.0] - 2026-02-24
 
 > [!Important]
 > :boom: **BREAKING CHANGE** :boom:
