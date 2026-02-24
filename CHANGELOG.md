@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<!--
+> [!NOTE]
+> [!TIP]
+> [!IMPORTANT]
+> [!WARNING]
+> [!CAUTION]
+-->
+
+
 <!---
 ## [Unreleased Template]
 ### Changed
@@ -28,13 +37,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-## [6.1.0] - 2026-02-19
+## [7.0.0] - 2026-02-24
 
-> **Important Note**:
+
+> [!Important]
+> :boom: **BREAKING CHANGE** :boom:
 > 
-> As this module version requires Talos v1.12 at minimum, please ensure to upgrade your Talos cluster to v1.12 beforehand, cf. *Upgrade Note*.
+> This is a major release introducing breaking changes. Please read the *Upgrade Note* carefully before upgrading.
+> 
+> In short, this module version requires Talos v1.12 at minimum, please ensure to upgrade your Talos cluster to v1.12 beforehand.
 
-This module minor version adds support for Talos v1.12, which comes along with an incompatibility with Talos v1.11 and below, unfortunately. Besides increasing Talos compatibility, also the `directory` type for `volumes` got added, which is a new feature introduced in Talos v1.12. A new and enriched [storage documentation](docs/storage.md) explains the 3 storage options available in this terraform module and their usage.
+> [!NOTE]
+> This release got published as `v6.1.0` first, but due to the breaking changes introduced in this release, it got renamed to `v7.0.0` for better reflecting the breaking changes and for following semantic versioning properly.
+
+This module version adds support for Talos v1.12, which comes along with an incompatibility with Talos v1.11 and below, unfortunately. Besides increasing Talos compatibility, also the `directory` type for `volumes` got added, which is a new feature introduced in Talos v1.12. A new and enriched [storage documentation](docs/storage.md) explains the 3 storage options available in this terraform module and their usage.
 
 ### Changed
 
@@ -69,7 +85,7 @@ The module now supports Talos v1.12 and newer, and is incompatible with Talos v1
 | -------------------- | ------------------------ | -------------------- |
 | v5.0                 | >=1.8                    | not available        |
 | v6.0                 | >=1.10                   | >=1.11, <=1.12       |
-| v6.1                 | >=1.12                   | >=1.12               |
+| v7.0                 | >=1.12                   | >=1.12               |
 
 ### Dependencies
 
