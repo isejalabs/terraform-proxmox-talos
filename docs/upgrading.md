@@ -219,9 +219,9 @@ This section will handle the upgrade procedures of inbuilt components shipped wi
 
 ### Cilium Upgrade
 
-Out of the [3 stable branches](https://docs.cilium.io/en/stable/contributing/release/organization/) of [Cilium CNI](https://cilium.io/) (say 1.0, 1.1 and 1.2), this module is shipping with the most recent previous minor version of Cilium (here 1.1, i.e. X.Y-1.Z). This ensures that the Cilium version is stable and well tested, while still being relatively up-to-date, including bug fixes (cf. Cilium's [backporting process](https://docs.cilium.io/en/stable/contributing/release/backports/)). 
+Out of the [3 stable branches](https://docs.cilium.io/en/stable/contributing/release/organization/) of [Cilium CNI](https://cilium.io/) (say 1.17, 1.18 and 1.19), this module is shipping with the most recent **previous minor** version of Cilium (here 1.18, i.e. X.Y-1.Z), i.e. `oldstable` in Debian terminology. This ensures that the Cilium version is stable and well tested, while still being relatively up-to-date, including bug fixes (cf. Cilium's [backporting process](https://docs.cilium.io/en/stable/contributing/release/backports/)). 
 
-The Cilium version used is hardcoded in the module and documented in the [Changelog](../CHANGELOG.md).
+The Cilium version used is hardcoded in the module and documented in the [Changelog](../CHANGELOG.md). It is only used for the initial **installation** of Cilium, but not managed after that.
 
 Thus, if you want to upgrade to another version of Cilium, you will have to install the [Cilium Helm chart](https://docs.cilium.io/en/stable/installation/k8s-install-helm/) on-top to upgrade the Cilium to another version.
 
@@ -229,7 +229,7 @@ Thus, if you want to upgrade to another version of Cilium, you will have to inst
 
 #### Gateway API Version
 
-The [Gateway API](https://gateway-api.sigs.k8s.io/) version can be upgraded by changing the [`cluster.gateway_api_version`](variables.md#definition-1) variable to the desired version. A `terraform apply` will apply the change accordingly. Check the [Cilium Gateway API documentation](https://docs.cilium.io/en/stable/gettingstarted/k8s/gateway/) as well as the [Gateway API conformance documentation](https://gateway-api.sigs.k8s.io/implementations/#cilium) for details on compatibility and upgrade considerations before selecting a new version for the Gateway API.
+The [Gateway API](https://gateway-api.sigs.k8s.io/) version can be upgraded by changing the [`cluster.gateway_api_version`](variables.md#definition-1) variable to the desired version. A `terraform apply` will apply the change accordingly. Check the [Cilium Gateway API documentation](https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/) as well as the [Gateway API conformance documentation](https://gateway-api.sigs.k8s.io/implementations/#cilium) for details on compatibility and upgrade considerations before selecting a new version for the Gateway API.
 
 #### Gateway API Standard and Experimental Channels
 
