@@ -113,7 +113,7 @@ This release is fixing an issue with `disk` type volumes. The module is still li
 
 ### Fixed
 
-- **Breaking possibly:** Fixed an issue for `disk` type where `volumes[].datastore` was not properly defaulting to the VM's datastore (`nodes[].datastore`) if not specified (#179).
+- **Breaking possibly:** Fixed an issue for `disk` type where `volumes[].datastore` was not properly defaulting to the VM's datastore (`nodes[].datastore`) if not specified explicetely (#179).
 
 ### Compatibility Note
 

@@ -35,7 +35,7 @@ If you happen to running your cluster with a `disk`-type volume, you have the fo
 
 ## [6.0.2]
 
-> **Important Note for `disk` Type Volumes**:
+> [!IMPORTANT]
 >
 > If you have `disk` type volumes without specifying an individual `datastore` and the VM is not using `local-zfs`, special care is required when upgrading to this version.
 

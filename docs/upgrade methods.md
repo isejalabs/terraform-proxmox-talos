@@ -31,8 +31,7 @@ Most of the upgrades are a disruptive operation causing a destruction and recrea
 - **Cluster Health**: Monitor the health of the Kubernetes cluster during the upgrade process to ensure that the control plane and worker nodes remain operational.
 - **Data Persistence**: Ensure that any important data stored on the node is persisted outside of the Talos VM. This is typically done by using the separate data VM for EPHEMERAL and other data disks. In other cases, ensure that data is backed up appropriately or there's a replica available on another node which is not part of the upgrade step.
 
-> **Good to know**
->
+> [!TIP]
 > A **cluster health check** (`module.talos.data.talos_cluster_health.this`) is part of the configuration process and waits for its successful termination. Hence, you can start the next action safely once terraform processes a configuration change successfully.
 
 ### ❤️ `terraform` = `tofu` = `terragrunt` ❤️
@@ -154,7 +153,7 @@ Likewise, changing other cluster parameters as available in the [`cluster` varia
 
 #### Semantic Versioning
 
-> [!NOTE]
+> [!CAUTION]
 >
 > Never use `HEAD` or `main` branch references for the module source in production environments. Always use a specific version tag to ensure stability and predictability of your infrastructure.
 

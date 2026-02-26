@@ -297,7 +297,8 @@ Depending on the volume [`type`](#types) chosen, the volume space get created di
 
 ### `directory` and `partition` volume types
 
-> **Note**: The `partition` volume types is currently not implemented due to its difficulty to provisioning and partioning disks in Proxmox. It is mentioned here for completeness and future reference.
+> [!NOTE] 
+> The `partition` volume types is currently not implemented due to its difficulty to provisioning and partioning disks in Proxmox. It is mentioned here for completeness and future reference.
 
 The `directory` and `partition` volume types do not require separate disks in Proxmox. The `directory` volume type simply creates a directory on the host filesystem and mounts it at `/var/mnt/<volume name>`. Hence, it's limited by the host’s EPHEMERAL partition.
 
