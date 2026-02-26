@@ -22,8 +22,7 @@ These use cases will get described in the following sections.
 
 ### Before you upgrade – Important Considerations
 
-> **Note**
->
+> [!TIP]
 > It's recommended to perform the upgrade in a non-production environment first to validate the process and ensure that there are no unexpected issues.
 
 Most of the upgrades are a disruptive operation causing a destruction and recreation of the VM or important components of the Kubernetes cluster (e.g. etcd, CNI pods). Hence, you need to take care of the following aspects when performing a Talos OS upgrade:
@@ -56,18 +55,16 @@ In short, a Talos OS upgrade is performed by setting the [`nodes[].update`](vari
 
 Due to the new image, this will cause a destruction and recreation of the Talos VM for the respective node, while the data VM (holding EPHEMERAL and other data disks) remains untouched. Thus, data stored on the data VM is preserved across the Talos OS upgrade (similar to a `talosctl upgrade --preserve=true`).
 
-> **Good to know**
+> [!TIP]
 >
 > Starting with version 6.0 of terraform-provider-talos, this module supports Talos OS upgrades with only one control plane (thx to [PR #144](https://github.com/isejalabs/terraform-proxmox-talos/pull/144)). Thus, it's strictly not needed anymore to [scaling up the cluster](#cluster-scaling) with at minimum a 2nd control plane node (temporarily or permanently) or [backing up and restoring etcd](https://docs.siderolabs.com/talos/v1.9/build-and-extend-talos/cluster-operations-and-maintenance/disaster-recovery). This is good for development or test environments. However, it's still recommended to have 3 control plane nodes for production clusters for high availability, and to have a backup of etcd and other critical aspects (e.g. PV data) of your cluster.
 
 ### Steps to upgrade Talos OS
 
-> **Important**
->
+> [!IMPORTANT]
 > It's recommended to **upgrade control plane nodes first**, followed by worker nodes. This ensures that the control plane is always running the latest Talos OS version, which is important for cluster stability and compatibility.
 
-> **Note**
->
+> [!NOTE]
 > Please note that a Talos upgrade will _not_ perform an upgrade of Kubernetes version. It is recommended to perform the Kubernetes upgrade separately (and _not_ set [`cluster.kubernetes_version`](variables.md#definition-1) as part of the Talos OS upgrade). See also [Kubernetes Version Upgrade](#kubernetes-version-upgrade) section.
 
 Carry out the following steps to **upgrade Talos nodes one by one**:
@@ -82,11 +79,11 @@ Carry out the following steps to **upgrade Talos nodes one by one**:
 
 Also, **monitor the cluster health** closely during and after the upgrade process before carrying out the upgrade for the next node(s).
 
-> **Note**
+> [!TIP]
 >
 > There is a more elaborate description of the steps in [Vegard's blog post](https://blog.stonegarden.dev/articles/2024/08/talos-proxmox-tofu/#upgrading-the-cluster).
 
-> **Note**
+> [!TIP]
 >
 > **Multiple nodes can be upgraded in parallel** by setting `update = true` for multiple nodes before running `terraform apply` (e.g. a control plane and a worker node on another Proxmox host). When upgrading multiple nodes in parallel, ensure to exclude at minimum 1 control plane and a minimum of x worker nodes (depending on the workload deployed and availability of services during the change).
 
@@ -101,7 +98,7 @@ Upgrading the Talos schematic version is similar to upgrading the Talos OS versi
 
 ## Kubernetes Version Upgrade
 
-> **Important**
+> [!IMPORTANT]
 >
 > It's important to note that upgrading the Talos OS version does not automatically upgrade the Kubernetes version running on the cluster. This might lead to incompatibilities between Talos OS and Kubernetes versions if the Kubernetes version is kept over several Talos OS upgrade.
 >
@@ -114,10 +111,10 @@ When setting a new `cluster.kubernetes_version`, a `terraform apply` would cause
 
 ### Steps to upgrade Kubernetes version
 
-> **Note**
+> [!NOTE]
 >
-> The **approach** is to first perform an _rolling upgrade_ using `talosctl upgrade apply`, and finally reconcile the state with terraform.
-> Using `talosctl upgrade apply` will ensure that only one control plane node is upgraded at a time, keeping the cluster operational during the upgrade process. Also, images of `kubelet`, `kube-apiserver`, `kube-schedule`, `etcd` and other components are pre-pulled to the nodes to minimize downtime and test for image availability (cf. [Talos Upgrading Kubernetes documentation](https://docs.siderolabs.com/kubernetes-guides/advanced-guides/upgrading-kubernetes) for details).
+> The approach is a **hybrid method** of first performing an _rolling upgrade_ using `talosctl` command, and finally reconcile the state with terraform.
+> Using `talosctl` will ensure that only one control plane node is upgraded at a time, keeping the cluster operational during the upgrade process. Also, images of `kubelet`, `kube-apiserver`, `kube-schedule`, `etcd` and other components are pre-pulled to the nodes to minimize downtime and test for image availability (cf. [Talos Upgrading Kubernetes documentation](https://docs.siderolabs.com/kubernetes-guides/advanced-guides/upgrading-kubernetes) for details).
 
 Perform the following 2 steps for upgrading the Kubernetes version:
 
@@ -153,30 +150,44 @@ Likewise, changing other cluster parameters as available in the [`cluster` varia
 
 ## Terraform Module Version Upgrade
 
-### Semantic Versioning and Changelog
+### Semantic Versioning, Changelog and Upgrade Notes
 
-Handling upgrades of the underlying `terraform-proxmox-talos` module version is similar to other terraform modules. Special care needs to be taken when there are breaking changes introduced in a new module version. As this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html), breaking changes will be introduced in major version upgrades only (e.g. v5.x.x to v6.x.x). Minor and patch version upgrades (e.g. v6.0.0 to v6.1.0 or v6.1.0 to v6.1.1) will be backward compatible.
+#### Semantic Versioning
 
-When upgrading the module version, please refer to the [Changelog](../CHANGELOG.md) for details on changes introduced in the new version. Follow the instructions provided in the changelog for any specific upgrade steps required.
-
-Some breaking changes might require manual intervention when upgrading the module version, e.g. changing variable names or adjusting configurations due to deprecated features. In rare cases, there might be changes requiring a destruction and recreation of resources managed by the module. These cases will be documented in the [Changelog](../CHANGELOG.md) for each release. Often, the reader will be then referred to this upgrading documentation for using [Resource Targeting](#resource-targeting) which is documented [below](#resource-targeting).
-
-> **Note**
+> [!NOTE]
 >
 > Never use `HEAD` or `main` branch references for the module source in production environments. Always use a specific version tag to ensure stability and predictability of your infrastructure.
 
+Handling upgrades of the underlying `terraform-proxmox-talos` module version is similar to other terraform modules. Special care needs to be taken when there are breaking changes introduced in a new module version. As this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html), breaking changes will be introduced in major version upgrades only (e.g. v5.x.x to v6.x.x). Minor and patch version upgrades (e.g. v6.0.0 to v6.1.0 or v6.1.0 to v6.1.1) will be backward compatible.
+
+#### Changelog
+
+When upgrading the module version, please refer to the [Changelog](../CHANGELOG.md) for details on changes introduced in the new version. This document details additions, changes allowing you to leverage new features. It will also document deprecations and removals of features, variables and other aspects of the module, including any breaking changes introduced in the new version, which require special attention when upgrading.
+
+#### Upgrade Notes
+
+Some module version might introduce breaking changes which require manual intervention, e.g. changing variable names or adjusting configurations due to deprecated features. In rare cases, there might be changes requiring a destruction and recreation of resources managed by Terraform. The necessary steps will be documented in the [UPGRADE.md](../UPGRADE.md) document for each release. 
+
+Follow the instructions provided in the [UPGRADE.md](../UPGRADE.md) document for any specific upgrade steps required.
+
 ### Steps to upgrade the module version
 
+#### General Upgrade Steps
+
 1. Update the module source reference in your `terragrunt.hcl` or `main.tf` file to point to the new version of the `terraform-proxmox-talos` module.
-1. Review the [Changelog](../CHANGELOG.md) for any breaking changes or special upgrade instructions.
+1. Review the [UPGRADE.md](../UPGRADE.md) document for any breaking changes or special upgrade instructions and follow the instructions provided for the new version.
 1. Run `terraform init` to initialize the module with the new version. In some cases, you might need to run `terraform init -upgrade` to ensure all providers are updated as well.
 1. Run `terraform plan` to see the changes that will be applied to your infrastructure.
-1. If there are any breaking changes that require manual intervention, follow the instructions provided in the changelog.
-1. Finally, run `terraform apply` to apply the changes and upgrade your infrastructure
+1. If the plan looks good, run `terraform apply` to apply the changes and upgrade your infrastructure.
+1. Monitor the upgrade process and ensure that all resources are updated successfully. Check the health of your Kubernetes cluster, the status of your nodes after the upgrade as well as the health of the workload running in the cluster.
+
+#### Time for new features
+
+When upgrading to a new module version, it's also a good time to review the new features and improvements introduced in the new version. Check the [Changelog](../CHANGELOG.md) for details on new features and consider leveraging them in your configuration to enhance your cluster's capabilities – after being sure you're still having a stable cluster.
 
 ### Resource Targeting
 
-> **Note**
+> [!TIP]
 >
 > Resource targeting is especially useful when upgrading the module version which might introduce breaking changes affecting multiple nodes at once. As such, this method can also be used for other upgrade scenarios described in this document (e.g. instead of using the [`nodes[].update` vehicle](#steps-to-upgrade-talos-os) which is just another, inbuilt notation of using the `-target` flag).
 >
@@ -203,7 +214,7 @@ The following command gives a list of all relevant nodes to be targeted or exclu
 terraform state list | grep module.talos.proxmox_virtual_environment_vm.this
 ```
 
-> **Note**
+> [!IMPORTANT]
 >
 > When applying a critical change, be sure to exclude at minimum 1 control plane and a minimum of x worker nodes (depending on the workload deployed and availability of services during the change). Just add additional `-exclude` parameters if needed.
 

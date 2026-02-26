@@ -1,9 +1,14 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All _notable_ changes to this project will be documented in this file, following the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format. It won't include each and every change and commit (e.g. ci or documentation changes), but only the notable changes, in a human-readable format that commit messages sometimes do not provide.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+This project tries to adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Hence, a change to the version number X.Y.Z will indicate a
+
+- **X+1: breaking changes** in **major** version numbers,
+- **Y+1: feature updates** (and possbily bug fixes) in **minor** version numbers, and
+- **Z+1: bug fixes** only in **patch** version numbers.
+
+Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPGRADE.md) file, which is supposed to get enriched with detailed upgrade instructions for each release, especially for handling breaking changes.
 
 <!--
 > [!NOTE]
@@ -12,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > [!WARNING]
 > [!CAUTION]
 -->
-
 
 <!---
 ## [Unreleased Template]
@@ -31,7 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Documentation: Renamed [docs/upgrading.md](docs/upgrade%20methods.md) to [docs/upgrade methods.md](docs/upgrade%20methods.md) to reflect the following: This file describes various **methods** to "upgrade" (change) various aspects of a Kubernetes cluster, which could be, besides a terraform module version change, e.g., how to upgrade Talos OS version, Kubernetes version, or how to perform a cluster scaling. The file is not describing the upgrade instructions for each release of this terraform module, which are now documented in the new [UPGRADE.md](UPGRADE.md) file (cf. below).
+
 ### Added
+
+- Documentation: Added a new [UPGRADE.md](UPGRADE.md) file in the project root with detailed upgrade instructions for each release, especially for handling breaking changes. It documents the actions needed to upgrade this terraform module version in your cluster. This information was kept in the CHANGELOG.md file before, but it got moved to a separate file for better structuring and readability of the CHANGELOG.md file, which is supposed to give a high-level overview of the changes in each release, while the UPGRADE.md file is supposed to give detailed instructions for each release, especially for handling breaking changes.
 
 ### Removed
 
@@ -45,16 +53,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `smbios` configuration to the VM resource. This helps the Proxmox CSI Driver to identify nodes correctly, thus the plugin will work more reliably and faster (cf. #180). Note: It doesn't remove the need for node labels, and it doesn't free you up guiding deployments with node selectors and affinities, which are still required for the Proxmox CSI Driver to work correctly. 
+- Added `smbios` configuration to the VM resource. This helps the Proxmox CSI Driver to identify nodes correctly, thus the plugin will work more reliably and faster (cf. #180). Note: It doesn't remove the need for node labels, and it doesn't free you up guiding deployments with node selectors and affinities, which are still required for the Proxmox CSI Driver to work correctly.
 
 ## [7.0.0] - 2026-02-24
 
-> [!Important]
+> [!CAUTION]
 > :boom: **BREAKING CHANGE** :boom:
-> 
-> This is a major release introducing breaking changes. Please read the *Upgrade Note* carefully before upgrading.
-> 
-> In short, this module version requires Talos v1.12 at minimum, please ensure to upgrade your Talos cluster to v1.12 beforehand.
+>
+> Please consult [UPGRADE.md](UPGRADE.md#700) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
 
 > [!NOTE]
 > This release got published as `v6.1.0` first, but due to the breaking changes introduced in this release, it got renamed to `v7.0.0` for better reflecting the breaking changes and for following semantic versioning properly.
@@ -63,28 +69,13 @@ This module version adds support for Talos v1.12, which comes along with an inco
 
 ### Changed
 
-- The compatibility changed for this module minor version. The minimum Talos version supported is now v1.12 (#182, #187). See the *Upgrade Note* and *Compatibility Note* sections below for further details.
+- **Breaking:** The compatibility changed for this module minor version. The minimum Talos version supported is now v1.12 (#182, #187). See the _Upgrade Note_ and _Compatibility Note_ sections below for further details.
 
 ### Added
 
 - Added functionality to apply the DNS configuration in Talos via Machine Config (#185). Previously, DNS was configured via Cloud Init in Proxmox only. While this looks redundant, it ensures that Talos itself has a proper DNS configuration, too, and it prepares this module for a potential hybrid scenario.
 - Added support for `directory` type [`volumes`](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) (#188). This is a new volume type introduced in Talos v1.12 (besides `partition` type which is not supported by this module version, yet). This allows to use storage space on the EPHEMERAL partition as volumes in Talos, which can be used for various use cases (e.g. for `hostPath` or for additional space for other CSI solutions (e.g. OpenEBS, Longhorn)). See the [`volumes` variable documentation](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) for further details and examples.
 - Added a dedicated [storage documentation](docs/storage.md) covering the different storage options supported by this module, including their additional configuration needed and special handling (#194, #198).
-
-### Upgrade Note
-
-The safest upgrade path is not having a volume with type `disk` yet. The steps for upgrading are as follows:
-
-1. Upgrade your Talos cluster to v1.12 (cf. [Talos upgrade documentation](docs/upgrading.md#talos-os-upgrade)).
-1. Upgrade this Terraform Talos module to v6.1.x or newer (cf. [Module upgrade documentation](docs/upgrading.md#terraform-module-version-upgrade)).
-
-If you happen to running your cluster with a `disk`-type volume, you have the following options:
-
-1. Remove the `disk`-type volume(s) temporarily (you already have a backup, haven't you), upgrade Talos to v1.12, upgrade this module to v6.1.x or newer, and re-add the `disk`-type volume(s) again.
-1. Alternatively, keep the `disk`-type volume(s) and use [resource targeting](docs/upgrading.md#resource-targeting), excluding the following terraform resource types for each `terraform apply` run sequentially per node:
-   - `module.talos.proxmox_virtual_environment_vm.this["node1"]`
-   - `module.talos.talos_machine_configuration_apply.this["node1"]`
-
 
 ### Compatibility Note
 
@@ -113,77 +104,16 @@ The module now supports Talos v1.12 and newer, and is incompatible with Talos v1
 
 ## [6.0.2] - 2026-01-29
 
-This is a patch release fixing an issue with `disk` type volumes. The module is still limited to Talos v1.10 (or v1.11 when using the `disk` feature) as minimum versions and v1.11 as maximum supported version.
+> [!CAUTION]
+> :boom: **BREAKING CHANGE** for some cases :boom:
+>
+> While released as patch version, accidentially, this release is introducing breaking changes _if_ you're using `disk` type volumes. Please read the [UPGRADE.md](UPGRADE.md#602) documentation carefully before upgrading.
+
+This release is fixing an issue with `disk` type volumes. The module is still limited to Talos v1.10 (or v1.11 when using the `disk` feature) as minimum versions and v1.11 as maximum supported version.
 
 ### Fixed
 
-- Fixed an issue for `disk` type where `volumes[].datastore` was not properly defaulting to the VM's datastore (`nodes[].datastore`) if not specified (#179).
-
-  See *Upgrade Note* section for further instructions.
-
-### Upgrade Note
-
-> **Important Note for `disk` Type Volumes**:
-> 
-> If you have `disk` type volumes without specifying an individual `datastore` and the VM is not using `local-zfs`, special care is required when upgrading to this version.
-
-Previously, when not specifying a specific `datastore` for `disk` type volumes, the module defaulted to `local-zfs` datastore erroneously. This is not the desired and documented behaviour (instead, the VM's datastore should be taken when no datastore is specified). As such, a module upgrade will recitify the situation by moving the disk(s) to the same datastore the VM is using.
-
-The following is required to avoid errors during `terraform plan` and `terraform apply`:
-
-While the disk(s) will get moved from `local-zfs` (the former datastore) to the VM's datastore without data loss, special care is required to avoid `terraform plan/apply` errors due to the dynamic behaviour of the VM disk handling logic.
-
-1. Optimally, detach the `disk` type volume(s) from the Main Talos VM(s) (not Data VMs) manually via Proxmox VE UI or CLI. See the [VM architecture documentation](docs/vms.md#separation-of-talos-vm-and-data-vm) for identifying the Main Talos VM(s).
-1. Run (`terraform plan` and) `terraform apply` _multiple_ times for getting to a final result. Terraform will produce several errors inbetween – which will get solved with multiple runs, finally.
-
-The error messages produced by `terraform` will look similar to the ones below:
-
-```
-* Failed to execute "tofu apply" in ./.terragrunt-cache/cj_qtdX4SVSN2mQL18WDg3O9M74/AXI3wB-PS_BYZEnbtpZ4j1O9g34
-  ╷
-  │ Error: Provider produced inconsistent final plan
-  │
-  │ When expanding the plan for
-  │ module.talos.proxmox_virtual_environment_vm.this["host.example.com"]
-  │ to include new values learned so far during apply, provider
-  │ "registry.opentofu.org/bpg/proxmox" produced an invalid new value for
-  │ .disk[2].path_in_datastore: was cty.StringVal("vm-1230-disk-3"), but
-  │ now cty.StringVal("vm-1230-disk-1").
-  │
-  │ This is a bug in the provider, which should be reported in the provider's
-  │ own issue tracker.
-  ╵
-
-  exit status 1
-...
-* Failed to execute "tofu apply" in ./.terragrunt-cache/cj_qtdX4SVSN2mQL18WDg3O9M74/AXI3wB-PS_BYZEnbtpZ4j1O9g34
-  ╷
-  │ Error: Defined disk interface not supported. Interface was , but only [ide sata scsi virtio] are supported
-  │
-  │   with module.talos.proxmox_virtual_environment_vm.this["host.example.com"],
-  │   on talos/virtual-machines.tf line 1, in resource "proxmox_virtual_environment_vm" "this":
-  │    1: resource "proxmox_virtual_environment_vm" "this" {
-  │
-  ╵
-
-  exit status 1
-```
-
-Should you forget to detach an additional `disk` type volume from the Main Talos VM(s) before running `terraform apply`, you will get an error message similar to the following:
-
-```
-* Failed to execute "tofu apply" in ./.terragrunt-cache/cj_qtdX4SVSN2mQL18WDg3O9M74/AXI3wB-PS_BYZEnbtpZ4j1O9g34
-  ╷
-  │ Error: Cannot move local-zfs:vm-1230-disk-1 to datastore foo in VM 123 configuration, it is not owned by this VM!
-  │
-  │   with module.talos.proxmox_virtual_environment_vm.this["host.example.com"],
-  │   on talos/virtual-machines.tf line 1, in resource "proxmox_virtual_environment_vm" "this":
-  │    1: resource "proxmox_virtual_environment_vm" "this" {
-  │
-  ╵
-
-  exit status 1
-```
+- **Breaking possibly:** Fixed an issue for `disk` type where `volumes[].datastore` was not properly defaulting to the VM's datastore (`nodes[].datastore`) if not specified (#179).
 
 ### Compatibility Note
 
@@ -203,27 +133,29 @@ The minimum (and maximum) supported Talos versions are still the same as mention
 
 ## [6.0.0] - 2026-01-19
 
-:boom: **BREAKING CHANGE** :boom:
+> [!CAUTION]
+> :boom: **BREAKING CHANGE** :boom:
+>
+> Please consult [UPGRADE.md](UPGRADE.md#600) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
 
 This release introduces a major change in the VM and disk architecture by separating the Talos OS disk from the EPHEMERAL and additional data disks, among some name harmonizations of variables. While coming along with several breaking changes, this release enhances upgradeability, flexibility, maintainability and storage options.
 
-The module is limited to Talos v1.10 (or v1.11 when using the `disk` feature) as minimum versions and v1.11 as maximum supported version. It will stay this way within the v6.0 minor series (as any v6.0.x patch version will not alter functionality). Only v6.1 of this Terraform Talos provider will support Talos v1.12 and newer. See *Compatibility Note* section below for further details.
+The module is limited to Talos v1.10 (or v1.11 when using the `disk` feature) as minimum versions and v1.11 as maximum supported version. It will stay this way within the v6.0 minor series (as any v6.0.x patch version will not alter functionality). Only v6.1 of this Terraform Talos provider will support Talos v1.12 and newer. See _Compatibility Note_ section below for further details.
 
 ### Changed
 
 - **Breaking:** Split up disk setup and VM into 2 disks and 2 VMs (#144). As this change is destroying the former primary disk, please consult the **Upgrade Note** below for further instructions.
 
   The new VM and disk architecture is as follows (cf. [VM architecture documentation](docs/vms.md#separation-of-talos-vm-and-data-vm)):
-
   - Main/Talos VM is holding primary (existing) disk with Talos OS (with EFI,
-    META and STATE) partitions.  The disk has a fixed size of `5 GB` because
+    META and STATE) partitions. The disk has a fixed size of `5 GB` because
     current Talos image size is ~4 GB.
   - (NEW) 2nd disk is holding `/var` with EPHEMERAL data (with e.g. `etcd`).
     In addition, a new "data_vm" (which is offline and just acts as a
-    placeholder).  The VM id is the Talos VM ID suffixed by `0` and the VM name
+    placeholder). The VM id is the Talos VM ID suffixed by `0` and the VM name
     ia suffixed by `-data` (e.g. VM ID `123` and VM name `k8s1.example.com`
     become `1230` and `k8s1.example.com-data`, respectively).
-    The data disk has a variable size which is configurable.  As the new data
+    The data disk has a variable size which is configurable. As the new data
     disk is not holding the OS any longer, you can decrease its size by 4 GB
     for having a similar data usage setup as before.
   - The data_vm's disk is attached to the main Talos VM.
@@ -239,29 +171,19 @@ The module is limited to Talos v1.10 (or v1.11 when using the `disk` feature) as
 ### Added
 
 - Added possibility to define addtional **data disks** (#175). An additional data disk can be be used e.g. for `hostPath` or for additional space for other CSI solutions (e.g. OpenEBS, Longhorn). This feature leverages the `User Volume` feature introduced in [Talos v1.11](https://docs.siderolabs.com/talos/v1.11/configure-your-talos-cluster/storage-and-disk-management/disk-management/user). See the enriched [`volumes` variable documentation](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) – which, BTW, is indicating support for further Volume Types `directory` (#161) and `partition` (#162) in future releases (#159) based on Talos v1.12.
-- Documented [how to upgrade](docs/upgrading.md) several aspects of the Talos cluster (e.g. upgrade Talos OS version, Kubernetes version, terraform module version, incl. breaking changes and resource targeting).
+- Documented [how to upgrade](docs/upgrade%20methods.md) several aspects of the Talos cluster (e.g. upgrade Talos OS version, Kubernetes version, terraform module version, incl. breaking changes and resource targeting).
 - Documented the new VM architecture with [separation of Talos VM and Data VM](docs/vms.md#separation-of-talos-vm-and-data-vm).
 
 ### Fixed
 
 - Fixed definition of `volumes` variable to allow no volume getting specified (#166).
 
-### Upgrade Note
-
-- Rename variables as indicated above.
-- For tackling the VM destruction caused by breaking change of separating Talos OS and EPHEMERAL disks you have several options:
-  1. Recreate the cluster, or
-  1. Restore `etcd` data from a backup, or
-  1. (Recommeded) leverage **resource targeting** (cf. [upgrade documentation](docs/upgrading.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
-- Optionally, you can decrease the data disk size by 4 GB for having a similar
-  data usage setup as before.
-
 ### Compatibility Note
 
 The minimum Talos version requirement changed due to the new disk management features leveraged here:
 
-- If *not* using `disk` feature, Talos v1.10 is required at minimum nevertheless (due to separating EPHEMERAL partition from OS disk). It appears that 6.0.x module version is supported by newer Talos versions, e.g. v1.12.
-- If using `disk` feature, Talos v1.11 is required at minimum (due to leveraging `User Volume` feature). Talos v1.12 forms the *maximum* supported version due to incompatible changes introduced in Talos v1.12.
+- If _not_ using `disk` feature, Talos v1.10 is required at minimum nevertheless (due to separating EPHEMERAL partition from OS disk). It appears that 6.0.x module version is supported by newer Talos versions, e.g. v1.12.
+- If using `disk` feature, Talos v1.11 is required at minimum (due to leveraging `User Volume` feature). Talos v1.12 forms the _maximum_ supported version due to incompatible changes introduced in Talos v1.12.
 - When requiring Talos v1.12, you have the option of not using the `disk` feature or waiting for module version v6.1 which is supposed to support Talos v1.12 and newer.
 
 | Module/Talos Version | not using `disk` feature | using `disk` feature |
@@ -307,7 +229,10 @@ The minimum Talos version requirement changed due to the new disk management fea
 
 ## [5.0.0] - 2025-10-03
 
-:boom: **BREAKING CHANGE** :boom:
+> [!CAUTION]
+> :boom: **BREAKING CHANGE** :boom:
+>
+> Please consult [UPGRADE.md](UPGRADE.md#500) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
 
 ### Changed
 
@@ -407,17 +332,23 @@ The minimum Talos version requirement changed due to the new disk management fea
 
 ## [4.0.0] - 2025-08-30
 
-:boom: **BREAKING CHANGE** :boom:
+> [!CAUTION]
+> :boom: **BREAKING CHANGE** :boom:
+>
+> Please consult [UPGRADE.md](UPGRADE.md#400) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
 
-### Added
+### Changed
 
-- **Breaking:** The `on_boot` parameter got moved from the `nodes` variable to
-  the `cluster` variable for controlling VM startup during boot (#115). It
-  makes more sense setting it for all VMs used in a cluster.
+- **Breaking possibly:** The `on_boot` parameter got moved from the `nodes` variable to the `cluster` variable for controlling VM startup during boot (#115). It makes more sense setting it for all VMs used in a cluster.
+
+If you used the `on_boot` parameter before, you need to move it from the `nodes` variable to the `cluster` variable.
 
 ## [3.0.0] - 2025-08-29
 
-:boom: **BREAKING CHANGE** :boom:
+> [!CAUTION]
+> :boom: **BREAKING CHANGE** :boom:
+>
+> Please consult [UPGRADE.md](UPGRADE.md#300) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
 
 ### Changed
 
@@ -439,15 +370,10 @@ The minimum Talos version requirement changed due to the new disk management fea
 - update `cilium/cilium` v1.18.0 → v1.18.1 (#82)
 - update `terraform proxmox` v0.81.0 → v0.82.0 (#100)
 
-### Upgrade Note
-
-- As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade documentation](docs/upgrading.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
-
 ## [2.1.0] - 2025-08-10
 
-### Upgrade Note
-
-Ensure to use Talos version `v1.9.3` at minimum (cf. #20).
+> [!TIP]
+> Ensure to use Talos version `v1.9.3` at minimum. This is due to a bug in the terraform talos provider which causes issues with Talos v1.9.2 and below ([GH issue #20](https://github.com/isejalabs/terraform-proxmox-talos/issues/20)). Please consult [UPGRADE.md](UPGRADE.md#210) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
 
 ### Added
 
@@ -486,41 +412,28 @@ caused a change in the release tag naming scheme.
 
 ## [2.0.0] - 2025-01-16
 
+> [!CAUTION]
+> :boom: **BREAKING CHANGE** :boom:
+>
+> Please consult [UPGRADE.md](UPGRADE.md#200) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
+
 ### Changed
 
-**BREAKING CHANGE**:
-
-- Repo ownership changed from @sebiklamar to @isejalabs.
-- In addition, there's a change in the repo structure by splitting up the
-  terraform modules to multiple repos. As such, terraform module `vehagn-k8s`
-  will change its name to `terraform-proxmox-talos`, while version tags will
-  strip off the module name, i.e. change from `vehagn-k8s-v2.0.0` to `v2.0.0`.
+- **Breaking:** Repo ownership changed from @sebiklamar to @isejalabs.
+- **Breaking:** In addition, there's a change in the repo structure by splitting up the terraform modules to multiple repos. As such, terraform module `vehagn-k8s` will change its name to `terraform-proxmox-talos`, while version tags will strip off the module name, i.e. change from `vehagn-k8s-v2.0.0` to `v2.0.0`.
 
 No further code changes, i.e. functionality equals the `v1.0.0` version.
 
-**Upgrade Notice**:
-While most tools will accomodate to the new repo URL per `git`'s redirect for
-the short term, a manual change is necessary for the long term and for adapting
-to the new repo structure because the module's code will move from the
-`modules/vehagn-k8s` subfolder to the repo root folder.
-
-Coming from a pre-`v2.0.0` version you normally have adapted any `source` URL
-references as part of the transition from `vehagn-k8s-v1.0.0` via the
-transitional release `vehagn-k8s-v2.0.0` already.
-
-1. If not done yet, set repo `source` URL in terraform/tofu/terragrunt to
-   `isejalabs/terraform-proxmox-talos.git?ref=v2.0.0`.
-2. Migrate your state file, depending on `remote_state` configuration. Read the
-   [release notes for vehagn-k8s-v2.0.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/vehagn-k8s-v2.0.0)
-   for further instructions.
-
 ## [1.0.0] - 2024-12-23
+
+> [!CAUTION]
+> :boom: **BREAKING CHANGE** :boom:
+>
+> Please consult [UPGRADE.md](UPGRADE.md#100) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
 
 ### Changed
 
-**BREAKING CHANGE:**
-
-- Proxmox volume and downloaded file (talos image) respect
+- **Breaking:** Proxmox volume and downloaded file (talos image) respect
   the environment (`var.env`) in the volume (e.g. `vm-9999-dev-foo`) and
   filename (e.g. `dev-talos-<schematic>-v1.8.4-nocloud-amd64.img`) if specified
   (optionally).
@@ -540,17 +453,13 @@ transitional release `vehagn-k8s-v2.0.0` already.
   beware potential issue with DNS, see siderolabs/talos#10002: Cilium 1.16.5
   breaks external DNS resolution with forwardKubeDNSToHost enabled)
 
-### Upgrade Note
-
-- As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade documentation](docs/upgrading.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
-
 ## [0.3.0] - 2024-12-14
 
 ### Added
 
-- new optional `nodes.[].disk_size` parameter for VM disk size (defaulted to
+- new optional `nodes[].disk_size` parameter for VM disk size (defaulted to
   vehagn's `20` GB size)
-- new optional `nodes.[].bridge` parameter for network bridge (defaulted to
+- new optional `nodes[].bridge` parameter for network bridge (defaulted to
   vehagn's `vmbr0`)
 
 ### Changed
@@ -573,7 +482,7 @@ transitional release `vehagn-k8s-v2.0.0` already.
 
 ### Added
 
-- Keep a Changelog
+- Introduced this [CHANGELOG](CHANGELOG.md) document which is following [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) approach.
 - proxmox csi role & user get env-specific prefix (per `var.env`), default is
   empty (e.g. `dev-CSI` and default `CSI`)
 - CPU configurable (default CPU stays `x86-64-v2-AES`, though not hard-coded any
@@ -618,16 +527,19 @@ additions)
 
 ## [0.0.2] - 2024-11-17
 
+> [!CAUTION]
+> :boom: **BREAKING CHANGE** :boom:
+>
+> Please consult [UPGRADE.md](UPGRADE.md#002) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
+
 ### Added
 
 - use variables for node and other env.specific config
 
 ### Changed
 
-**BREAKING CHANGE:**
-
-- requires definition of nodes, cluster, image as variables (or terragrunt input)
-- change default `nodes.[].datastore_id` back to `local-zfs` (was: `local-enc`)
+- **Breaking:** requires definition of nodes, cluster, image as variables (or terragrunt input)
+- **Breaking possibly:** change default `nodes[].datastore_id` back to `local-zfs` (was: `local-enc`)
 
 ## [0.0.1] - 2024-11-17
 
@@ -639,14 +551,14 @@ Notable changes to the upstream version are:
 
 ### Added
 
-- optional `nodes.[].vlan_id` parameter for defining VLAN ID
+- optional `nodes[].vlan_id` parameter for defining VLAN ID
 - install gateway api manifests before cilium deployment (cherry-picking
   [vehagn/homelab PR 78](https://github.com/vehagn/homelab/pull/78/commits))
 
 ### Changed
 
-- `nodes.[].datastore_id` defaulted to `local-enc` (was: `local-zfs`)
-- `nodes.[].mac_address` optional
+- `nodes[].datastore_id` defaulted to `local-enc` (was: `local-zfs`)
+- `nodes[].mac_address` optional
 - changed CPU model to `x86-64-v2-AES` (was: `host`)
 - overwrite existing downloaded file from other module instance, hence limiting
   clashing with other module instances in the same proxmox cluster
