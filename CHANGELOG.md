@@ -234,6 +234,8 @@ The minimum Talos version requirement changed due to the new disk management fea
 >
 > Please consult [UPGRADE.md](UPGRADE.md#500) documentation for detailed upgrade instructions, including instructions for handling the breaking changes introduced in this release.
 
+While this is a release with breaking changes which need your attention in configuring new variables (or just changing their name), it also brings *a lot* of new features. Most of them got ported from [vehagn/homelab](https://github.com/vehagn/homelab) where @vehagn and @karteekiitg implemented some nice things in the area of Talos machine configuration 🙏. Apart from that, there is a small subset implemented by @sebiklamar, and of course some indispensable component updates brought in by @renovate.
+
 ### Changed
 
 - **Breaking:** Moved `proxmox.api_token` variable out of `promox` struct into
