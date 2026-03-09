@@ -275,21 +275,29 @@ There's no real solution to the issue with the current implementation, as it is 
 
 ### Removing a disk volume – the need for manual handling
 
-#### The problem with terraform's handling of removing resources
+#### Proxmox' 2-step approach of handling removal disk volumes
 
-When a disk volume of type `disk` gets removed from the `volumes` variable, terraform will attempt to remove the respective disk from Proxmox. Besides the general potential issue of data loss, this can lead to two issues in the current implementation:
+A crucial point to be aware of when using disk volumes of type `disk` is that they require **manual handling** when removing them from the `volumes` variable in your terraform configuration. This is due to the way Proxmox handles the removal of disk resources in two steps separately:
 
-1. **Issue with disk attachment to Talos VM**: When removing a disk volume, terraform will attempt to remove the respective disk from both the data VM and the Talos VM in Proxmox. Unfortunately, terraform is not able to remove the disk from both VMs properly because it is trying the removal in the wrong order (data VM before Talos VM instead of from Talos VM first).
-1. **Issue with terraform not removing the disks according the plan**: When removing a disk volume, terraform will show in the plan that the respective disk gets removed from Proxmox. However, when applying the changes, terraform will not carry out the changes accordingly. This looks like an issue in the terraform provider, as it is not able to remove the disk from Proxmox as planned and also not detecting that the disks are still present in Proxmox after the pseudo-apply (see upstream issue [bpg/terraform-provider-proxmox#2596](https://redirect.github.com/bpg/terraform-provider-proxmox/issues/2596), tracked internally as [#197](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/197)).
+1. **Detaching disk from VM – done by terraform**: First, the disk gets **detached** from the VM(s), which leads to the disk still present in Proxmox.  
+    This complies to using the `Detach` UI option in Proxmox or using the CLI command `qm set <VMID> --delete <disk_interface>` (e.g., `qm set 123 --delete scsi1`).
+1. **Removing disk in Proxmox – to be done manually**: Then, the disk gets **removed** from Proxmox, which leads to the disk getting deleted in Proxmox and thus data loss.  
 
-#### How to deal with the issues arising from terraform's handling of removing disk volumes
+If the 2nd step is omitted and another disk volume gets added, the existing _unused_ disk will get ignored and another disk gets created, i.e. it cannot be *reused* – rather its kept safe until it gets deleted on purpose.
 
-The best way to deal with the issues is to **combine manual handling and terraform** when removing a disk volume of type `disk`:
+#### How to deal with the issue arising from Proxmox' approach of removing disk volumes
 
-1. First, **manually remove the disk from Proxmox** via the Proxmox UI or API. Make sure to remove the disk from  the Talos VM first and then from the data VM to avoid issues with disk attachment. 
-1. Then, remove the disk volume from the `volumes` variable in your terraform configuration and **apply the changes with terraform**.
+The terraform provider and thus this implementation is only carrying out the first step of detaching the disk, but not the second step of removing the disk from Proxmox. Therefore, the second step needs to be done **manually** after the disk got detached by terraform – unless one requires to keep the disk in Proxmox on purpose (e.g. as data "backup").
 
-A future version of the terraform provider might solve the issue [#197](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/197) with removing the disks properly, which would allow to remove disk volumes with terraform without manual intervention.
+The disk can get removed manually via the Proxmox UI using the `Remove` UI option for the respective VM. ALternatively, the following CLI command can get used, whereas the `disk_interface` is formed of the `unsedN` interface name and not the formerly used `scsiN` interface:
+
+```sh
+# Usage: Remove a disk from a VM
+qm unlink <VMID> --idlist <disk_interface>
+
+# Example: Remove unused disk from VM 123
+qm unlink 123 --idlist unused0
+```
 
 ## Architecture of the Volumes in Proxmox and Talos
 
