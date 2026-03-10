@@ -45,6 +45,12 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Fixed
 
+- Fixed an issue where disks did not get detached in Proxmox properly ([#197](https://github.com/isejalabs/terraform-proxmox-talos/issues/197)). While the disk now gets _detached_ from the VM properly, it still needs to get _removed_ (deleted from storage system) in Proxmox manually due to Proxmox' 2-step approach, cf. [storage documentation](docs/storage.md#disk-volumes-need-to-know).
+
+### Dependencies
+
+- update `terraform proxmox` v0.96.0 → v0.97.0 (#197)
+
 ## [7.1.0] - 2026-02-24
 
 ### Changed
