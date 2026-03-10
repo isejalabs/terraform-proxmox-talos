@@ -32,6 +32,17 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 -->
 
 ## [Unreleased]
+### Changed
+
+### Added
+
+### Removed
+
+### Fixed
+
+## [7.1.1] - 2026-03-10
+
+This release is mainly fixing an issue with removing `disk` type volumes in Proxmox properly. It also improves documentation by moving the upgrade instructions into a separate [UPGRADE.md](UPGRADE.md) document.
 
 ### Changed
 
@@ -41,8 +52,6 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 - Documentation: Added a new [UPGRADE.md](UPGRADE.md) file in the project root with detailed upgrade instructions for each release, especially for handling breaking changes. It documents the actions needed to upgrade this terraform module version in your cluster. This information was kept in the CHANGELOG.md file before, but it got moved to a separate file for better structuring and readability of the CHANGELOG.md file, which is supposed to give a high-level overview of the changes in each release, while the UPGRADE.md file is supposed to give detailed instructions for each release, especially for handling breaking changes.
 
-### Removed
-
 ### Fixed
 
 - Fixed an issue where disks did not get detached in Proxmox properly ([#197](https://github.com/isejalabs/terraform-proxmox-talos/issues/197)). While the disk now gets _detached_ from the VM properly, it still needs to get _removed_ (deleted from storage system) in Proxmox manually due to Proxmox' 2-step approach, cf. [storage documentation](docs/storage.md#disk-volumes-need-to-know).
@@ -50,6 +59,15 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 ### Dependencies
 
 - update `terraform proxmox` v0.96.0 → v0.97.0 (#197)
+
+| Component            | Version |
+| -------------------- | ------- |
+| cilium/cilium        | 1.18.7  |
+| cilium/cilium-cli    | 0.18.9  |
+| Mastercard/restapi   | 2.0.1   |
+| terraform kubernetes | 2.38.0  |
+| terraform proxmox    | 0.97.0  |
+| terraform talos      | 0.10.1  |
 
 ## [7.1.0] - 2026-02-24
 
