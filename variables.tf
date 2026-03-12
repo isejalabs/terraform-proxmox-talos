@@ -104,6 +104,22 @@ variable "sealed_secrets_config" {
   }
 }
 
+variable "talos_config_patches" {
+  description = "Paths to additional Talos Machine Configuration patches"
+  type = list(
+    object({
+      path         = string
+      machine_type = optional(string, "all") # "all", "controlplane", "worker"
+    })
+  )
+  validation {
+    // @formatter:off
+    condition     = length([for i in var.talos_config_patches : i if contains(["all", "controlplane", "worker"], i.machine_type)]) == length(var.talos_config_patches)
+    error_message = "`machine_type` must be either 'all', 'controlplane' or 'worker'."
+    // @formatter:on
+  }
+}
+
 variable "volumes" {
   description = "Additional storage volumes available to the cluster"
   type = map(

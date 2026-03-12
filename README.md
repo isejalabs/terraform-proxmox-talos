@@ -54,7 +54,7 @@ For seeing an example usage of the module, please be referred to the [author](ht
   - [X] disks → v6.0
   - [X] directories → v7.0
   - [ ] partitions → [#162](https://github.com/isejalabs/terraform-proxmox-talos/issues/162)
-- [ ] Allow more generic Talos Machine Configuration → [#214](https://github.com/isejalabs/terraform-proxmox-talos/issues/214)
+- [X] Allow more generic Talos Machine Configuration → v7.2 / [#214](https://github.com/isejalabs/terraform-proxmox-talos/issues/214)
 - [ ] Hybrid cluster, consisting of Proxmox VMs and bare metal hosts → [#219](https://github.com/isejalabs/terraform-proxmox-talos/issues/219)
 - [ ] Make included components' versions (e.g. cilium) more independent of module → [#218](https://github.com/isejalabs/terraform-proxmox-talos/issues/218)
 

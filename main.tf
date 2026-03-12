@@ -16,6 +16,8 @@ module "talos" {
   # hand over volumes of type `directory` only, else an empty list
   talos_volumes = coalesce({ for k, v in var.volumes : k => v if v.type == "directory" }, {})
 
+  talos_config_patches = var.talos_config_patches
+
   # take over configuration from main
   providers = {
     proxmox = proxmox
