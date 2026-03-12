@@ -32,18 +32,39 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 
 For seeing an example usage of the module, please be referred to the [author](https://github.com/sebiklamar/)'s implementation of the module in [isejalab/homelab](https://github.com/isejalabs/homelab). You will see this module being used in a multi-environment (e.g. dev, qa, prod), not only leveraging [Terragrunt](https://terragrunt.gruntwork.io/) as a DRY-style wrapper for `terraform`/`tofu`. Copious amounts of [YAML](https://yaml.org/) using [kustomize](https://kustomize.io/) and its [transformer](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/transformerconfigs/README.md), patches and components features will provide more [DRY](https://de.wikipedia.org/wiki/Don%E2%80%99t_repeat_yourself) capabilities.
 
-## Roadmap and more features
-
-If you think a feature is worth being implemented inside this terraform/tofu module, feel free starting a community [discussion](https://github.com/isejalabs/terraform-proxmox-talos/discussions). You can also look for existing [feature requests](https://github.com/isejalabs/terraform-proxmox-talos/issues?q=is%3Aissue%20state%3Aopen%20type%3AFeature) created in the [issue tracker](https://github.com/isejalabs/terraform-proxmox-talos/issues) which is governed by the author's [homelab project](https://github.com/orgs/isejalabs/projects/1).
-
 ## Requirements
 
 1. **Required**: You need to have one or more [**Proxmox**](https://www.proxmox.com/en/proxmox-virtual-environment) nodes to run the VMs on. A Proxmox cluster setup is required in the case of using multiple nodes.
 1. **Free Choice**: The module is tested to running well with [**OpenTofu**](https://opentofu.org/), while it should be compatible with [**Terraform**](https://www.terraform.io/) as well.
 1. **Recommended**: It's recommended using [**SOPS**](https://getsops.io/) for encrypting your Terraform credentials (e.g. Proxmox login). This allows storing all your Terraform configuration in version control.
 1. **Recommended**: For daily operations of the cluster you should have K8S **CLI tools** such als `kubectl`, `kustomize`, `cilium`, and `kubeseal`.
-1. **Optional**: You could have CLI tool `talosctl` for checking your Talos cluster. It's not strictly needed because even [upgrades are done using declarative IaC](docs/upgrading.md#talos-os-upgrade).
+1. **Optional**: You could have CLI tool `talosctl` for checking your Talos cluster. It's not strictly needed because even [upgrades are done using declarative IaC](docs/upgrade%20methods.md.md#talos-os-upgrade).
 1. **Optional**: Using [**Terragrunt**](https://terragrunt.gruntwork.io/) as a DRY-wrapper for terraform/tofu is optional.  Though, it's recommended by the author when aiming for multiple incarnations of the module for running multiple environments (e.g. dev, test, prod).
+
+## Roadmap and more features
+
+- [X] Transform Vegard's implementation into a separate and reusable terraform module
+  - Convert hardcodings into variables → v0.2
+  - Make some variables optional → v7.0
+- [X] Introduce an environment-specific prefix to allow multiple clusters on the same Proxmox cluster in parallel → v1.0
+- [X] Additional variables for configuring the VM and the cluster, growing (see the [CHANGELOG](CHANGELOG.md)), e.g.
+  - Network VLAN ID → v0.0.1
+  - Network Bridge Name → v0.3
+  - DNS configuration (→ v3.0
+  - Proxmox `on_boot` variable → v3.0
+- [X] Allow clusters with only one control plane node → v0.0.3
+- [X] Make scheduling on control plane configurable → v5.0 / [#124](https://github.com/isejalabs/terraform-proxmox-talos/issues/124)
+- [X] Make Talos machine configurable (ported from vehagn upstream) → v5.0
+- [X] Find a way where EPHEMERAL and additional disks are not deleted when Talos VM gets an upgrade → v6.0 / [#136](https://github.com/isejalabs/terraform-proxmox-talos/issues/136)
+- [ ] Allow configuring additional volume (TalosVolumes) → [#159](https://github.com/isejalabs/terraform-proxmox-talos/issues/159)
+  - [X] disks → v6.0
+  - [X] directories → v7.0
+  - [ ] partitions → [#162](https://github.com/isejalabs/terraform-proxmox-talos/issues/162)
+- [ ] Allow more generic Talos Machine Configuration → [#214](https://github.com/isejalabs/terraform-proxmox-talos/issues/214)
+- [ ] Hybrid cluster, consisting of Proxmox VMs and bare metal hosts
+- [ ] Make included components' versions (e.g. cilium) more independent of module. Thus, requiring no new module version on every component update or letting user override component versions for e.g. cilium. Nevertheless, user can already override a component version by a installing Kubernetes manifests or Helm charts on-top (c.f. [Upgrading instructions](docs/upgrading%20methods.md#upgrade-of-inbuilt-components)).
+
+If you think a feature is worth being implemented inside this terraform/tofu module, feel free starting a community [discussion](https://github.com/isejalabs/terraform-proxmox-talos/discussions). You can also look for existing [feature requests](https://github.com/isejalabs/terraform-proxmox-talos/issues?q=is%3Aissue%20state%3Aopen%20type%3AFeature) created in the [issue tracker](https://github.com/isejalabs/terraform-proxmox-talos/issues) which are steered by [project planning](https://github.com/orgs/isejalabs/projects/2).
 
 ## Credits
 
