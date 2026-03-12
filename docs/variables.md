@@ -142,7 +142,7 @@ Setting the `env` variable, to e.g. `"dev"`, has an effect on the following reso
 
 ### Definition
 
-The `image` parameter not only allows adjusting the downloaded Talos image by defining its extensions (schematic), version and other settings. The two `update_` attributes allow updating to another version or schematic definition; see the [upgrade documentation](upgrading.md) for more details.
+The `image` parameter not only allows adjusting the downloaded Talos image by defining its extensions (schematic), version and other settings. The two `update_` attributes allow updating to another version or schematic definition; see the [upgrade documentation](upgrade%20methods.md#talos-os-upgrade) for more details.
 
 | Key                     | Description                                                                                                                                                                       | Type     | Default / Example                    |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------ |
@@ -152,8 +152,8 @@ The `image` parameter not only allows adjusting the downloaded Talos image by de
 | `factory_url`           | Alternative [Talos Factory](https://factory.talos.dev/) URL                                                                                                                       | `string` | `"https://factory.talos.dev"`        |
 | `platform`              | Typically left set to its default (`"nocloud"`), still allowing alternative configuration for [Talos platform](https://www.talos.dev/v1.10/talos-guides/install/cloud-platforms/) | `string` | `"nocloud"`                          |
 | `datastore`             | Proxmox datastore used to store the image. Please do not use a shared storage as the image is expected to be downloaded for each Proxmox node separately                          | `string` | `"local"`                            |
-| `update_schematic_path` | Path to an alternative schematic definition to be used when updating a node (c.f. [updating schematic documentation](upgrading.md#talos-schematic-upgrade))                                                                                                                  | `string` | `null`                               |
-| `update_version`        | Alternative version definition to be used when updating a node (c.f. [updating Talos OS version documentation](upgrading.md#talos-os-upgrade))                                                                                                                   | `string` | `null`                               |
+| `update_schematic_path` | Path to an alternative schematic definition to be used when updating a node (c.f. [updating schematic documentation](upgrade%20methods.md#talos-schematic-upgrade))               | `string` | `null`                               |
+| `update_version`        | Alternative version definition to be used when updating a node (c.f. [updating Talos OS version documentation](upgrade%20methods.md#talos-os-upgrade))                            | `string` | `null`                               |
 
 ### Example
 
@@ -206,7 +206,7 @@ The `nodes` variable defines the Talos VMs that form the cluster. It consists of
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                            |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`         | `false`                           |
 | mac_address   | Custom MAC address, if no auto-assignment desired. Can be chosen from Proxmox' `BC:24:11` range            | `string`       | `null`                            |
-| update        | If set to `true`, the node will get updated to the [`image.update_version`](#definition-3) and/or [`image.update_schematic`](#definition-3). See the [upgrade documentation](upgrading.md#steps-to-upgrade-talos-os) for more details. | `bool`         | `false`                           |
+| update        | If set to `true`, the node will get updated to the [`image.update_version`](#definition-3) and/or [`image.update_schematic`](#definition-3). See the [upgrade documentation](upgrade%20methods.md#steps-to-upgrade-talos-os) for more details. | `bool`         | `false`                           |
 | vlan_id       | Network VLAN ID                                                                                            | `number`       | `0`                               |
 
 ### Example

@@ -271,7 +271,7 @@ There's no real solution to the issue with the current implementation, as it is 
 1. When using multiple disk volumes, nevertheless, try to **add or remove only volumes whose name comes after existing volume names** in regards to their lexical order.
 1. If naming the volumes in a way that their lexical order matches the desired order of the disks in Proxmox is not possible, you need to **remove all conflicting disk volumes from the `volumes` variable**, apply the changes to remove the disks from Proxmox, and then add the conflicting disk volumes again including the desired configuration.
 
-    You need to make sure to **backup any important data** on the disks before removing them from Proxmox, as this process will lead to data loss on the respective disks. If the disks are used for a storage backend that uses replication, you can mitigate the risk of data loss by ensuring that the data is replicated to other disks before removing the disks from Proxmox and use [resource targeting](upgrading.md#resource-targeting) to apply the change to only one disk.
+   You need to make sure to **backup any important data** on the disks before removing them from Proxmox, as this process will lead to data loss on the respective disks. If the disks are used for a storage backend that uses replication, you can mitigate the risk of data loss by ensuring that the data is replicated to other disks before removing the disks from Proxmox and use [resource targeting](upgrade%20methods.md#resource-targeting) to apply the change to only one disk.
 
 ### Removing a disk volume – the need for manual handling
 

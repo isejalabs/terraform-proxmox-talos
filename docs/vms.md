@@ -16,7 +16,7 @@ Some configuration changes (e.g. changing count of CPU cores or amount of memory
 
 ### Cluster Upgrades
 
-A special case is upgrading the cluster and its nodes which is [documented here](upgrading.md).
+A special case is upgrading the cluster and its nodes which is [documented here](upgrade%20methods.md).
 
 ## Separation of Talos VM and Data VM
 
