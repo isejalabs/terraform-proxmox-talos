@@ -16,6 +16,7 @@ For a quick overview of all variables, please see the following Table of Content
 - [proxmox](#proxmox)
 - [proxmox_api_token](#proxmox_api_token)
 - [sealed_secrets_config](#sealed_secrets_config)
+- [talos_config_patches](#talos_config_patches)
 - [volumes](#volumes)
 
 # Variables
@@ -135,7 +136,7 @@ Setting the `env` variable, to e.g. `"dev"`, has an effect on the following reso
 | ---------------------------- | -------------------------------- | ------------------- |
 | Proxmox role for CSI:<br>`<env>-CSI` | `CSI`                    | `dev-CSI`           |
 | Proxmox user for CSI plugin:<br>`<env>-kubernetes-csi@pve` | `kubernetes-csi@pve` | `dev-kubernetes-csi@pve`|
-| Proxmox disk names for CSI:<br>`vm-<vmid>-<env>-<volname>` | `vm-9999-foo` | `vm-9999-dev-pv-foo`<br><br>While adjusting the [`volumes.vmid`](#definition-8) parameter (default `"9999"`) variable looks like another option to prevent name clashes in a multi-environment, the recommended way is using the `env` variable for separating *multiple environments* and using the `volumes.vmid` for separating proxmox-csi volumes/disks from a potential *VM with the same ID* (where this VM's ID cannot get changed) |
+| Proxmox disk names for CSI:<br>`vm-<vmid>-<env>-<volname>` | `vm-9999-foo` | `vm-9999-dev-pv-foo`<br><br>While adjusting the [`volumes.vmid`](#definition-9) parameter (default `"9999"`) variable looks like another option to prevent name clashes in a multi-environment, the recommended way is using the `env` variable for separating *multiple environments* and using the `volumes.vmid` for separating proxmox-csi volumes/disks from a potential *VM with the same ID* (where this VM's ID cannot get changed) |
 | Downloaded image file        | `talos-ce..15-v1.2.3-nocloud-amd64.img` | `<env>-talos-<schematic>-<version>-<platform>-<arch>.img`<br>e.g. `dev-talos-ce..15-v1.2.3-nocloud-amd64.img` |
 
 ## image
@@ -206,6 +207,7 @@ The `nodes` variable defines the Talos VMs that form the cluster. It consists of
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                            |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`         | `false`                           |
 | mac_address   | Custom MAC address, if no auto-assignment desired. Can be chosen from Proxmox' `BC:24:11` range            | `string`       | `null`                            |
+| talos_config_patches | List of paths to Talos [MachineConfig](https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config) patch files, dedicated per node-level, similar to the global-scoped [`talos_config_patches`](#talos_config_patches) variable | `list(string)` | `[]`
 | update        | If set to `true`, the node will get updated to the [`image.update_version`](#definition-3) and/or [`image.update_schematic`](#definition-3). See the [upgrade documentation](upgrade%20methods.md#steps-to-upgrade-talos-os) for more details. | `bool`         | `false`                           |
 | vlan_id       | Network VLAN ID                                                                                            | `number`       | `0`                               |
 
@@ -237,6 +239,10 @@ nodes = {
     dns           = ["1.1.1.1", "9.9.9.9"]
     igpu          = true
     mac_address   = "BC:24:11:2E:C8:02"
+    talos_config_patches = [
+      "assets/talos/patches/worker1.example.net/patch1.yaml", 
+      "assets/talos/patches/worker1.example.net/patch2.yaml",
+    ]
     # update        = true  # leave this commented out usually!
     vlan          = 123
   }
@@ -321,10 +327,79 @@ openssl req -x509 -days 365 -nodes -newkey rsa:4096 -keyout assets/sealed-secret
 
 The command given above places the files in the default path (`"assets/sealed..."`).
 
+## talos_config_patches
+
+The `talos_config_patches` variable gives you the option to apply additional Talos [MachineConfig](https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config) patches. This is especially useful, when the available configuration options given by the [`cluster`](#cluster) variable (e.g. `cluster.api_server`, `cluster.extra_manifests`, `cluster.kubelet` etc.) are not sufficient.
+
+These patches are merged with the default configuration of this module and those of the [`cluster`](#cluster) variable and are applied last. Hence, you could overwrite configuration by said variable and the module-specific configuration described below.
+
+### Definition
+
+The `talos_config_patches` variable is formed of a **list** of objects with 2 attributes, with `path` being mandatory and `machine_type` defaulting to `"all"` node types.
+
+Key | Description | Type | Default / Example
+--- | ----------- | ---- | -----------------
+path | **Required** Path to the patch file | `string` | e.g. `"assets/talos/patches/controlplane/openebs.yaml"`
+machine_type | Type of Kubernetes node, the patch should get applied to. Must be either `"all"` (default), `"controlplane"` or `"worker"` | `string` | `"all"`
+
+### Example
+
+#### Variable assignment
+
+```terraform
+# terraform variable assignment
+talos_config_patches = [
+  {
+    machine_type = "controlplane"
+    path         = "assets/talos/patches/controlplane/openebs.yaml"
+  },
+  {
+    machine_type = "worker"
+    path         = "assets/talos/patches/worker/openebs.yaml"
+  },
+]
+```
+
+#### Patch file
+
+The patch file can be in the format of a "Strategic Merge Patch" and also RFC 6902 (JSON Patch).
+
+Example for a strategic merge patch where map values (here `apiServer`) are merged, list values getting added (here `openebs`and scalars replaced (here `apiVersion` is changed from `v1alpha1` to `v1beta1`):
+
+```yaml
+# assets/talos/patches/controlplane/openebs.yaml
+cluster:
+  apiServer:
+    admissionControl:
+      - name: PodSecurity
+        configuration:
+          apiVersion: pod-security.admission.config.k8s.io/v1beta1
+          kind: PodSecurityConfiguration
+          exemptions:
+            namespaces:
+              - openebs
+```
+
+Example of a RFC 6902 (JSON Patch) patch:
+
+```yaml
+- op: remove
+  path: /cluster/apiServer/admissionControl
+```
+
+### Module default machine configuration
+
+This terraform module is configuring some settings using given variables leveraging template files (e.g. node labeling and network configuration using attributes of the `nodes` and `cluster` variables, cluster configuration using the `cluster` variable etc.). You can consult the configuration made per templating in the following files:
+
+- **all** nodes: [`common.yaml.tftpl`](../talos/machine-config/common.yaml.tftpl)
+- **controlplane** nodes: [`controlplane.yaml.tftpl`](../talos/machine-config/controlplane.yaml.tftpl)
+- **worker** nodes: [`worker.yaml.tftpl`](../talos/machine-config/worker.yaml.tftpl)
+
+As stated above, this default configuration can be _enriched_ and even _overriden_ by additional patch files because they are applied last. Pay attention to not alter or remove configuration needed for proper functioning of the cluster.
+
 ## volumes
 
 The `volumes` variable lets you configure additional storage volumes available to the cluster. The supported storage options are described in the [storage documentation](storage.md).
-
 
 ### Definition
 

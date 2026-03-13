@@ -4,6 +4,11 @@ locals {
   extra_manifests = concat(var.cluster.extra_manifests, [
     "https://github.com/kubernetes-sigs/gateway-api/releases/download/${var.cluster.gateway_api_version}/standard-install.yaml",
   ])
+
+  # Talos Machine Configuration patches
+  talos_config_patches_all          = coalesce([for k, v in var.talos_config_patches : v.path if v.machine_type == "all"], [])
+  talos_config_patches_controlplane = coalesce([for k, v in var.talos_config_patches : v.path if v.machine_type == "controlplane"], [])
+  talos_config_patches_worker       = coalesce([for k, v in var.talos_config_patches : v.path if v.machine_type == "worker"], [])
 }
 
 resource "talos_machine_secrets" "this" {
@@ -51,7 +56,7 @@ data "talos_machine_configuration" "this" {
   # @formatter:on
   machine_type    = each.value.machine_type
   machine_secrets = talos_machine_secrets.this.machine_secrets
-  config_patches = [
+  config_patches = concat([
     templatefile("${path.module}/machine-config/common.yaml.tftpl", {
       dns                = each.value.dns
       node_name          = each.value.host_node
@@ -60,7 +65,8 @@ data "talos_machine_configuration" "this" {
       hostname           = each.key
       kubelet            = var.cluster.kubelet
       machine_features   = var.cluster.machine_features
-    }), each.value.machine_type == "controlplane" ?
+    }),
+    each.value.machine_type == "controlplane" ?
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {
       talos_volumes      = var.talos_volumes
       talos_disk_volumes = var.talos_disk_volumes
@@ -82,7 +88,13 @@ data "talos_machine_configuration" "this" {
       gateway            = var.cluster.gateway
       subnet_mask        = var.cluster.subnet_mask
     })
-  ]
+    ],
+    local.talos_config_patches_all,
+    each.value.machine_type == "controlplane" ?
+    local.talos_config_patches_controlplane :
+    local.talos_config_patches_worker,
+    each.value.talos_config_patches,
+  )
 }
 
 resource "talos_machine_configuration_apply" "this" {

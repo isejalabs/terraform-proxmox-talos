@@ -63,6 +63,7 @@ variable "nodes" {
     igpu          = optional(bool, false)
     mac_address   = optional(string, null)
     update        = optional(bool, false)
+    talos_config_patches = optional(list(string), )
     vlan_id       = optional(number, 0)
   }))
 }
@@ -87,6 +88,22 @@ variable "talos_volumes" {
     // @formatter:off
     condition     = length([for i in var.talos_volumes : i if contains(["directory", "disk", "proxmox-csi"], i.type)]) == length(var.talos_volumes)
     error_message = "Volume `type` can be 'directory', 'disk' or 'proxmox-csi' only; other types not supported by this module version."
+    // @formatter:on
+  }
+}
+
+variable "talos_config_patches" {
+  description = "Paths to additional Talos Machine Configuration patches"
+  type = list(
+    object({
+      path         = string
+      machine_type = optional(string, "all") # "all", "controlplane", "worker"
+    })
+  )
+  validation {
+    // @formatter:off
+    condition     = length([for i in var.talos_config_patches : i if contains(["all", "controlplane", "worker"], i.machine_type)]) == length(var.talos_config_patches)
+    error_message = "`machine_type` must be either 'all', 'controlplane' or 'worker'."
     // @formatter:on
   }
 }

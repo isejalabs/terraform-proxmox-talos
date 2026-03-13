@@ -312,7 +312,7 @@ The `directory` and `partition` volume types do not require separate disks in Pr
 
 The `partition` volume type would require a separate partition on the underlying storage device, which is currently not implemented.
 
-By default, the volume types `directory` (and `disk`) get created for all _Worker_ Kubernetes nodes (Talos VMs with [`nodes[].machine_type="worker"`](variables.md#definition-4)) in the cluster. You can adjust the volume creation to specific Talos VM types by setting the optional `machine_type` parameter to `controlplane`, `worker` (default) or `all` in the [`volumes[]`](variables.md#definition-8) definition. This might be useful for special use cases, when workloads are supposed to run on control plane nodes as well (which can get achieved by setting [`cluster.allow_scheduling_on_controlplane="true"`](variables.md#definition-1)).
+By default, the volume types `directory` (and `disk`) get created for all _Worker_ Kubernetes nodes (Talos VMs with [`nodes[].machine_type="worker"`](variables.md#definition-4)) in the cluster. You can adjust the volume creation to specific Talos VM types by setting the optional `machine_type` parameter to `controlplane`, `worker` (default) or `all` in the [`volumes[]`](variables.md#definition-9) definition. This might be useful for special use cases, when workloads are supposed to run on control plane nodes as well (which can get achieved by setting [`cluster.allow_scheduling_on_controlplane="true"`](variables.md#definition-1)).
 
 You can list the created volumes in Talos with the `talosctl get mountstatus` command, which will show the respective mountpoints (e.g. `/var/mnt/test-dir1`).
 

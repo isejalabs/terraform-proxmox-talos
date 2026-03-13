@@ -65,6 +65,7 @@ variable "nodes" {
     dns           = optional(list(string))
     igpu          = optional(bool, false)
     mac_address   = optional(string, null)
+    talos_config_patches = optional(list(string), [])
     update        = optional(bool, false)
     vlan_id       = optional(number, 0)
   }))
@@ -101,6 +102,22 @@ variable "sealed_secrets_config" {
   default = {
     certificate_path = "assets/sealed-secrets/certificate/sealed-secrets.cert"
     key_path         = "assets/sealed-secrets/certificate/sealed-secrets.key"
+  }
+}
+
+variable "talos_config_patches" {
+  description = "Paths to additional Talos Machine Configuration patches"
+  type = list(
+    object({
+      path         = string
+      machine_type = optional(string, "all") # "all", "controlplane", "worker"
+    })
+  )
+  validation {
+    // @formatter:off
+    condition     = length([for i in var.talos_config_patches : i if contains(["all", "controlplane", "worker"], i.machine_type)]) == length(var.talos_config_patches)
+    error_message = "`machine_type` must be either 'all', 'controlplane' or 'worker'."
+    // @formatter:on
   }
 }
 
