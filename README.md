@@ -43,32 +43,28 @@ For seeing an example usage of the module, please be referred to the [author](ht
 
 ## Roadmap and more features
 
-- [X] Transform Vegard's implementation into a separate and reusable terraform module
-  - Convert hardcodings into variables → v0.2
-  - Make some variables optional → v7.0
+- [X] Transform Vegard's implementation into a separate and reusable terraform module, also converting hardcodings into variables → v0.2
+- [X] Allow creating clusters with only one control plane node → v0.0.3
 - [X] Introduce an environment-specific prefix to allow multiple clusters on the same Proxmox cluster in parallel → v1.0
-- [X] Additional variables for configuring the VM and the cluster, growing (see the [CHANGELOG](CHANGELOG.md)), e.g.
-  - Network VLAN ID → v0.0.1
-  - Network Bridge Name → v0.3
-  - DNS configuration (→ v3.0
-  - Proxmox `on_boot` variable → v3.0
-- [X] Allow clusters with only one control plane node → v0.0.3
+- [X] Additional variables for configuring the VM and the cluster, growing → see the [CHANGELOG](CHANGELOG.md)
 - [X] Make scheduling on control plane configurable → v5.0 / [#124](https://github.com/isejalabs/terraform-proxmox-talos/issues/124)
-- [X] Make Talos machine configurable (ported from vehagn upstream) → v5.0
-- [X] Find a way where EPHEMERAL and additional disks are not deleted when Talos VM gets an upgrade → v6.0 / [#136](https://github.com/isejalabs/terraform-proxmox-talos/issues/136)
-- [ ] Allow configuring additional volume (TalosVolumes) → [#159](https://github.com/isejalabs/terraform-proxmox-talos/issues/159)
+- [X] Allow customizing the Talos Machine Configuration (ported from vehagn upstream) → v5.0 / [#83](https://github.com/isejalabs/terraform-proxmox-talos/issues/83)
+- [X] Prevent EPHEMERAL and additional disks from getting deleted when Talos VM is upgraded → v6.0 / [#136](https://github.com/isejalabs/terraform-proxmox-talos/issues/136)
+- [ ] Allow configuring additional storage volumes (TalosVolumes) → [#159](https://github.com/isejalabs/terraform-proxmox-talos/issues/159)
   - [X] disks → v6.0
   - [X] directories → v7.0
   - [ ] partitions → [#162](https://github.com/isejalabs/terraform-proxmox-talos/issues/162)
 - [ ] Allow more generic Talos Machine Configuration → [#214](https://github.com/isejalabs/terraform-proxmox-talos/issues/214)
-- [ ] Hybrid cluster, consisting of Proxmox VMs and bare metal hosts
-- [ ] Make included components' versions (e.g. cilium) more independent of module. Thus, requiring no new module version on every component update or letting user override component versions for e.g. cilium. Nevertheless, user can already override a component version by a installing Kubernetes manifests or Helm charts on-top (c.f. [Upgrading instructions](docs/upgrading%20methods.md#upgrade-of-inbuilt-components)).
+- [ ] Hybrid cluster, consisting of Proxmox VMs and bare metal hosts → [#219](https://github.com/isejalabs/terraform-proxmox-talos/issues/219)
+- [ ] Make included components' versions (e.g. cilium) more independent of module → [#218](https://github.com/isejalabs/terraform-proxmox-talos/issues/218)
 
-If you think a feature is worth being implemented inside this terraform/tofu module, feel free starting a community [discussion](https://github.com/isejalabs/terraform-proxmox-talos/discussions). You can also look for existing [feature requests](https://github.com/isejalabs/terraform-proxmox-talos/issues?q=is%3Aissue%20state%3Aopen%20type%3AFeature) created in the [issue tracker](https://github.com/isejalabs/terraform-proxmox-talos/issues) which are steered by [project planning](https://github.com/orgs/isejalabs/projects/2).
+If you think a feature is worth getting implemented inside this terraform/tofu module, feel free starting a community [discussion](https://github.com/isejalabs/terraform-proxmox-talos/discussions). You can also look for existing [feature requests](https://github.com/isejalabs/terraform-proxmox-talos/issues?q=is%3Aissue%20state%3Aopen%20type%3AFeature) created in the [issue tracker](https://github.com/isejalabs/terraform-proxmox-talos/issues) which are steered by the [project plan](https://github.com/orgs/isejalabs/projects/2).
 
 ## Credits
 
-This module would not exist without [**Vegard Stenhjem Hagen**](https://github.com/vehagn)'s excellent work on his [@vehagn/homelab//tofu/kubernets](https://github.com/vehagn/homelab/tree/140fbc249b26c622c0e2ab413c3aca9eb5014f8e) implementation. Besides variables and releases/tags, some other small changes got added, making this terraform module more usable in different environments. See the [Changelog](CHANGELOG.md) for a full list of changes. And don't miss out checking Vegard's helpful [blog](https://blog.stonegarden.dev/), where he's giving brilliant explainations on Kubernetes topics, and of course his [homelab implementation](https://github.com/vehagn/homelab).
+This terraform module would not exist without [**Vegard Stenhjem Hagen**](https://github.com/vehagn). He set the foundation for a terraform module creating a Talos Kubernetes cluster in Proxmox in his excellent [vehagn/homelab//tofu/kubernets](https://github.com/vehagn/homelab/tree/140fbc249b26c622c0e2ab413c3aca9eb5014f8e) implementation. Vegard's implementation got transformed into a reusable terraform module by adding variables and other tweaks.
+
+Additional features got added by the author of this module in the meanwhile while functionality from Vegard's implementation get ported from time to time. See the [Changelog](CHANGELOG.md) for a full list of changes. And don't miss out checking Vegard's helpful [blog](https://blog.stonegarden.dev/), where he's giving brilliant explainations on Kubernetes topics, and of course his [homelab implementation](https://github.com/vehagn/homelab).
 
 ## Disclaimer
 
