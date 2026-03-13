@@ -52,22 +52,22 @@ variable "image" {
 variable "nodes" {
   description = "Configuration for cluster nodes"
   type = map(object({
-    cpu           = number
-    host_node     = string
-    ip            = string
-    machine_type  = string
-    ram_dedicated = number
-    vm_id         = number
-    bridge        = optional(string, "vmbr0")
-    cpu_type      = optional(string, "x86-64-v2-AES")
-    datastore     = optional(string, "local-zfs")
-    disk_size     = optional(number, 20)
-    dns           = optional(list(string))
-    igpu          = optional(bool, false)
-    mac_address   = optional(string, null)
+    cpu                  = number
+    host_node            = string
+    ip                   = string
+    machine_type         = string
+    ram_dedicated        = number
+    vm_id                = number
+    bridge               = optional(string, "vmbr0")
+    cpu_type             = optional(string, "x86-64-v2-AES")
+    datastore            = optional(string, "local-zfs")
+    disk_size            = optional(number, 20)
+    dns                  = optional(list(string))
+    igpu                 = optional(bool, false)
+    mac_address          = optional(string, null)
     talos_config_patches = optional(list(string), [])
-    update        = optional(bool, false)
-    vlan_id       = optional(number, 0)
+    update               = optional(bool, false)
+    vlan_id              = optional(number, 0)
   }))
   validation {
     // @formatter:off
