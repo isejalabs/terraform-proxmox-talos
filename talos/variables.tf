@@ -63,6 +63,7 @@ variable "nodes" {
     igpu          = optional(bool, false)
     mac_address   = optional(string, null)
     update        = optional(bool, false)
+    talos_config_patches = optional(list(string), )
     vlan_id       = optional(number, 0)
   }))
 }

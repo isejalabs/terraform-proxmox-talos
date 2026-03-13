@@ -93,6 +93,7 @@ data "talos_machine_configuration" "this" {
     each.value.machine_type == "controlplane" ?
     local.talos_config_patches_controlplane :
     local.talos_config_patches_worker,
+    each.value.talos_config_patches,
   )
 }
 

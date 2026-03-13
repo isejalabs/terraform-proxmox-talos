@@ -37,6 +37,7 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 ### Added
 
 - The new [`talos_config_patches`](docs/variables.md#talos_config_patches) variable gives you the option to apply additional Talos [MachineConfig](https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config) patches to controlplane, worker nodes or both. This is especially useful, when the available configuration options given by the [`cluster`](#cluster) variable (e.g. `cluster.api_server`, `cluster.extra_manifests`, `cluster.kubelet` etc.) are not sufficient. These patches are merged with the default configuration of this module and those of the [`cluster`](#cluster) variable and are applied last. Hence, you can enrich and even override the module configuration further.
+- Added a node-specific [`nodes[].talos_config_patches`](docs/variables.md#definition-4) variable which provides a similar functionality as the global-scoped [`talos_config_patches`](docs/variables.md#talos_config_patches) variable.
 
 ### Removed
 

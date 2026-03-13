@@ -207,6 +207,7 @@ The `nodes` variable defines the Talos VMs that form the cluster. It consists of
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                            |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`         | `false`                           |
 | mac_address   | Custom MAC address, if no auto-assignment desired. Can be chosen from Proxmox' `BC:24:11` range            | `string`       | `null`                            |
+| talos_config_patches | List of paths to Talos [MachineConfig](https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config) patch files, dedicated per node-level, similar to the global-scoped [`talos_config_patches`](#talos_config_patches) variable | `list(string)` | `[]`
 | update        | If set to `true`, the node will get updated to the [`image.update_version`](#definition-3) and/or [`image.update_schematic`](#definition-3). See the [upgrade documentation](upgrade%20methods.md#steps-to-upgrade-talos-os) for more details. | `bool`         | `false`                           |
 | vlan_id       | Network VLAN ID                                                                                            | `number`       | `0`                               |
 
@@ -238,6 +239,10 @@ nodes = {
     dns           = ["1.1.1.1", "9.9.9.9"]
     igpu          = true
     mac_address   = "BC:24:11:2E:C8:02"
+    talos_config_patches = [
+      "assets/talos/patches/worker1.example.net/patch1.yaml", 
+      "assets/talos/patches/worker1.example.net/patch2.yaml",
+    ]
     # update        = true  # leave this commented out usually!
     vlan          = 123
   }
