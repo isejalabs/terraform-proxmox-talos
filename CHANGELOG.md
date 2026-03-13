@@ -40,6 +40,15 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Fixed
 
+
+## [7.2.1] - 2026-03-13
+
+This hotfix release fixes a bug occuring due to lack of proper testing.
+
+### Fixed
+
+Fixed an issue with the new [`talos_config_patches`](docs/variables.md#talos_config_patches) variable being mandatory instead of allowing no usage.
+
 ## [7.2.0] - 2026-03-13
 
 This feature release enables you specifying Talos [MachineConfig](https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config) patches in a more flexible way.

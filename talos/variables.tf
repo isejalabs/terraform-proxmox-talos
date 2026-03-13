@@ -100,6 +100,7 @@ variable "talos_config_patches" {
       machine_type = optional(string, "all") # "all", "controlplane", "worker"
     })
   )
+  default = []
   validation {
     // @formatter:off
     condition     = length([for i in var.talos_config_patches : i if contains(["all", "controlplane", "worker"], i.machine_type)]) == length(var.talos_config_patches)
