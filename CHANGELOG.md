@@ -36,12 +36,32 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Added
 
-- The new [`talos_config_patches`](docs/variables.md#talos_config_patches) variable gives you the option to apply additional Talos [MachineConfig](https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config) patches to controlplane, worker nodes or both. This is especially useful, when the available configuration options given by the [`cluster`](#cluster) variable (e.g. `cluster.api_server`, `cluster.extra_manifests`, `cluster.kubelet` etc.) are not sufficient. These patches are merged with the default configuration of this module and those of the [`cluster`](#cluster) variable and are applied last. Hence, you can enrich and even override the module configuration further.
-- Added a node-specific [`nodes[].talos_config_patches`](docs/variables.md#definition-4) variable which provides a similar functionality as the global-scoped [`talos_config_patches`](docs/variables.md#talos_config_patches) variable.
-
 ### Removed
 
 ### Fixed
+
+## [7.2.0] - 2026-03-13
+
+This feature release enables you specifying Talos [MachineConfig](https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config) patches in a more flexible way.
+This is especially useful, when the available configuration options given by the [`cluster`](#cluster) variable (e.g. `cluster.api_server`, `cluster.extra_manifests`, `cluster.kubelet` etc.) are not sufficient (e.g. #121, #214). These patches are merged with the default configuration of this module and those of the [`cluster`](#cluster) variable and are applied last. Hence, you can enrich and even override the module configuration further. Typical examples are CSI solutions such as [OpenEBS](https://openebs.io/docs/Solutioning/openebs-on-kubernetes-platforms/talos) and [Longhorn](https://longhorn.io/docs/1.9.0/advanced-resources/os-distro-specific/talos-linux-support/#v2-data-engine) and also general tuning `sysctl` kernel parameters.
+
+### Added
+
+- The new [`talos_config_patches`](docs/variables.md#talos_config_patches) variable gives you the option to apply additional Talos [MachineConfig](https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config) patches to controlplane, worker nodes or both (#220).
+- Added a node-specific [`nodes[].talos_config_patches`](docs/variables.md#definition-4) variable which provides a similar functionality as the global-scoped [`talos_config_patches`](docs/variables.md#talos_config_patches) variable (#220).
+
+### Dependencies
+
+- update `terraform proxmox` v0.97.0 → v0.98.1 (#205)
+
+Component            | Version
+-------------------- | -------
+cilium/cilium        | 1.18.7
+cilium/cilium-cli    | 0.18.9
+Mastercard/restapi   | 2.0.1
+terraform kubernetes | 2.38.0
+terraform proxmox    | 0.98.1
+terraform talos      | 0.10.1
 
 ## [7.1.1] - 2026-03-10
 
