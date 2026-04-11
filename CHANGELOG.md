@@ -40,8 +40,13 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Fixed
 
-Fixed an issue #228 with the `csi-proxmox` namespace spilling warning messages for pod security despite of the `privileged` label.
+## [7.2.2] - 2026-04-11
 
+This quality of life release is fixing an issue with the `csi-proxmox` namespace spilling warning messages for pod security despite of the `privileged` label.
+
+### Fixed
+
+Fixed an issue #228 with the `csi-proxmox` namespace spilling warning messages for pod security despite of the `privileged` label (#229).
 
 ## [7.2.1] - 2026-03-13
 
