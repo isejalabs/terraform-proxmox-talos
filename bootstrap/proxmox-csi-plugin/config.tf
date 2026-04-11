@@ -44,8 +44,8 @@ resource "kubernetes_namespace" "csi-proxmox" {
     name = "csi-proxmox"
     labels = {
       "pod-security.kubernetes.io/enforce" = "privileged"
-      "pod-security.kubernetes.io/audit"   = "baseline"
-      "pod-security.kubernetes.io/warn"    = "baseline"
+      "pod-security.kubernetes.io/audit"   = "privileged"
+      "pod-security.kubernetes.io/warn"    = "privileged"
     }
   }
 }
