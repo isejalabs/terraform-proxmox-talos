@@ -1,8 +1,8 @@
 variable "cilium_config" {
   description = "Cilium configuration"
   type = object({
-    bootstrap_manifest_path = string
-    values_file_path        = string
+    bootstrap_manifest_path = optional(string, "talos/inline-manifests/cilium-install.yaml")
+    values_file_path        = optional(string, "talos/inline-manifests/cilium-values.default.yaml")
   })
   default = {
     bootstrap_manifest_path = "talos/inline-manifests/cilium-install.yaml"
