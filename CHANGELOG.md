@@ -40,6 +40,8 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Fixed
 
+- Fixed an issue where the path specified in `cilium_config.bootstrap_manifest_path` and `cilium_config.values_file_path` variables was based on this module's root path instead of the path the module is called from.
+
 ## [7.2.2] - 2026-04-11
 
 This quality of life release is fixing an issue with the `csi-proxmox` namespace spilling warning messages for pod security despite of the `privileged` label.

@@ -26,7 +26,7 @@ resource "terraform_data" "cilium_bootstrap_inline_manifests" {
   input = [
     {
       name     = "cilium-bootstrap"
-      contents = file("${path.root}/${var.cilium_config.bootstrap_manifest_path}")
+      contents = file("${var.cilium_config.bootstrap_manifest_path}")
     },
     {
       name = "cilium-values"
@@ -38,7 +38,7 @@ resource "terraform_data" "cilium_bootstrap_inline_manifests" {
           namespace = "kube-system"
         }
         data = {
-          "values.yaml" = file("${path.root}/${var.cilium_config.values_file_path}")
+          "values.yaml" = file("${var.cilium_config.values_file_path}")
         }
       })
     }
