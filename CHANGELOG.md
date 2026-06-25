@@ -41,6 +41,7 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 ### Fixed
 
 - Fixed an issue where the path specified in `cilium_config.bootstrap_manifest_path` and `cilium_config.values_file_path` variables was based on this module's root path instead of the path the module is called from.
+- Fixed an issue where the `cilium_config.bootstrap_manifest_path` and `cilium_config.values_file_path` both had to be maintained in the `cilium_config` variable, even if only one was needed. Now, it's possible to specify both, only one (NEW) or none at all.
 
 ## [7.2.2] - 2026-04-11
 
