@@ -34,8 +34,6 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 ## [Unreleased]
 ### Changed
 
-- Documentation: Linked the release version references in the README's [Roadmap and more features](README.md#roadmap-and-more-features) section to their corresponding GitHub releases instead of plain text ([#245](https://github.com/isejalabs/terraform-proxmox-talos/issues/245)).
-
 ### Added
 
 ### Removed
