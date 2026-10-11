@@ -181,9 +181,9 @@ Changing `host_node` on an existing entry is **not** a live migration: the node'
 
   This keeps the cluster on 2 control plane nodes only for the brief overlap window, never on zero.
 
-  > [!TIP]
-  >
-  > Starting with version 6.0 of `terraform-provider-talos`, this module supports [Talos OS upgrades](#talos-os-upgrade) with only one control plane node (see the note in [Preamble](#preamble)). That mechanism is specific to the `nodes[].update` flag and doesn't extend to a `host_node` change — the interim-node workaround above is still the safe path for relocating the sole control plane node of a single-control-plane cluster to a different Proxmox host.
+> [!TIP]
+>
+> Starting with version 6.0 of `terraform-provider-talos`, this module supports [Talos OS upgrades](#talos-os-upgrade) with only one control plane node (see the note in [Preamble](#preamble)). That mechanism is specific to the `nodes[].update` flag and doesn't extend to a `host_node` change — the interim-node workaround above is still the safe path for relocating the sole control plane node of a single-control-plane cluster to a different Proxmox host.
 
 > [!IMPORTANT]
 >
