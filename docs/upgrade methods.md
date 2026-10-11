@@ -14,7 +14,7 @@ Upgrades can involve changes to the Talos OS version, Kubernetes version, VM con
 | [**Talos OS Upgrade**](#talos-os-upgrade)                                 | Upgrading the **Talos OS version** running on the cluster                                                                           |
 | [**Talos Schematic Version Upgrade**](#talos-schematic-upgrade)           | Upgrading the **Talos schematic version** used for generating node configurations.                                                  |
 | [**Kubernetes Version Upgrade**](#kubernetes-version-upgrade)             | Upgrading the **Kubernetes version** managed by Talos.                                                                              |
-| [**VM Configuration Changes**](#vm-configuration-changes)                 | Apply changes to **VM configurations** (e.g. CPU, memory), or **scale the cluster** (by adding or removing nodes from the cluster). |
+| [**VM Configuration Changes**](#vm-configuration-changes)                 | Apply changes to **VM configurations** (e.g. CPU, memory), **scale the cluster** (by adding or removing nodes), or **relocate a node** to a different Proxmox host. |
 | [**Terraform Module Version Upgrade**](#terraform-module-version-upgrade) | Upgrading the underlying `terraform-proxmox-talos` **module version**.                                                              |
 | [**Upgrade of inbuilt components**](#upgrade-of-inbuilt-components)       | Upgrading **inbuilt components** like CNI, CSI, etc., which are shipped with this terraform module (e.g. Cilium, Gateway API).      |
 
@@ -136,6 +136,63 @@ Despite of the somewhat imperative approach using `talosctl`, this will ensure t
 VMs get handled in Proxmox according to their configuration using the [`nodes` variable](variables.md#nodes). By adding (or removing) elements to the `nodes` variable, VMs get created (or removed) in Proxmox while at the same time control plane or worker nodes get added/removed in the Talos Kubernetes cluster automatically. This allows for (horizontal) **scaling the cluster** easily by adding or removing nodes as needed.
 
 Likewise, vertical cluster scaling can be achieved by changing configuration parameters of the VMs (e.g. CPU cores, memory) will cause the respective VMs to get updated accordingly in Proxmox. Depending on the parameter changed, this might require a reboot of the VM. Hence, take care of not putting too many nodes offline at the same time when changing a parameter applicable for multiple VMs. This can be done by changing the parameter only for one VM step-by-step or use [resource targeting](#resource-targeting).
+
+#### Ramping up
+
+Add a new entry to the [`nodes` variable](variables.md#nodes) (picking an unused `vm_id`) and run `terraform apply`. For a **control plane** node specifically, the module's own [`talos_cluster_health`](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/data-sources/cluster_health) data source gates the apply on the new node actually joining `etcd` and reporting healthy before `apply` returns — a successful `apply` already means it has joined, no manual polling needed. Verify directly afterward anyway (`kubectl get nodes`, `talosctl etcd members`).
+
+> [!TIP]
+>
+> Adding a temporary 2nd control plane node this way is also the mechanism [Moving a Node to Another Proxmox Host](#moving-a-node-to-another-proxmox-host) below relies on for single-control-plane clusters.
+
+#### Ramping down
+
+Removing a node is not simply deleting its entry from the `nodes` variable. The VM resource is configured with `stop_on_destroy = true`, which is a hard Proxmox-level stop, not a graceful Talos/Kubernetes shutdown — skipping a graceful removal first risks a stuck `etcd` member (control plane node) or workloads killed without a clean drain. Before editing `nodes`, retire the node gracefully:
+
+```sh
+talosctl reset --nodes <node-ip> --graceful --reboot
+```
+
+This cordons the node in Kubernetes, drains its workloads, and — for a control plane node — leaves the `etcd` cluster cleanly, before wiping and shutting the node down. `--graceful` evicts pods immediately rather than waiting for a replacement to become ready elsewhere first — that's an ordinary Kubernetes `drain` characteristic, not something this module controls; it matters mainly for workloads that can't tolerate even a brief gap (consider `maxSurge`/multiple replicas/a storage class mountable from two nodes at once for those).
+
+For a control plane node, confirm it actually left `etcd` before removing its entry:
+
+```sh
+talosctl --nodes <any-remaining-control-plane-ip> etcd members
+```
+
+Then remove its entry from `nodes` and run `terraform apply`.
+
+> [!NOTE]
+>
+> If `terraform apply` then errors with something like `cluster health check failed` / `unexpected nodes with IPs [...]`, even though the node's VM was already destroyed successfully (confirmed in Proxmox) — the departed node's Kubernetes `Node` object doesn't get removed automatically just because the underlying VM did, and [`talos_cluster_health`](https://registry.terraform.io/providers/siderolabs/talos/latest/docs/data-sources/cluster_health) fails on that stale, now-unreachable peer. Confirm with `kubectl get nodes` (the departed node shows `NotReady`), delete it (`kubectl delete node <name>`), and re-run `terraform apply` — it converges cleanly (`0 added, 0 changed, 0 destroyed`) once the stale object is gone. This doesn't mean the removal failed; the infrastructure change already took effect, the health check is just pickier than a plain VM destroy.
+
+### Moving a Node to Another Proxmox Host
+
+Relocating a node's physical placement (`nodes[].host_node`) without changing its logical identity (name, IP, `vm_id`) otherwise.
+
+Changing `host_node` on an existing entry is **not** a live migration: the node's OS disk image is downloaded per-`host_node`, so changing it forces the VM to be destroyed on the old host and recreated on the new one — the same kind of destruction-and-recreation as any other [VM parameter change that can't be applied in place](#changing-other-vm-parameters). `terraform plan` shows this as `proxmox_virtual_environment_vm.this[...] must be replaced`.
+
+- **Worker node**: change `host_node` in place on the existing entry and `terraform apply`. A worker losing its one instance briefly during the move carries no cluster-quorum risk.
+- **Control plane node with other control plane nodes already present**: safe to change `host_node` in place as long as the remaining control plane nodes keep `etcd` quorum throughout — for a 3-node control plane, briefly taking one down to relocate it is the normal rolling-maintenance case. [Drain and leave `etcd` gracefully first](#ramping-down), same as any other control plane node removal, then change `host_node` and `apply`.
+- **Control plane node in a single-control-plane cluster**: changing `host_node` in place would destroy and recreate the *only* control plane node directly — a full control plane outage for the duration, with real quorum risk if anything goes wrong mid-move. The safer path:
+  1. [Add a second, interim control plane node](#ramping-up) on the target host and confirm it's healthy and in `etcd`.
+  2. [Gracefully retire the original](#ramping-down) (drain, `etcd leave`, remove its entry, `apply`).
+
+  This keeps the cluster on 2 control plane nodes only for the brief overlap window, never on zero.
+
+  > [!TIP]
+  >
+  > Starting with version 6.0 of `terraform-provider-talos`, this module supports [Talos OS upgrades](#talos-os-upgrade) with only one control plane node (see the note in [Preamble](#preamble)). That mechanism is specific to the `nodes[].update` flag and doesn't extend to a `host_node` change — the interim-node workaround above is still the safe path for relocating the sole control plane node of a single-control-plane cluster to a different Proxmox host.
+
+> [!IMPORTANT]
+>
+> Two things that look like they could be the cause of a failed move are usually something else instead:
+>
+> - The `bpg/proxmox` Terraform provider needs direct SSH access (not just the Proxmox API) to the **target** Proxmox host for some disk operations when creating the new VM. If the session running `terraform apply` has no `ssh-agent` key authorized on that host, VM creation fails with `unable to authenticate user "root" over SSH`, even though everything else (API calls, Talos bootstrap) would otherwise work fine — this is not a sign that the control plane's VIP is unreachable or that `etcd leave` was skipped.
+> - The stale-`Node`-object gotcha from [Ramping down](#ramping-down) applies here identically when retiring the original node.
+>
+> Separately, a control plane's VIP can take a short moment (roughly a minute) to become reachable again after migrating to a new node, due to ordinary ARP/routing propagation delay — transient, not a sign that something went wrong.
 
 ### Changing other VM parameters
 
