@@ -34,6 +34,8 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 ## [Unreleased]
 ### Changed
 
+- Bumped the `siderolabs/talos` provider version constraint to `0.12.0` ([#247](https://github.com/isejalabs/terraform-proxmox-talos/issues/247)).
+
 ### Added
 
 ### Removed
