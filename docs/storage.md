@@ -188,7 +188,7 @@ Please note that you still need to ensure that the existing volumes are defined 
 
 Disk volumes are created as additional disks in Proxmox (besides the `/var` EPHEMERAL disk). They are owned by a separate data VM and attached to the respective Talos VM (cf. [separation of Talos VM and data VM](vms.md#separation-of-talos-vm-and-data-vm)).
 
-When using disk volumes, be aware of the following limitations and implications when using [multiple disk volumes](#multiple-disk-volumes-handling) and when [removing a disk volume](#removing-a-disk-volume-the-need-for-manual-handling).
+When using disk volumes, be aware of the following limitations and implications when using [multiple disk volumes](#multiple-disk-volumes-handling), when [removing a disk volume](#removing-a-disk-volume-the-need-for-manual-handling), and when [changing a node's datastore](#changing-the-datastore-of-an-existing-node--ownership-limitation-on-attached-disks) after it already exists.
 
 ### Multiple disk volumes handling
 
@@ -298,6 +298,35 @@ qm unlink <VMID> --idlist <disk_interface>
 # Example: Remove unused disk from VM 123
 qm unlink 123 --idlist unused0
 ```
+
+### Changing the datastore of an existing node – ownership limitation on attached disks
+
+Changing a node's `datastore` (`nodes[].datastore`) after the node already exists moves its disks in Proxmox via a "move disk" operation. This works fine for disks the Talos VM genuinely owns – its OS disk (`scsi0`) and, if applicable, its cloud-init disk.
+
+However, nodes typically also have one or more disks **attached from the separate data VM** (cf. [separation of Talos VM and data VM](vms.md#separation-of-talos-vm-and-data-vm)): the EPHEMERAL disk always, and any `disk`-type volumes (see above). The Talos VM's resource re-declares these attached disks with the same `datastore_id` as the data VM's own disks, so when a node's `datastore` changes, terraform tries to "move" those attached disks too – through the Talos VM. Proxmox rejects this, since the Talos VM isn't the owner of that disk (the data VM is):
+
+```text
+Error: Cannot move local-enc:vm-<data_vm_id>-disk-0 to datastore <new-datastore> in VM <vm_id> configuration, it is not owned by this VM!
+```
+
+This has been confirmed to fail **consistently and symmetrically** (in either direction) for any node that has an attached data VM disk – which is effectively every node, since the EPHEMERAL disk is always attached this way. When it happens:
+
+- The **data VM's own disks** typically do get moved successfully (it does own them) – `terraform apply`/`tofu apply` reports that resource's move as complete.
+- The **Talos VM's attachment** to those disks is left unreconciled, still referencing the old `datastore_id`/volume path. Proxmox does not auto-delete the old copy in this case, so the old volume remains in place (no immediate data loss), but it's now an **orphaned duplicate** alongside the new one, and the Talos VM is left stopped mid-apply.
+
+There is no terraform-only way to reconcile this today – retrying the apply fails identically. The workaround is a manual, out-of-band fix on the Proxmox host, since it's a plain config rewrite rather than a "move" and therefore isn't subject to the ownership check:
+
+1. Confirm the Talos VM is stopped (`qm status <vm_id>`).
+1. Repoint the affected `scsiN` entries at the data VM's new volume location, keeping every other disk option identical to what `qm config <vm_id>` currently shows, e.g.:
+
+   ```sh
+   qm set <vm_id> --scsi1 'local-zfs-4k:vm-<data_vm_id>-disk-0,aio=io_uring,backup=1,cache=writethrough,discard=on,iothread=1,replicate=1,size=12G,ssd=1'
+   ```
+
+1. Re-run `terraform apply`/`tofu apply`: the remaining diff should now only cover the Talos VM's own disks (which it owns and can move cleanly) and starting the VM back up.
+1. Once confirmed healthy, free the now-unreferenced old-datastore copies to reclaim space, e.g. `pvesm free local-enc:vm-<data_vm_id>-disk-0`.
+
+Migrating a node's datastore when it has any attached data VM disk is therefore **not a clean, terraform-only operation** with the current module architecture. A proper fix would need to decouple the attached-disk declaration in the Talos VM resource from directly mirroring the data VM's `datastore_id`.
 
 ## Architecture of the Volumes in Proxmox and Talos
 
