@@ -53,6 +53,21 @@ This release bumps provider versions, primarily to prepare for upcoming Talos OS
   - `proxmox_virtual_environment_user`'s inline `acl` block (`bootstrap/proxmox-csi-plugin/config.tf`) → dedicated `proxmox_acl` resource ([#254](https://github.com/isejalabs/terraform-proxmox-talos/issues/254)).
 - Bumped the Cilium version installed by the bootstrap `cilium-install` job (`talos/inline-manifests/cilium-install.yaml`) from `v1.18.7` to `v1.18.14` ([#226](https://github.com/isejalabs/terraform-proxmox-talos/pull/226)). Patch-only release, no breaking changes. Note this only affects brand-new clusters bootstrapping from scratch — an already-running cluster's Cilium version is governed by whatever manages it day-2 (e.g. a Flux `HelmRelease`), not by this one-time install job.
 
+### Dependencies
+
+- update `terraform talos` v0.10.1 → v0.12.0 ([#247](https://github.com/isejalabs/terraform-proxmox-talos/issues/247))
+- update `terraform proxmox` v0.98.1 → v0.116.0 ([#225](https://github.com/isejalabs/terraform-proxmox-talos/pull/225))
+- update `cilium/cilium` v1.18.7 → v1.18.14 ([#226](https://github.com/isejalabs/terraform-proxmox-talos/pull/226))
+
+Component            | Version
+-------------------- | -------
+cilium/cilium        | 1.18.14
+cilium/cilium-cli    | 0.18.9
+Mastercard/restapi   | 2.0.1
+terraform kubernetes | 2.38.0
+terraform proxmox    | 0.116.0
+terraform talos      | 0.12.0
+
 ## [7.2.3] - 2026-06-26
 
 This quality of life release is bringing improvement for the [`cilium_config`](docs/variables.md#cilium_config) variable.
