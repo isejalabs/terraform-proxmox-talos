@@ -36,6 +36,7 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 - Migrated `proxmox_virtual_environment_download_file` (`talos/image.tf`) to `proxmox_download_file`, following `bpg/proxmox`'s ADR-007 resource rename ([#252](https://github.com/isejalabs/terraform-proxmox-talos/issues/252)). Existing consumer state is carried over via a `moved` block; no plan diff expected.
 - Migrated `proxmox_virtual_environment_user_token` (`bootstrap/proxmox-csi-plugin/config.tf`) to `proxmox_user_token`, following `bpg/proxmox`'s ADR-007 resource rename ([#253](https://github.com/isejalabs/terraform-proxmox-talos/issues/253)). Existing consumer state is carried over via a `moved` block; no plan diff expected.
+- Replaced the inline `acl` block on `proxmox_virtual_environment_user.kubernetes-csi` (`bootstrap/proxmox-csi-plugin/config.tf`) with a dedicated `proxmox_acl` resource, following `bpg/proxmox`'s deprecation of the inline block ([#254](https://github.com/isejalabs/terraform-proxmox-talos/issues/254)). No `moved` block applies here (an inline block isn't a separately addressable resource); verified the user resource itself only updates in-place (the nested `acl` block is dropped, nothing else changes) rather than being replaced, so the existing user and its token are unaffected — only the ACL entry itself gets recreated as a standalone resource with the same path/role/user.
 
 ### Added
 

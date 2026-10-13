@@ -25,11 +25,13 @@ resource "proxmox_virtual_environment_role" "csi" {
 resource "proxmox_virtual_environment_user" "kubernetes-csi" {
   user_id = "${local.env_prefix}kubernetes-csi@pve"
   comment = "User for Proxmox CSI Plugin"
-  acl {
-    path      = "/"
-    propagate = true
-    role_id   = proxmox_virtual_environment_role.csi.role_id
-  }
+}
+
+resource "proxmox_acl" "csi" {
+  path      = "/"
+  propagate = true
+  role_id   = proxmox_virtual_environment_role.csi.role_id
+  user_id   = proxmox_virtual_environment_user.kubernetes-csi.user_id
 }
 
 moved {
