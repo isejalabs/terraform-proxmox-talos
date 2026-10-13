@@ -39,6 +39,7 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
   - `proxmox_virtual_environment_download_file` (`talos/image.tf`) → `proxmox_download_file` ([#252](https://github.com/isejalabs/terraform-proxmox-talos/issues/252)).
   - `proxmox_virtual_environment_user_token` (`bootstrap/proxmox-csi-plugin/config.tf`) → `proxmox_user_token` ([#253](https://github.com/isejalabs/terraform-proxmox-talos/issues/253)).
   - `proxmox_virtual_environment_user`'s inline `acl` block (`bootstrap/proxmox-csi-plugin/config.tf`) → dedicated `proxmox_acl` resource ([#254](https://github.com/isejalabs/terraform-proxmox-talos/issues/254)).
+- Bumped the Cilium version installed by the bootstrap `cilium-install` job (`talos/inline-manifests/cilium-install.yaml`) from `v1.18.7` to `v1.18.14` ([#226](https://github.com/isejalabs/terraform-proxmox-talos/pull/226)). Patch-only release, no breaking changes. Note this only affects brand-new clusters bootstrapping from scratch — an already-running cluster's Cilium version is governed by whatever manages it day-2 (e.g. a Flux `HelmRelease`), not by this one-time install job.
 
 ### Added
 
