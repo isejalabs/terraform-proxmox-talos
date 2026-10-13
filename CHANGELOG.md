@@ -36,9 +36,9 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 - Bumped the `siderolabs/talos` provider version constraint to `0.12.0` ([#247](https://github.com/isejalabs/terraform-proxmox-talos/issues/247)).
 - Bumped the `bpg/proxmox` provider version to `0.116.0` ([#225](https://github.com/isejalabs/terraform-proxmox-talos/pull/225)). No breaking changes affect this module's usage, but three upstream deprecations do (none removed before the provider's v1.0, all still functional today) — tracked as follow-ups, not fixed in this release:
-  - `proxmox_virtual_environment_download_file` (`talos/image.tf`) → `proxmox_download_file`.
-  - `proxmox_virtual_environment_user_token` (`bootstrap/proxmox-csi-plugin/config.tf`) → `proxmox_user_token`.
-  - `proxmox_virtual_environment_user`'s inline `acl` block (`bootstrap/proxmox-csi-plugin/config.tf`) → dedicated `proxmox_acl` resource.
+  - `proxmox_virtual_environment_download_file` (`talos/image.tf`) → `proxmox_download_file` ([#252](https://github.com/isejalabs/terraform-proxmox-talos/issues/252)).
+  - `proxmox_virtual_environment_user_token` (`bootstrap/proxmox-csi-plugin/config.tf`) → `proxmox_user_token` ([#253](https://github.com/isejalabs/terraform-proxmox-talos/issues/253)).
+  - `proxmox_virtual_environment_user`'s inline `acl` block (`bootstrap/proxmox-csi-plugin/config.tf`) → dedicated `proxmox_acl` resource ([#254](https://github.com/isejalabs/terraform-proxmox-talos/issues/254)).
 
 ### Added
 
