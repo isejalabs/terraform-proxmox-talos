@@ -657,7 +657,7 @@ Notable changes to the upstream version are:
 
 - optional `nodes[].vlan_id` parameter for defining VLAN ID
 - install gateway api manifests before cilium deployment (cherry-picking
-  [vehagn/homelab PR 78](https://github.com/vehagn/homelab/pull/78/commits))
+  [vehagn/homelab PR 78](https://redirect.github.com/vehagn/homelab/pull/78/commits))
 
 ### Changed
 
@@ -670,7 +670,7 @@ Notable changes to the upstream version are:
   [vehagn/homelab#106](https://redirect.github.com/vehagn/homelab/issues/106)) by not depending on the `schematic_id` in the resource id
   by having 2 instances of `proxmox_virtual_environment_download_file`
   (impl. option 4, cf.
-  https://github.com/vehagn/homelab/issues/106#issuecomment-2481303369)
+  https://redirect.github.com/vehagn/homelab/issues/106#issuecomment-2481303369)
 
 ### Removed
 
