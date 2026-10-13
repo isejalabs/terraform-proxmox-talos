@@ -35,6 +35,7 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 ### Changed
 
 - Migrated `proxmox_virtual_environment_download_file` (`talos/image.tf`) to `proxmox_download_file`, following `bpg/proxmox`'s ADR-007 resource rename ([#252](https://github.com/isejalabs/terraform-proxmox-talos/issues/252)). Existing consumer state is carried over via a `moved` block; no plan diff expected.
+- Migrated `proxmox_virtual_environment_user_token` (`bootstrap/proxmox-csi-plugin/config.tf`) to `proxmox_user_token`, following `bpg/proxmox`'s ADR-007 resource rename ([#253](https://github.com/isejalabs/terraform-proxmox-talos/issues/253)). Existing consumer state is carried over via a `moved` block; no plan diff expected.
 
 ### Added
 
