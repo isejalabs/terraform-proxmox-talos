@@ -34,6 +34,9 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 ## [Unreleased]
 ### Changed
 
+- Machine config generation is now version-gated for Talos 1.14+: the fields this module sets that moved to dedicated configuration documents in Talos 1.14 (`machine.kubelet`, `machine.nodeLabels`, `cluster.apiServer`, `cluster.controllerManager`, `cluster.scheduler`, `cluster.proxy`, and the default Flannel CNI) are now emitted on their new document (`KubeletConfig`, `KubeNodeConfig`, `KubeAPIServerConfig`, `KubeControllerManagerConfig`, `KubeSchedulerConfig`, `KubeProxyConfig`, and a `KubeFlannelCNIConfig` `$patch: delete`) instead of the legacy `v1alpha1` fields when `talos_machine_config_version`/`image.version` targets `v1.14.0` or newer. Without this, targeting 1.14+ fails outright: Talos rejects a config that sets the same thing under both the old field and the new document. See [docs/talos-compatibility.md](docs/talos-compatibility.md) for the full writeup, including two known gaps (`machine.features.hostDNS`, and `cluster.allowSchedulingOnControlPlanes = true`) that don't yet have a confirmed 1.14+ replacement.
+- Verified end-to-end against a real Talos 1.14.2 cluster bootstrap (control plane + 3 workers): cluster health, all static pods, and CSI/sealed-secrets bootstrap all converge cleanly.
+
 ### Added
 
 ### Removed

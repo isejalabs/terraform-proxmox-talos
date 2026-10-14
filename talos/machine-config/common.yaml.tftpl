@@ -1,3 +1,4 @@
+%{ if !talos_1_14_plus }
 machine:
   kubelet:
     image: ghcr.io/siderolabs/kubelet:${kubernetes_version}
@@ -21,6 +22,38 @@ cluster:
     image: registry.k8s.io/kube-proxy:${kubernetes_version}
   scheduler:
     image: registry.k8s.io/kube-scheduler:${kubernetes_version}
+%{ else }
+# Talos 1.14+: machine.kubelet, machine.nodeLabels, and the
+# cluster.{apiServer,controllerManager,proxy,scheduler}.image fields above moved to dedicated
+# documents (see docs/talos-compatibility.md). The cluster.apiServer/controllerManager/
+# proxy/scheduler *content* (beyond image, which only matters for control planes) is emitted from
+# control-plane.yaml.tftpl instead.
+# NOTE: machine.features.hostDNS has no known 1.14+ document replacement, so it's intentionally
+# dropped here for 1.14+, falling back to Talos's own default. A full cluster bootstrap on a real
+# 1.14.2 node came up healthy without the override (this setting exists as a workaround for a
+# specific past Cilium/Talos interaction, see
+# https://www.talos.dev/v1.8/kubernetes-guides/network/deploying-cilium/#known-issues - not fully
+# re-verified against that specific issue). Tracked in the issue linked from
+# docs/talos-compatibility.md.
+
+---
+apiVersion: v1alpha1
+kind: KubeletConfig
+image: ghcr.io/siderolabs/kubelet:${kubernetes_version}
+%{ if kubelet_config_yaml != null }
+${kubelet_config_yaml}
+%{ endif }
+
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+%{ if kubelet_register_with_fqdn != null }
+registerWithFQDN: ${kubelet_register_with_fqdn}
+%{ endif }
+labels:
+  topology.kubernetes.io/region: ${cluster_name}
+  topology.kubernetes.io/zone: ${node_name}
+%{ endif }
 
 ---
 apiVersion: v1alpha1

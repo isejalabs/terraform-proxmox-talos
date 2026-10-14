@@ -21,6 +21,7 @@ machine:
 %{ endif }
 
 cluster:
+%{ if !talos_1_14_plus }
   allowSchedulingOnControlPlanes: ${allow_scheduling}
 %{ if api_server != null }
   apiServer:
@@ -29,9 +30,6 @@ cluster:
   controllerManager:
     extraArgs:
       bind-address: 0.0.0.0
-  etcd:
-    extraArgs:
-      listen-metrics-urls: http://0.0.0.0:2381
   scheduler:
     extraArgs:
       bind-address: 0.0.0.0
@@ -40,8 +38,64 @@ cluster:
       name: none
   proxy:
     disabled: true
+%{ endif }
+  etcd:
+    extraArgs:
+      listen-metrics-urls: http://0.0.0.0:2381
   extraManifests: ${extra_manifests}
   inlineManifests: ${inline_manifests}
+
+%{ if talos_1_14_plus }
+# Talos 1.14+: apiServer/controllerManager/scheduler/proxy content moved to the dedicated
+# documents below (see docs/talos-compatibility.md).
+#
+# KNOWN GAP: allowSchedulingOnControlPlanes has no confirmed 1.14+ document replacement, so it's
+# intentionally dropped here. Verified empirically that this matches the module's documented
+# `false` default (the control-plane NoSchedule taint is still applied when omitted) - but a
+# consumer setting `allow_scheduling_on_controlplane = true` will NOT get that behavior on 1.14+
+# until this is resolved (tracked in the issue linked from docs/talos-compatibility.md).
+#
+# The base-generated config always includes a default KubeFlannelCNIConfig for 1.14+, regardless
+# of settings elsewhere - there's no "disabled" field on it (unlike KubeProxyConfig below), so the
+# only way to actually drop the default CNI (this module installs Cilium instead) is to delete the
+# document outright. Verified this also requires cleaning up the Flannel DaemonSet/RBAC Talos
+# already deployed once at initial bootstrap on a cluster that was bootstrapped before this fix -
+# the config change alone only prevents it going forward. See
+# https://redirect.github.com/siderolabs/talos/issues/13958 and
+# https://redirect.github.com/siderolabs/talos/issues/14398.
+---
+apiVersion: v1alpha1
+kind: KubeFlannelCNIConfig
+$patch: delete
+
+---
+apiVersion: v1alpha1
+kind: KubeAPIServerConfig
+image: registry.k8s.io/kube-apiserver:${kubernetes_version}
+%{ if api_server_config_yaml != null }
+${api_server_config_yaml}
+%{ endif }
+
+---
+apiVersion: v1alpha1
+kind: KubeControllerManagerConfig
+image: registry.k8s.io/kube-controller-manager:${kubernetes_version}
+extraArgs:
+  bind-address: 0.0.0.0
+
+---
+apiVersion: v1alpha1
+kind: KubeSchedulerConfig
+image: registry.k8s.io/kube-scheduler:${kubernetes_version}
+extraArgs:
+  bind-address: 0.0.0.0
+
+---
+apiVersion: v1alpha1
+kind: KubeProxyConfig
+image: registry.k8s.io/kube-proxy:${kubernetes_version}
+enabled: false
+%{ endif }
 
 # iterate over `disk`-type volumes
 %{ for k, v in talos_disk_volumes } 
