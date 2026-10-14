@@ -34,13 +34,23 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 ## [Unreleased]
 ### Changed
 
-- Machine config generation is now version-gated for Talos 1.14+: the fields this module sets that moved to dedicated configuration documents in Talos 1.14 (`machine.kubelet`, `machine.nodeLabels`, `machine.features.hostDNS`, `cluster.apiServer`, `cluster.controllerManager`, `cluster.scheduler`, `cluster.proxy`, `cluster.allowSchedulingOnControlPlanes`, and the default Flannel CNI) are now emitted on their new document (`KubeletConfig`, `KubeNodeConfig`, `KubeAPIServerConfig`, `KubeControllerManagerConfig`, `KubeSchedulerConfig`, `KubeProxyConfig`, and a `KubeFlannelCNIConfig` `$patch: delete`) instead of the legacy `v1alpha1` fields when `talos_machine_config_version`/`image.version` targets `v1.14.0` or newer. Without this, targeting 1.14+ fails outright: Talos rejects a config that sets the same thing under both the old field and the new document. See [docs/talos-compatibility.md](docs/talos-compatibility.md) for the full writeup.
-
 ### Added
 
 ### Removed
 
 ### Fixed
+
+## [7.5.0] - 2026-10-14
+
+This release restores Talos 1.14+ compatibility, broken by Talos's own move of several `v1alpha1` fields into dedicated configuration documents.
+
+### Compatibility Note
+
+The module now supports Talos v1.14 and newer again, in addition to the existing v1.12/v1.13 range (v1.15 untested). See [docs/talos-compatibility.md](docs/talos-compatibility.md) for the full compatibility matrix.
+
+### Changed
+
+- Machine config generation is now version-gated for Talos 1.14+: the fields this module sets that moved to dedicated configuration documents in Talos 1.14 (`machine.kubelet`, `machine.nodeLabels`, `machine.features.hostDNS`, `cluster.apiServer`, `cluster.controllerManager`, `cluster.scheduler`, `cluster.proxy`, `cluster.allowSchedulingOnControlPlanes`, and the default Flannel CNI) are now emitted on their new document (`KubeletConfig`, `KubeNodeConfig`, `KubeAPIServerConfig`, `KubeControllerManagerConfig`, `KubeSchedulerConfig`, `KubeProxyConfig`, and a `KubeFlannelCNIConfig` `$patch: delete`) instead of the legacy `v1alpha1` fields when `talos_machine_config_version`/`image.version` targets `v1.14.0` or newer. Without this, targeting 1.14+ fails outright: Talos rejects a config that sets the same thing under both the old field and the new document. See [docs/talos-compatibility.md](docs/talos-compatibility.md) for the full writeup.
 
 ## [7.4.0] - 2026-10-13
 
