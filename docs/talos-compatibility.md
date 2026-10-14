@@ -21,6 +21,22 @@ It's a companion to [Upgrade Methods](upgrade-methods.md#talos-os-upgrade), whic
 
 Caveats in this section apply to the target Talos version regardless of which module version you're on, since they stem from Talos's own behavior, not this module's code.
 
+### Talos 1.14: multi-document machine config (fixed, two known gaps remain)
+
+> [!IMPORTANT]
+>
+> **Talos 1.14 moves several `v1alpha1` fields into dedicated configuration documents** (`KubeletConfig`, `KubeNodeConfig`, `KubeAPIServerConfig`, `KubeControllerManagerConfig`, `KubeSchedulerConfig`, `KubeProxyConfig`, `KubeFlannelCNIConfig`, etc. — see [Talos's document map](https://docs.siderolabs.com/talos/v1.14/reference/configuration/document-map)) and rejects a config that sets the same thing in both places. Since this module fully regenerates machine config from `talos_version` on every `apply` (unlike a plain `talosctl upgrade`, which only swaps the OS image), this previously broke any apply targeting a 1.14+ contract outright (see [#269](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/269)).
+>
+> **Fixed** as of this module version: machine config generation is now version-gated, emitting the affected fields on their new document for 1.14+. Verified end-to-end against a real Talos 1.14.2 cluster bootstrap.
+>
+> **Two known gaps remain** (no confirmed 1.14+ replacement identified yet — tracked in [#269](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/269)):
+> - `machine.features.hostDNS` is dropped for 1.14+, falling back to Talos's own default.
+> - `cluster.allowSchedulingOnControlPlanes = true` is dropped for 1.14+ — the default (`false`) is verified correct, but setting this to `true` will not take effect on 1.14+ yet.
+>
+> **If your own `talos_config_patches` files set any of the migrated fields** (e.g. a `cluster.controllerManager`/`cluster.scheduler` leader-election patch), they'll need their own 1.14+ variant too — this module can't migrate a consumer's own patch files automatically.
+>
+> **If a cluster was already bootstrapped on 1.14+ before this fix**, Talos will have deployed the default Flannel CNI DaemonSet once at initial bootstrap; a config change alone won't retroactively remove it — clean up the `kube-flannel` DaemonSet/ClusterRole/ClusterRoleBinding/ServiceAccount/ConfigMap manually (and restart any pods that got stuck from the resulting broken networking) after applying the fix.
+
 ### Talos 1.14: `SecurityProfileConfig.workloadIsolation`
 
 > [!IMPORTANT]
