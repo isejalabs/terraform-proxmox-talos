@@ -86,6 +86,12 @@ Also, **monitor the cluster health** closely during and after the upgrade proces
 >
 > **Multiple nodes can be upgraded in parallel** by setting `update = true` for multiple nodes before running `terraform apply` (e.g. a control plane and a worker node on another Proxmox host). When upgrading multiple nodes in parallel, ensure to exclude at minimum 1 control plane and a minimum of x worker nodes (depending on the workload deployed and availability of services during the change).
 
+> [!IMPORTANT]
+>
+> **Upgrading past Talos 1.13 → 1.14 silently enables `SecurityProfileConfig.workloadIsolation`.** Talos 1.14 introduces a `sandboxd`-based workload isolation feature that's version-gated purely on the target Talos version, with no awareness of whether the cluster already exists — unlike a plain `talosctl upgrade apply`, this module's `talos_machine_configuration` data source fully regenerates machine config from `talos_version` on every `apply`, so the 1.14 bump brings `workloadIsolation: true` along with it automatically (see [#265](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/265)).
+>
+> Per [Talos's own docs](https://docs.siderolabs.com/talos/v1.14/getting-started/what's-new-in-talos), this is expected to be safe for a cluster using only CSI drivers for storage (CSI node plugins run self-contained in their own privileged pod and are explicitly unaffected) — only the deprecated **in-tree** kubelet volume plugins (e.g. the in-tree iSCSI plugin) actually break. Still, **verify on a non-prod cluster first**: confirm storage CSI pods stay healthy and any `hostPath`-based workloads (monitoring agents, etc.) keep reporting correctly, before rolling the 1.14 bump to production.
+
 ## Talos Schematic Upgrade
 
 Upgrading the Talos schematic version is similar to upgrading the Talos OS version, here change `image.update_schematic_path` and `image.schematic_path`, instead of `image.update_version` and `image.version`:
