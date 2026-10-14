@@ -7,7 +7,7 @@ All instructions to upgrade this project from one major release to the next will
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project tries to adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-For general instructions on how to upgrade, please consult the [Upgrade Methods documentation](docs/upgrade%20methods.md#).
+For general instructions on how to upgrade, please consult the [Upgrade Methods documentation](docs/upgrade%20methods.md#). For module/Talos OS version compatibility and caveats specific to upgrading past a given Talos version, see [Talos Compatibility](docs/talos-compatibility.md).
 
 <!--
 > [!NOTE]
