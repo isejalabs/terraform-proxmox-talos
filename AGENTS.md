@@ -46,7 +46,7 @@ Root `variables.tf` is a thin passthrough/validation layer in front of the `./ta
 
 ### Talos OS upgrade model
 
-Because the `siderolabs/terraform-provider-talos` provider doesn't support in-place OS upgrades, upgrades are done by flipping a node's `update = true` and re-`apply`ing one node at a time (control planes first), which swaps that node's boot image to `image.update_version`/`update_schematic_path` and destroys/recreates its Talos VM — the data VM is untouched so EPHEMERAL/volume data persists. See [docs/upgrade methods.md](docs/upgrade%20methods.md) for the full node-by-node procedure and rollback notes; this is the standard change process to explain when touching `image.tf`, `variables.tf`'s `nodes[].update`, or `virtual-machines.tf`'s image/disk wiring.
+Because the `siderolabs/terraform-provider-talos` provider doesn't support in-place OS upgrades, upgrades are done by flipping a node's `update = true` and re-`apply`ing one node at a time (control planes first), which swaps that node's boot image to `image.update_version`/`update_schematic_path` and destroys/recreates its Talos VM — the data VM is untouched so EPHEMERAL/volume data persists. See [docs/upgrade-methods.md](docs/upgrade-methods.md) for the full node-by-node procedure and rollback notes; this is the standard change process to explain when touching `image.tf`, `variables.tf`'s `nodes[].update`, or `virtual-machines.tf`'s image/disk wiring.
 
 ### Storage model
 
