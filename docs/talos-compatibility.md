@@ -2,7 +2,7 @@
 
 This document tracks which Talos OS versions are compatible with which version of this module, and documents known caveats specific to upgrading *past* a given Talos version boundary.
 
-It's a companion to [Upgrade Methods](upgrade%20methods.md#talos-os-upgrade), which covers the *mechanics* of performing a Talos OS upgrade with this module (the `nodes[].update` procedure). This document instead covers *what to watch out for* depending on which Talos version(s) you're moving between — information that's a function of the target Talos version itself, independent of which module version you're running.
+It's a companion to [Upgrade Methods](upgrade-methods.md#talos-os-upgrade), which covers the *mechanics* of performing a Talos OS upgrade with this module (the `nodes[].update` procedure). This document instead covers *what to watch out for* depending on which Talos version(s) you're moving between — information that's a function of the target Talos version itself, independent of which module version you're running.
 
 ## Compatibility Matrix
 

@@ -26,7 +26,7 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 - [Storage Options](docs/storage.md) for configuring storage for your cluster (e.g. Proxmox CSI Plugin and RAW block devices),
 - [Changelog](CHANGELOG.md) with all notable changes,
 - [Upgrade Instructions](UPGRADE.md) for each major release (especially handing breaking changes),
-- [Upgrade Methods](docs/upgrade%20methods.md) for detailed instructions on how to perform an upgrade of the Talos OS version, Kubernetes version, scaling the cluster, and other aspects, and
+- [Upgrade Methods](docs/upgrade-methods.md) for detailed instructions on how to perform an upgrade of the Talos OS version, Kubernetes version, scaling the cluster, and other aspects, and
 - [Talos Compatibility](docs/talos-compatibility.md) for the module/Talos version compatibility matrix and known caveats when upgrading past a given Talos version.
 
 ### Example
@@ -39,7 +39,7 @@ For seeing an example usage of the module, please be referred to the [author](ht
 1. **Free Choice**: The module is tested to running well with [**OpenTofu**](https://opentofu.org/), while it should be compatible with [**Terraform**](https://www.terraform.io/) as well.
 1. **Recommended**: It's recommended using [**SOPS**](https://getsops.io/) for encrypting your Terraform credentials (e.g. Proxmox login). This allows storing all your Terraform configuration in version control.
 1. **Recommended**: For daily operations of the cluster you should have K8S **CLI tools** such als `kubectl`, `kustomize`, `cilium`, and `kubeseal`.
-1. **Optional**: You could have CLI tool `talosctl` for checking your Talos cluster. It's not strictly needed because even [upgrades are done using declarative IaC](docs/upgrade%20methods.md.md#talos-os-upgrade).
+1. **Optional**: You could have CLI tool `talosctl` for checking your Talos cluster. It's not strictly needed because even [upgrades are done using declarative IaC](docs/upgrade-methods.md#talos-os-upgrade).
 1. **Optional**: Using [**Terragrunt**](https://terragrunt.gruntwork.io/) as a DRY-wrapper for terraform/tofu is optional.  Though, it's recommended by the author when aiming for multiple incarnations of the module for running multiple environments (e.g. dev, test, prod).
 
 ## Roadmap and more features

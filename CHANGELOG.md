@@ -132,7 +132,7 @@ This release is mainly fixing an issue with removing `disk` type volumes in Prox
 
 ### Changed
 
-- Documentation: Renamed [docs/upgrading.md](docs/upgrade%20methods.md) to [docs/upgrade methods.md](docs/upgrade%20methods.md) to reflect the following: This file describes various **methods** to "upgrade" (change) various aspects of a Kubernetes cluster, which could be, besides a terraform module version change, e.g., how to upgrade Talos OS version, Kubernetes version, or how to perform a cluster scaling. The file is not describing the upgrade instructions for each release of this terraform module, which are now documented in the new [UPGRADE.md](UPGRADE.md) file (cf. below).
+- Documentation: Renamed [docs/upgrading.md](docs/upgrade-methods.md) to [docs/upgrade-methods.md](docs/upgrade-methods.md) to reflect the following: This file describes various **methods** to "upgrade" (change) various aspects of a Kubernetes cluster, which could be, besides a terraform module version change, e.g., how to upgrade Talos OS version, Kubernetes version, or how to perform a cluster scaling. The file is not describing the upgrade instructions for each release of this terraform module, which are now documented in the new [UPGRADE.md](UPGRADE.md) file (cf. below).
 
 ### Added
 
@@ -281,7 +281,7 @@ The module is limited to Talos v1.10 (or v1.11 when using the `disk` feature) as
 ### Added
 
 - Added possibility to define addtional **data disks** ([#175](https://github.com/isejalabs/terraform-proxmox-talos/issues/175)). An additional data disk can be be used e.g. for `hostPath` or for additional space for other CSI solutions (e.g. OpenEBS, Longhorn). This feature leverages the `User Volume` feature introduced in [Talos v1.11](https://docs.siderolabs.com/talos/v1.11/configure-your-talos-cluster/storage-and-disk-management/disk-management/user). See the enriched [`volumes` variable documentation](https://github.com/isejalabs/terraform-proxmox-talos/blob/main/docs/variables.md#volumes) – which, BTW, is indicating support for further Volume Types `directory` ([#161](https://github.com/isejalabs/terraform-proxmox-talos/issues/161)) and `partition` ([#162](https://github.com/isejalabs/terraform-proxmox-talos/issues/162)) in future releases ([#159](https://github.com/isejalabs/terraform-proxmox-talos/issues/159)) based on Talos v1.12.
-- Documented [how to upgrade](docs/upgrade%20methods.md) several aspects of the Talos cluster (e.g. upgrade Talos OS version, Kubernetes version, terraform module version, incl. breaking changes and resource targeting).
+- Documented [how to upgrade](docs/upgrade-methods.md) several aspects of the Talos cluster (e.g. upgrade Talos OS version, Kubernetes version, terraform module version, incl. breaking changes and resource targeting).
 - Documented the new VM architecture with [separation of Talos VM and Data VM](docs/vms.md#separation-of-talos-vm-and-data-vm).
 
 ### Fixed

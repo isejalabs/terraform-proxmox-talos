@@ -7,7 +7,7 @@ All instructions to upgrade this project from one major release to the next will
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project tries to adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-For general instructions on how to upgrade, please consult the [Upgrade Methods documentation](docs/upgrade%20methods.md#). For module/Talos OS version compatibility and caveats specific to upgrading past a given Talos version, see [Talos Compatibility](docs/talos-compatibility.md).
+For general instructions on how to upgrade, please consult the [Upgrade Methods documentation](docs/upgrade-methods.md#). For module/Talos OS version compatibility and caveats specific to upgrading past a given Talos version, see [Talos Compatibility](docs/talos-compatibility.md).
 
 <!--
 > [!NOTE]
@@ -23,13 +23,13 @@ For general instructions on how to upgrade, please consult the [Upgrade Methods 
 
 The safest upgrade path is not having a volume with type `disk` yet. The steps for upgrading are as follows:
 
-1. Upgrade your Talos cluster to v1.12 (cf. [Talos upgrade documentation](docs/upgrade%20methods.md#talos-os-upgrade)).
-1. Upgrade this Terraform Talos module to v6.1.x or newer (cf. [Module upgrade documentation](docs/upgrade%20methods.md#terraform-module-version-upgrade)).
+1. Upgrade your Talos cluster to v1.12 (cf. [Talos upgrade documentation](docs/upgrade-methods.md#talos-os-upgrade)).
+1. Upgrade this Terraform Talos module to v6.1.x or newer (cf. [Module upgrade documentation](docs/upgrade-methods.md#terraform-module-version-upgrade)).
 
 If you happen to running your cluster with a `disk`-type volume, you have the following options:
 
 1. Remove the `disk`-type volume(s) temporarily (you already have a backup, haven't you), upgrade Talos to v1.12, upgrade this module to v6.1.x or newer, and re-add the `disk`-type volume(s) again.
-1. Alternatively, keep the `disk`-type volume(s) and use [resource targeting](docs/upgrade%20methods.md#resource-targeting), excluding the following terraform resource types for each `terraform apply` run sequentially per node:
+1. Alternatively, keep the `disk`-type volume(s) and use [resource targeting](docs/upgrade-methods.md#resource-targeting), excluding the following terraform resource types for each `terraform apply` run sequentially per node:
    - `module.talos.proxmox_virtual_environment_vm.this["node1"]`
    - `module.talos.talos_machine_configuration_apply.this["node1"]`
 
@@ -103,7 +103,7 @@ Should you forget to detach an additional `disk` type volume from the Main Talos
 - For tackling the VM destruction caused by breaking change of separating Talos OS and EPHEMERAL disks you have several options:
   1. Recreate the cluster, or
   1. Restore `etcd` data from a backup, or
-  1. (Recommeded) leverage **resource targeting** (cf. [upgrade documentation](docs/upgrade%20methods.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
+  1. (Recommeded) leverage **resource targeting** (cf. [upgrade documentation](docs/upgrade-methods.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
 - **Optionally**: As the disks for Talos OS image and EPHEMERAL partition are now separated, you may need to adjust the disk sizes accordingly. You can **decrease the data disk size by 4 GB** for having a similar data usage setup as before.
 
 ### [5.0.0]
@@ -120,7 +120,7 @@ If you used the `nodes[].on_boot` parameter before, you need to move it from the
 
 ### [3.0.0]
 
-As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade documentation](docs/upgrade%20methods.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
+As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade documentation](docs/upgrade-methods.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
 
 ### [2.0.0]
 
@@ -133,7 +133,7 @@ Coming from a pre-`v2.0.0` version, you normally have adapted any `source` URL r
 
 ### [1.0.0]
 
-As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade methods](docs/upgrade%20methods.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
+As one of the upgrade procedures – besides recreating the cluster or restoring `etcd` from a backup – you can use **resource targeting** (cf. [upgrade methods](docs/upgrade-methods.md#resource-targeting)) to facilitate a rolling upgrade of Talos nodes.
 
 ### [0.0.2]
 
