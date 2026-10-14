@@ -11,7 +11,7 @@ It's a companion to [Upgrade Methods](upgrade-methods.md#talos-os-upgrade), whic
 | v5.0                   | >=1.8                     | not available          |
 | v6.0                   | >=1.10                    | >=1.11, <=1.12          |
 | v7.0 - v7.4            | >=1.12, <1.14             | >=1.12, <1.14          |
-| v7.5 (unreleased)      | >=1.12                    | >=1.12                 |
+| v7.5                   | >=1.12                    | >=1.12                 |
 
 > [!NOTE]
 > Talos 1.15 is untested as of v7.5.
