@@ -68,13 +68,14 @@ Due to the new image, this will cause a destruction and recreation of the Talos 
 
 Carry out the following steps to **upgrade Talos nodes one by one**:
 
-1. First, set [`image.update_version`](variables.md#definition-3) to the required version you want to update to.
-1. In the following, you will process each node subsequently. Set [`nodes[1].update = true`](variables.md#definition-4) for the 1st node and run `terraform apply`.
+0. If your configuration pins [`cluster.talos_machine_config_version`](variables.md#definition-1) to an explicit version (rather than leaving it `null`), **temporarily unset it** before starting — see [Interaction with `talos_machine_config_version`](#interaction-with-talos_machine_config_version) below for why this matters.
+1. Set [`image.update_version`](variables.md#definition-3) to the required version you want to update to.
+1. In the following, you will process each node subsequently, **control planes first**. Set [`nodes[1].update = true`](variables.md#definition-4) for the 1st node and run `terraform apply`.
 1. Set `nodes[2].update = true` for the 2nd node, _leave_ the previous node's `update = true` and run `terraform apply`.
 1. Similarily to before, set `nodes[3].update = true` for the 3rd node, leave the previous nodes' `update = true` and run `terraform apply`.
 1. ...
 1. Set `nodes[n].update = true` for the n-th node, leave the previous nodes' `update = true` and run `terraform apply`.
-1. After upgrading all nodes, set `image.version` to match the update version and reset `update = false` for all [nodes](variables.md#definition-4).
+1. After upgrading all nodes, set `image.version` to match the update version, reset `update = false` (or remove the attribute) for all [nodes](variables.md#definition-4), and — if you unset `cluster.talos_machine_config_version` in step 0 — re-pin it to the same version now. Run `terraform apply` once more and confirm it converges to a clean (or drift-free) plan.
 
 Also, **monitor the cluster health** closely during and after the upgrade process before carrying out the upgrade for the next node(s).
 
@@ -89,6 +90,32 @@ Also, **monitor the cluster health** closely during and after the upgrade proces
 > [!TIP]
 >
 > Before upgrading, check [Talos Compatibility](talos-compatibility.md) for known caveats specific to the Talos version you're moving to or past (e.g. a behavior change introduced starting at a given version) — those are tracked separately from this mechanical procedure since they're a function of the target Talos version, not of this module.
+
+> [!TIP]
+>
+> VM recreation during this procedure needs the same `ssh-agent`-authenticated access to the Proxmox host described under [Moving a Node to Another Proxmox Host](#moving-a-node-to-another-proxmox-host) — not just for host moves. Confirm a key is loaded and reachable (`ssh-add -l`) before starting each node's step, especially the control plane step: a VM creation failure there (e.g. `unable to authenticate user "root" over SSH`) happens *after* the old VM is already destroyed, leaving the cluster with no control plane until it's resolved.
+
+> [!TIP]
+>
+> If a `host_node` runs more than one of your nodes, don't be surprised that the old-version `module.talos.proxmox_download_file.this[...]` entry for that host survives in the plan after you've upgraded only some of them — it's keyed per `host_node` + image version/schematic hash, and is only destroyed once *every* node on that host no longer references it. This is expected and safe: the previous image stays available on that host for any node still mid-rollout, and gets cleaned up automatically once the last one transitions.
+
+> [!TIP]
+>
+> If your environment only permits `apply` from a CI-gated or otherwise protected branch (e.g. a GitOps repo), each step above becomes its own commit → PR → merge → apply cycle. A cluster with *n* nodes needs *n* + 1 such cycles (one per node, plus the finalization step) — budget time accordingly, and don't skip verifying cluster health between cycles just because a merge was fast.
+
+### Interaction with `talos_machine_config_version`
+
+[`cluster.talos_machine_config_version`](variables.md#definition-1) lets you pin the machine-config *format* (as opposed to `image.version`/`image.update_version`, which govern the actual OS image) to an explicit Talos version. When set, it applies to **every node identically, regardless of that node's own `update` flag** — it does not participate in the node-by-node staging described above at all.
+
+This only matters when the staged rollout crosses a Talos version boundary that changes the machine-config format itself (see [Talos Compatibility](talos-compatibility.md) for known boundaries, e.g. Talos 1.14's multi-document config migration). If `talos_machine_config_version` stays pinned to the *old* version while you flip `update = true` node-by-node, every node — including ones not yet updated — keeps generating the *old* config format, so the new image on an updated node may receive a config it doesn't expect. If you instead pin it to the *new* version up front, every node (including ones still on the old image) jumps to the new config format immediately, defeating the purpose of staging.
+
+To stage both the image **and** the config format together, node-by-node:
+
+1. **Unset** `cluster.talos_machine_config_version` (leave it `null`) before starting. With it `null`, each node's machine-config format falls back to tracking its own `update` flag (the same `image.version`/`image.update_version` choice used for the image itself), so the format and the image version move together, one node at a time.
+1. Proceed through the [staged rollout steps](#steps-to-upgrade-talos-os) above as normal.
+1. Only in the finalization step, once every node has `update = true` (or `image.version` already matches `image.update_version` for all of them), re-pin `cluster.talos_machine_config_version` to the new version — alongside resetting `update = false` and converging `image.version`.
+
+If you don't use `talos_machine_config_version` at all (leave it `null` permanently), none of this applies — every node already tracks its own `update` flag by default.
 
 ## Talos Schematic Upgrade
 
