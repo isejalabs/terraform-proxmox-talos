@@ -25,8 +25,9 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 - [Input Variables Documentation](docs/variables.md) for configuring the module,
 - [Storage Options](docs/storage.md) for configuring storage for your cluster (e.g. Proxmox CSI Plugin and RAW block devices),
 - [Changelog](CHANGELOG.md) with all notable changes,
-- [Upgrade Instructions](UPGRADE.md) for each major release (especially handing breaking changes), and
-- [Upgrade Methods](docs/upgrade%20methods.md) for detailed instructions on how to perform an upgrade of the Talos OS version, Kubernetes version, scaling the cluster, and other aspects.
+- [Upgrade Instructions](UPGRADE.md) for each major release (especially handing breaking changes),
+- [Upgrade Methods](docs/upgrade%20methods.md) for detailed instructions on how to perform an upgrade of the Talos OS version, Kubernetes version, scaling the cluster, and other aspects, and
+- [Talos Compatibility](docs/talos-compatibility.md) for the module/Talos version compatibility matrix and known caveats when upgrading past a given Talos version.
 
 ### Example
 
