@@ -6,11 +6,15 @@ It's a companion to [Upgrade Methods](upgrade-methods.md#talos-os-upgrade), whic
 
 ## Compatibility Matrix
 
-| Module Version | not using `disk` feature | using `disk` feature |
-| --------------- | ------------------------- | --------------------- |
-| v5.0            | >=1.8                     | not available          |
-| v6.0            | >=1.10                    | >=1.11, <=1.12          |
-| v7.0            | >=1.12                    | >=1.12                 |
+| Module Version        | not using `disk` feature | using `disk` feature |
+| ---------------------- | ------------------------- | --------------------- |
+| v5.0                   | >=1.8                     | not available          |
+| v6.0                   | >=1.10                    | >=1.11, <=1.12          |
+| v7.0 - v7.4            | >=1.12, <1.14             | >=1.12, <1.14          |
+| v7.5 (unreleased)      | >=1.12                    | >=1.12                 |
+
+> [!NOTE]
+> Talos 1.15 is untested as of v7.5.
 
 > [!NOTE]
 > These ranges reflect what's been validated and documented, not a hard limit enforced by this module or its `siderolabs/talos` provider dependency — the provider's own version constraint (`talos/providers.tf`) has no upper bound. A module version working with a newer Talos release than listed here is plausible, but hasn't necessarily been verified; see the per-version caveats below for known exceptions.
@@ -20,6 +24,22 @@ It's a companion to [Upgrade Methods](upgrade-methods.md#talos-os-upgrade), whic
 ## Per-Talos-Version Caveats
 
 Caveats in this section apply to the target Talos version regardless of which module version you're on, since they stem from Talos's own behavior, not this module's code.
+
+### Talos 1.14: multi-document machine config (fixed)
+
+> [!IMPORTANT]
+>
+> **Talos 1.14 moves several `v1alpha1` fields into dedicated configuration documents** (`KubeletConfig`, `KubeNodeConfig`, `KubeAPIServerConfig`, `KubeControllerManagerConfig`, `KubeSchedulerConfig`, `KubeProxyConfig`, `KubeFlannelCNIConfig`, etc. — see [Talos's document map](https://docs.siderolabs.com/talos/v1.14/reference/configuration/document-map)) and rejects a config that sets the same thing in both places. Since this module fully regenerates machine config from `talos_version` on every `apply` (unlike a plain `talosctl upgrade`, which only swaps the OS image), this previously broke any apply targeting a 1.14+ contract outright (see [#269](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/269)).
+>
+> **Fixed** as of v7.5: machine config generation is now version-gated, emitting the affected fields on their new document for 1.14+. This includes the two fields that initially had no confirmed replacement:
+> - `machine.features.hostDNS` → the `ResolverConfig` document's own `hostDNS` field ([docs](https://docs.siderolabs.com/talos/v1.14/networking/host-dns)).
+> - `cluster.allowSchedulingOnControlPlanes = true` → a `KubeNodeConfig` document that `$patch: delete`s the `node-role.kubernetes.io/control-plane` taint ([docs](https://docs.siderolabs.com/talos/v1.14/deploy-and-manage-workloads/workloads-on-controlplane)).
+>
+> Verified end-to-end against a real Talos 1.14.2 cluster bootstrap, including both of the above.
+>
+> **If your own `talos_config_patches` files set any of the migrated fields** (e.g. a `cluster.controllerManager`/`cluster.scheduler` leader-election patch), they'll need their own 1.14+ variant too — this module can't migrate a consumer's own patch files automatically.
+>
+> **If a cluster was already bootstrapped on 1.14+ before this fix**, Talos will have deployed the default Flannel CNI DaemonSet once at initial bootstrap; a config change alone won't retroactively remove it — clean up the `kube-flannel` DaemonSet/ClusterRole/ClusterRoleBinding/ServiceAccount/ConfigMap manually (and restart any pods that got stuck from the resulting broken networking) after applying the fix.
 
 ### Talos 1.14: `SecurityProfileConfig.workloadIsolation`
 

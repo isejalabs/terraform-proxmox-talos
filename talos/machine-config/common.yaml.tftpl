@@ -1,3 +1,4 @@
+%{ if !talos_1_14_plus }
 machine:
   kubelet:
     image: ghcr.io/siderolabs/kubelet:${kubernetes_version}
@@ -21,6 +22,39 @@ cluster:
     image: registry.k8s.io/kube-proxy:${kubernetes_version}
   scheduler:
     image: registry.k8s.io/kube-scheduler:${kubernetes_version}
+%{ else }
+# Talos 1.14+: machine.kubelet, machine.nodeLabels, and the
+# cluster.{apiServer,controllerManager,proxy,scheduler}.image fields above moved to dedicated
+# documents (see docs/talos-compatibility.md). The cluster.apiServer/controllerManager/
+# proxy/scheduler *content* (beyond image, which only matters for control planes) is emitted from
+# control-plane.yaml.tftpl instead. machine.features.hostDNS also moved - to the ResolverConfig
+# document below (https://docs.siderolabs.com/talos/v1.14/networking/host-dns) - while any other
+# machine.features key stays here.
+%{ if machine_features_rest_yaml != null }
+
+machine:
+  features:
+    ${indent(4, machine_features_rest_yaml)}
+%{ endif }
+
+---
+apiVersion: v1alpha1
+kind: KubeletConfig
+image: ghcr.io/siderolabs/kubelet:${kubernetes_version}
+%{ if kubelet_config_yaml != null }
+${kubelet_config_yaml}
+%{ endif }
+
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+%{ if kubelet_register_with_fqdn != null }
+registerWithFQDN: ${kubelet_register_with_fqdn}
+%{ endif }
+labels:
+  topology.kubernetes.io/region: ${cluster_name}
+  topology.kubernetes.io/zone: ${node_name}
+%{ endif }
 
 ---
 apiVersion: v1alpha1
@@ -28,15 +62,21 @@ kind: HostnameConfig
 auto: off
 hostname: ${hostname}
 
-%{ if dns != null }
+%{ if dns != null || (talos_1_14_plus && host_dns_yaml != null) }
 ---
 apiVersion: v1alpha1
 kind: ResolverConfig
+%{ if dns != null }
 # A list of nameservers (DNS servers) to use for resolving domain names.
 nameservers:
     %{ for i in dns }
     - address: ${i}
     %{ endfor }
+%{ endif }
+%{ if talos_1_14_plus && host_dns_yaml != null }
+hostDNS:
+    ${indent(4, host_dns_yaml)}
+%{ endif }
 %{ endif }
 
 ---
