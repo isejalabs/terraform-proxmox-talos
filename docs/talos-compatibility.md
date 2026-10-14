@@ -25,17 +25,17 @@ It's a companion to [Upgrade Methods](upgrade-methods.md#talos-os-upgrade), whic
 
 Caveats in this section apply to the target Talos version regardless of which module version you're on, since they stem from Talos's own behavior, not this module's code.
 
-### Talos 1.14: multi-document machine config (fixed, two known gaps remain)
+### Talos 1.14: multi-document machine config (fixed)
 
 > [!IMPORTANT]
 >
 > **Talos 1.14 moves several `v1alpha1` fields into dedicated configuration documents** (`KubeletConfig`, `KubeNodeConfig`, `KubeAPIServerConfig`, `KubeControllerManagerConfig`, `KubeSchedulerConfig`, `KubeProxyConfig`, `KubeFlannelCNIConfig`, etc. — see [Talos's document map](https://docs.siderolabs.com/talos/v1.14/reference/configuration/document-map)) and rejects a config that sets the same thing in both places. Since this module fully regenerates machine config from `talos_version` on every `apply` (unlike a plain `talosctl upgrade`, which only swaps the OS image), this previously broke any apply targeting a 1.14+ contract outright (see [#269](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/269)).
 >
-> **Fixed** as of this module version: machine config generation is now version-gated, emitting the affected fields on their new document for 1.14+. Verified end-to-end against a real Talos 1.14.2 cluster bootstrap.
+> **Fixed** as of v7.5: machine config generation is now version-gated, emitting the affected fields on their new document for 1.14+. This includes the two fields that initially had no confirmed replacement:
+> - `machine.features.hostDNS` → the `ResolverConfig` document's own `hostDNS` field ([docs](https://docs.siderolabs.com/talos/v1.14/networking/host-dns)).
+> - `cluster.allowSchedulingOnControlPlanes = true` → a `KubeNodeConfig` document that `$patch: delete`s the `node-role.kubernetes.io/control-plane` taint ([docs](https://docs.siderolabs.com/talos/v1.14/deploy-and-manage-workloads/workloads-on-controlplane)).
 >
-> **Two known gaps remain** (no confirmed 1.14+ replacement identified yet — tracked in [#269](https://redirect.github.com/isejalabs/terraform-proxmox-talos/issues/269)):
-> - `machine.features.hostDNS` is dropped for 1.14+, falling back to Talos's own default.
-> - `cluster.allowSchedulingOnControlPlanes = true` is dropped for 1.14+ — the default (`false`) is verified correct, but setting this to `true` will not take effect on 1.14+ yet.
+> Verified end-to-end against a real Talos 1.14.2 cluster bootstrap, including both of the above.
 >
 > **If your own `talos_config_patches` files set any of the migrated fields** (e.g. a `cluster.controllerManager`/`cluster.scheduler` leader-election patch), they'll need their own 1.14+ variant too — this module can't migrate a consumer's own patch files automatically.
 >

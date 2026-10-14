@@ -49,12 +49,17 @@ cluster:
 # Talos 1.14+: apiServer/controllerManager/scheduler/proxy content moved to the dedicated
 # documents below (see docs/talos-compatibility.md).
 #
-# KNOWN GAP: allowSchedulingOnControlPlanes has no confirmed 1.14+ document replacement, so it's
-# intentionally dropped here. Verified empirically that this matches the module's documented
-# `false` default (the control-plane NoSchedule taint is still applied when omitted) - but a
-# consumer setting `allow_scheduling_on_controlplane = true` will NOT get that behavior on 1.14+
-# until this is resolved (tracked in the issue linked from docs/talos-compatibility.md).
-#
+# allowSchedulingOnControlPlanes moved too: the control-plane NoSchedule taint is now removed via
+# a KubeNodeConfig `$patch: delete` on the taint itself, instead of a cluster-level toggle. See
+# https://docs.siderolabs.com/talos/v1.14/deploy-and-manage-workloads/workloads-on-controlplane.
+%{ if allow_scheduling }
+---
+apiVersion: v1alpha1
+kind: KubeNodeConfig
+taints:
+  node-role.kubernetes.io/control-plane:
+    $patch: delete
+%{ endif }
 # The base-generated config always includes a default KubeFlannelCNIConfig for 1.14+, regardless
 # of settings elsewhere - there's no "disabled" field on it (unlike KubeProxyConfig below), so the
 # only way to actually drop the default CNI (this module installs Cilium instead) is to delete the

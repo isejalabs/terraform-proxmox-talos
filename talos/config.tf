@@ -42,6 +42,15 @@ locals {
     contains(keys(local.api_server_parsed), "certSANs") ? { certExtraSANs = local.api_server_parsed.certSANs } : {},
   )
   api_server_config_yaml = length(local.api_server_renamed) > 0 ? yamlencode(local.api_server_renamed) : null
+
+  # `machine.features.hostDNS` is deprecated in Talos 1.14 in favor of the `ResolverConfig`
+  # document's own `hostDNS` field (https://docs.siderolabs.com/talos/v1.14/networking/host-dns);
+  # everything else under `machine.features` stays there.
+  machine_features_parsed    = yamldecode(coalesce(var.cluster.machine_features, "{}"))
+  machine_features_host_dns  = try(local.machine_features_parsed.hostDNS, null)
+  machine_features_rest      = { for k, v in local.machine_features_parsed : k => v if k != "hostDNS" }
+  machine_features_rest_yaml = length(local.machine_features_rest) > 0 ? yamlencode(local.machine_features_rest) : null
+  host_dns_yaml              = local.machine_features_host_dns != null ? yamlencode(local.machine_features_host_dns) : null
 }
 
 resource "talos_machine_secrets" "this" {
@@ -101,6 +110,8 @@ data "talos_machine_configuration" "this" {
       talos_1_14_plus            = local.talos_1_14_plus_for_node[each.key]
       kubelet_config_yaml        = local.kubelet_config_yaml
       kubelet_register_with_fqdn = local.kubelet_register_with_fqdn
+      machine_features_rest_yaml = local.machine_features_rest_yaml
+      host_dns_yaml              = local.host_dns_yaml
     }),
     each.value.machine_type == "controlplane" ?
     templatefile("${path.module}/machine-config/control-plane.yaml.tftpl", {

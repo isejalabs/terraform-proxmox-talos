@@ -27,14 +27,15 @@ cluster:
 # cluster.{apiServer,controllerManager,proxy,scheduler}.image fields above moved to dedicated
 # documents (see docs/talos-compatibility.md). The cluster.apiServer/controllerManager/
 # proxy/scheduler *content* (beyond image, which only matters for control planes) is emitted from
-# control-plane.yaml.tftpl instead.
-# NOTE: machine.features.hostDNS has no known 1.14+ document replacement, so it's intentionally
-# dropped here for 1.14+, falling back to Talos's own default. A full cluster bootstrap on a real
-# 1.14.2 node came up healthy without the override (this setting exists as a workaround for a
-# specific past Cilium/Talos interaction, see
-# https://www.talos.dev/v1.8/kubernetes-guides/network/deploying-cilium/#known-issues - not fully
-# re-verified against that specific issue). Tracked in the issue linked from
-# docs/talos-compatibility.md.
+# control-plane.yaml.tftpl instead. machine.features.hostDNS also moved - to the ResolverConfig
+# document below (https://docs.siderolabs.com/talos/v1.14/networking/host-dns) - while any other
+# machine.features key stays here.
+%{ if machine_features_rest_yaml != null }
+
+machine:
+  features:
+    ${indent(4, machine_features_rest_yaml)}
+%{ endif }
 
 ---
 apiVersion: v1alpha1
@@ -61,15 +62,21 @@ kind: HostnameConfig
 auto: off
 hostname: ${hostname}
 
-%{ if dns != null }
+%{ if dns != null || (talos_1_14_plus && host_dns_yaml != null) }
 ---
 apiVersion: v1alpha1
 kind: ResolverConfig
+%{ if dns != null }
 # A list of nameservers (DNS servers) to use for resolving domain names.
 nameservers:
     %{ for i in dns }
     - address: ${i}
     %{ endfor }
+%{ endif }
+%{ if talos_1_14_plus && host_dns_yaml != null }
+hostDNS:
+    ${indent(4, host_dns_yaml)}
+%{ endif }
 %{ endif }
 
 ---
