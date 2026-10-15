@@ -1,6 +1,6 @@
 # Module usage examples
 
-This guide shows direct Terraform/OpenTofu usage without Terragrunt. The repository also includes [canonical root configurations](../examples/) for a minimal cluster and a high-availability cluster. See [input variables](variables.md) for all options and [storage options](storage.md) for storage behavior and caveats. A [complete configuration](full-example.md) brings every top-level input together.
+This guide shows direct Terraform/OpenTofu usage without Terragrunt. The repository also includes [canonical root configurations](../examples/) for a minimal cluster, a high-availability cluster, and a complete configuration. See [input variables](variables.md) for all options and [storage options](storage.md) for storage behavior and caveats. The [complete configuration guide](full-example.md) describes the full example and its caveats.
 
 ## Prerequisites
 

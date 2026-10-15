@@ -4,6 +4,7 @@ These root configurations call the module from a local checkout, so you can revi
 
 - [Minimal cluster](minimal/) — one control-plane node for a lab or evaluation; not highly available.
 - [High-availability cluster](high-availability/) — three control-plane nodes and two workers spread over three Proxmox hosts.
+- [Full configuration](full/) — one configuration showing every top-level input and all three supported storage types. See the [narrative guide](../docs/full-example.md) for topology and storage caveats.
 
 ## Before initializing
 
