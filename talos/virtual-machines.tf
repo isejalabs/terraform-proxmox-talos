@@ -102,6 +102,16 @@ resource "proxmox_virtual_environment_vm" "this" {
     }
   }
 
+  dynamic "usb" {
+    for_each = each.value.usb_devices
+    iterator = usb_device
+    content {
+      host    = usb_device.value.host
+      mapping = usb_device.value.mapping
+      usb3    = usb_device.value.usb3
+    }
+  }
+
   smbios {
     # use host_node (pve host) and vm_id (numeric) to create a unique serial number for each VM, so that Proxmox CSI Driver can identify nodes correctly
     # format: "h={host_node};i={vm_id}" e.g., "h=pve1;i=123"
