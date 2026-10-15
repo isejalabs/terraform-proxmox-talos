@@ -8,8 +8,21 @@ This guide shows direct Terraform/OpenTofu usage without Terragrunt. See [input 
 - A Proxmox API token and SSH access for the configured Proxmox user.
 - Reserved IP addresses for the nodes and a reachable gateway.
 - Terraform or OpenTofu and a Talos Image Factory schematic file (see [image configuration](variables.md#image)).
+- The Sealed Secrets certificate and private key at the paths in `sealed_secrets_config` (see [Sealed Secrets configuration](variables.md#sealed_secrets_config)).
 
-Keep credentials out of version control. The examples expose the token as a sensitive root variable populated from TF_VAR_proxmox_api_token.
+Before initialization, create the schematic and certificate assets. The following uses the module's default paths; adjust them if you override the corresponding inputs:
+
+~~~sh
+mkdir -p assets/talos assets/sealed-secrets/certificate
+# Save your Image Factory schematic as assets/talos/schematic.yaml.
+openssl req -x509 -days 365 -nodes -newkey rsa:4096 \
+  -keyout assets/sealed-secrets/certificate/sealed-secrets.key \
+  -out assets/sealed-secrets/certificate/sealed-secrets.cert \
+  -subj "/CN=sealed-secret/O=sealed-secret"
+chmod 600 assets/sealed-secrets/certificate/sealed-secrets.key
+~~~
+
+Keep credentials out of version control. The examples expose the token as a sensitive root variable populated from `TF_VAR_proxmox_api_token`. Sensitive flags redact CLI output; they do not encrypt values in Terraform state. Use an access-controlled backend and protect state backups and saved plan files. Keep the Sealed Secrets private key and generated `output/` files out of version control.
 
 ## Minimal single-node cluster
 
@@ -70,7 +83,22 @@ terraform plan
 terraform apply
 ~~~
 
-Use a secrets manager, ignored .tfvars file, or SOPS for local and CI use. Do not commit credentials or generated state. The module writes Talos and Kubernetes client configuration beneath its output directory; treat these files as sensitive and protect shared state accordingly.
+After apply completes, the module writes the following sensitive client and machine configuration files beneath `output/`:
+
+- `output/kube-config.yaml` — Kubernetes client configuration.
+- `output/talos-config.yaml` — Talos client configuration.
+- `output/talos-machine-config-<node>.yaml` — generated per-node machine configuration.
+- `output/talos-machine-secrets.yaml` — Talos cluster secrets; protect it as a credential.
+
+Verify the cluster using the generated kubeconfig:
+
+~~~sh
+export KUBECONFIG=output/kube-config.yaml
+kubectl cluster-info
+kubectl get nodes -o wide
+~~~
+
+The bootstrap is complete when the API responds and every expected node reaches `Ready`. This single-node topology is not highly available. Keep local assets and generated `output/` files out of version control.
 
 ## Multiple control-plane and worker nodes
 

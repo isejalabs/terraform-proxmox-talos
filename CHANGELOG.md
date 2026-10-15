@@ -42,6 +42,8 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Fixed
 
+- Set restrictive `0600` permissions on the generated Talos machine secrets file.
+
 ## [7.5.0] - 2026-10-14
 
 This release restores Talos 1.14+ compatibility, broken by Talos's own move of several `v1alpha1` fields into dedicated configuration documents.

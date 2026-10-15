@@ -25,7 +25,8 @@ resource "local_file" "talos_machine_secrets" {
       }
     }
   })
-  filename = "output/talos-machine-secrets.yaml"
+  filename        = "output/talos-machine-secrets.yaml"
+  file_permission = "0600"
 }
 
 resource "local_file" "talos_machine_configs" {
@@ -48,11 +49,13 @@ resource "local_file" "kube_config" {
 }
 
 output "kube_config" {
+  description = "Sensitive Kubernetes kubeconfig for cluster administration."
   value     = module.talos.kube_config.kubeconfig_raw
   sensitive = true
 }
 
 output "talos_config" {
+  description = "Sensitive Talos client configuration for cluster administration."
   value     = module.talos.client_configuration.talos_config
   sensitive = true
 }

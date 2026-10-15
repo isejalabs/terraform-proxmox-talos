@@ -2,11 +2,11 @@
 
 This documentation describes all input variables for the `terraform-proxmox-talos` module. You will be given detailed description of each variable, its type, default value (if any) and an example usage.
 
-For further usage instructions on using `terraform-proxmox-talos` module, please be referred to the [README](../README.md) file. There's also a [technical module documentation](module.md) available.
+For task-based navigation, start with the [documentation index](README.md). The [README](../README.md) introduces the module and links to direct usage examples. There's also a [technical module documentation](module.md) available.
 
 ## ToC
 
-For a quick overview of all variables, please see the following Table of Contents, linking to the sections with detailed description of the respective variable.
+Use the Table of Contents to jump to an input. Entries labeled as defaults reflect the module schema; values labeled `e.g.` are examples only.
 
 - [cilium_config](#cilium_config)
 - [cluster](#cluster)
@@ -53,15 +53,15 @@ The Kubernetes cluster configuration defines its version and network configurati
 | gateway_api_version              | **Required** [GW API version](https://gateway-api.sigs.k8s.io/concepts/versioning)                                                                                                                   | `string`       | e.g. `"v1.2.1"`     |
 | kubernetes_version               | **Required** Kubernetes version to set independent from Talos image inbuilt version                                                                                                                  | `string`       | e.g. `"v1.33.0"`    |
 | name                             | **Required** Arbitrary name of the Talos cluster                                                                                                                                                     | `string`       | e.g. `"dev-talos"`  |
-| proxmox_cluster                  | **Required** Name of the Proxmox cluster used for Promox CSI<br>will get used for `topology.kubernetes.io/region` setting                                                                            | `string`       | e.g. `"proxmox"`    |
+| proxmox_cluster                  | **Required** Name of the Proxmox cluster used for Proxmox CSI<br>will get used for `topology.kubernetes.io/region` setting                                                                            | `string`       | e.g. `"proxmox"`    |
 | allow_scheduling_on_controlplane | Allow scheduling of workloads on control planes                                                                                                                                                      | `bool`         | `false`             |
 | api_server                       | Kube apiserver options (cf. [Talos apiServerConfig](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) documentation)                                      | `string`       | `null`              |
-| extraManifests                   | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]`                |
+| extra_manifests                  | `List` of [`extraManifests`](https://www.talos.dev/v1.11/kubernetes-guides/configuration/inlinemanifests/#extramanifests) in Talos, e.g. experimental GW API features, Flux Controller or Prometheus | `list(string)` | `[]`                |
 | kubelet                          | Kubelet config values(cf. [Talos kubeletConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.kubelet)                                                         | `string`       | `null`              |
 | machine_features                 | Machine features, cf. [Talos featuresConfig](https://www.talos.dev/v1.11/reference/configuration/v1alpha1/config/#Config.machine.features)                                                           | `string`       | `null`              |
 | on_boot                          | Specifies whether all VMs will be started during system boot of the Proxmox server                                                                                                                   | `bool`         | `true`              |
 | subnet_mask                      | Network subnet mask                                                                                                                                                                                  | `string`       | `"24"`              |
-| talos_machine_config_version     | [Version of Talos](https://github.com/siderolabs/talos/releases) to use in generated machine configuration. Per default, the version defined in the `image` is used                                  | `string`       | `"v1.2.3"`          |
+| talos_machine_config_version     | [Version of Talos](https://github.com/siderolabs/talos/releases) to use in generated machine configuration. Per default, the version defined in the `image` is used                                  | `string`       | `null`              |
 | vip                              | [Virtual (shared) IP](https://www.talos.dev/v1.11/talos-guides/network/vip/) for building a high-availability controlplane                                                                           | `string`       | `null`              |
 
 ### Example
@@ -250,7 +250,7 @@ nodes = {
       "assets/talos/patches/worker1.example.net/patch2.yaml",
     ]
     # update        = true  # leave this commented out usually!
-    vlan          = 123
+    vlan_id       = 123
   }
 }
 ```
@@ -413,31 +413,31 @@ The `volumes` variable is formed of a **map** consisting of the _volume name_ as
 
 | Key          | Description                                                                                                                                                                                                                                                                                                   | Type     | Default / Example |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------- |
-| size         | **Required** Volume size with unit suffix, with _differing_ Unit of Measure (UoM) handling per volume `type`:<br>- `directory`: size can have any value and will be ignored as it's not relevant<br>- `disk`: only `GB` (or `G` and `GiB`) can be used, no `M`, `T` or other magnitude<br>- `proxmox-csi`: UoM needs to omit the `B`(Byte) suffix, i.e. `10G` mean `10GB`<br><br>Needed for: all types (can't get omited for `directory` type) | `string` | e.g. `"10G"`       |
-| datastore    | Proxmox datastore used to store the volume<br><br>Optional for: disk, proxmox-csi                                                                                                                                                                                                                             | `string` | `"local-zfs"`     |
+| size         | **Required** Volume size with unit suffix, with _differing_ Unit of Measure (UoM) handling per volume `type`:<br>- `directory`: size can have any value and will be ignored as it's not relevant<br>- `disk`: only `GB` (or `G` and `GiB`) can be used, no `M`, `T` or other magnitude<br>- `proxmox-csi`: UoM needs to omit the `B`(Byte) suffix, i.e. `10G` mean `10GB`<br><br>Needed for: all types (required even for `directory`, where it is ignored) | `string` | e.g. `"10G"`       |
+| datastore    | Proxmox datastore used to store the volume. If unset, Talos disk volumes use the node VM datastore and Proxmox CSI volumes use `local-zfs`.<br><br>Optional for: disk, proxmox-csi | `string` | unset; type-specific fallback |
 | format       | Disk format (`"raw"`, `"qcow"`)<br><br>Optional for: proxmox-csi                                                                                                                                                                                                                                              | `string` | `"raw"`           |
-| machine_type | Type of kubernetes node, where the Talos [User Volume](https://docs.siderolabs.com/talos/v1.12/configure-your-talos-cluster/storage-and-disk-management/disk-management/user) should get created. Must be either `"all"`, `"controlplane"` or `"worker"` (default)<br><br>Optional for: directory, disk, partition                                                                                                                                                                     | `string` | `"worker"`        |
+| machine_type | Type of kubernetes node, where the Talos [User Volume](https://docs.siderolabs.com/talos/v1.12/configure-your-talos-cluster/storage-and-disk-management/disk-management/user) should get created. Must be either `"all"`, `"controlplane"` or `"worker"` (default)<br><br>Optional for: directory and disk                                                                                                                                                                     | `string` | `"worker"`        |
 | node         | Hostname of the Proxmox node where the volume should get stored<br><br>Needed for: proxmox-csi                                                                                                                                                                                                                | `string` | e.g. `"host1"`    |
-| type         | Type of volume (`directory`, `disk`, `proxmox-volume` (default)). See the [storage documentation](storage.md) for more details.<br><br>Needed for: all types                                                                                                                                                                                                     | `string` | `"proxmox-csi"`   |
+| type         | Supported volume type: `directory`, `disk`, or `proxmox-csi`. The default is `proxmox-csi`. See the [storage documentation](storage.md) for more details.<br><br>Needed for: all types                                                                                                                                                                                                     | `string` | `"proxmox-csi"`   |
 | vmid         | Alternative VM ID for *naming* the volume. Do not mix up with the VM ID the volume gets bound to – which is driven by the proxmox-csi plugin dynamically.<br><br>When using a volume in multiple instances in the same Proxmox environment, e.g. for `prod` and `qa` instances, you need to use the [`env`](#env) variable for proper separation. The purpose of the `vmid` attribute is separation from a potential unrelated VM with the same ID (where the VM's ID cannot get changed) – or where the default `9999` is not your liking.<br><br>Optional for: proxmox-csi | `number` | `9999`            |
 
 ### Usage of variables per volume `type`
 
-| Variable     | default       | directory | disk | partition* | proxmox-csi |
-| ------------ | ------------- | :-------: | :--: | :--------: | :---------: |
-| size         | –             |     X     |  X   |     X      |      X      |
-| type         | `proxmox-csi` |     X     |  X   |     X      |      O      |
-| machine_type | `worker`      |     O     |  O   |     O      |      –      |
-| datastore    | `local-zfs`   |     –     |  O   |     –      |      O      |
-| format       | `raw`         |     –     |  –   |     –      |      O      |
-| node         | –             |     –     |  –   |     –      |      X      |
-| vmid         | `9999`        |     –     |  –   |     –      |      O      |
+| Variable     | default       | directory | disk | proxmox-csi |
+| ------------ | ------------- | :-------: | :--: | :---------: |
+| size         | –             |     X     |  X   |      X      |
+| type         | `proxmox-csi` |     X     |  X   |      O      |
+| machine_type | `worker`      |     O     |  O   |      –      |
+| datastore    | varies by type |     –     |  O   |      O      |
+| format       | `raw`         |     –     |  –   |      O      |
+| node         | –             |     –     |  –   |      X      |
+| vmid         | `9999`        |     –     |  –   |      O      |
 
 > **Legend**:  
 > **X** Required variable  
 > **O** Optional variable  
 > **–** Not used  
-> _*_ Not available currently  
+> `partition` is not supported by the module; see [issue #162](https://github.com/isejalabs/terraform-proxmox-talos/issues/162) for the proposed implementation.
 
 ### Example
 

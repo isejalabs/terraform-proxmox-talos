@@ -1,31 +1,30 @@
 ## About
 
-A `terraform`/`tofu` module for creating a [Kubernetes](https://kubernetes.io/) cluster on [Proxmox VE](https://www.proxmox.com/en/proxmox-virtual-environment), using [Talos Linux](https://talos.dev) as the governing declarative K8S OS.
+A `terraform`/`tofu` module for creating a [Kubernetes](https://kubernetes.io/) cluster on [Proxmox VE](https://www.proxmox.com/en/proxmox-virtual-environment), using [Talos Linux](https://talos.dev) as the operating system.
 
 ## What's in the pocket
 
 You will get:
 
 - [Kubernetes](https://kubernetes.io/) cluster based on
-- [Talos Linux](https://talos.dev) (a secure, immutable, and minimal distribution, explecitely designed for K8S) with
+- [Talos Linux](https://talos.dev) (a secure, immutable, and minimal distribution, explicitly designed for Kubernetes) with
 - [Cilium](https://cilium.io) as a [CNI](https://www.cni.dev),
 - [Gateway API](https://gateway-api.sigs.k8s.io/) as next-generation Kubernetes Ingress,
-- [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) for providing storage,
+- [Proxmox CSI integration support](https://github.com/sergelogvinov/proxmox-csi-plugin), including prepared credentials and optional pre-provisioned volumes,
 - [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) providing a safe store for your [`Secrets`](https://kubernetes.io/docs/concepts/configuration/secret/) – even inside a public repository –,
 - all running as QEMU/KVM VMs on [Proxmox VE](https://www.proxmox.com/en/proxmox-virtual-environment).
 
-Everything is set up with a simple `terraform apply` command.
-
-This module is designed for being minimalistic by bootstrapping a Kubernetes cluster with core intrastructure CNI, CSI and Secrets. Of course, you can add more Kubernetes features, e.g. [Argo CD](https://argo-cd.readthedocs.io/en/stable/) and [Cert-manager](https://cert-manager.io/), by defining [kustomize](https://kustomize.io/) YAML code on-top.
+This module provisions Proxmox VMs, configures Talos, bootstraps Kubernetes, and installs Cilium, Gateway API CRDs, and Sealed Secrets. It also prepares Proxmox CSI credentials, namespace, topology labels, and any requested pre-provisioned volumes and PersistentVolumes. You must supply the local image and Sealed Secrets assets, Proxmox credentials, and network details. The Proxmox CSI driver, StorageClasses, workload PersistentVolumeClaims, and applications beyond the included bootstrap components remain your responsibility. See the [quickstart](docs/examples.md) and [storage guide](docs/storage.md) for the full boundary.
 
 ## Usage
 
 ### Documentation
 
+- [Documentation index](docs/README.md) for task-based navigation,
 - [Input Variables Documentation](docs/variables.md) for configuring the module,
 - [Storage Options](docs/storage.md) for configuring storage for your cluster (e.g. Proxmox CSI Plugin and RAW block devices),
 - [Changelog](CHANGELOG.md) with all notable changes,
-- [Upgrade Instructions](UPGRADE.md) for each major release (especially handing breaking changes),
+- [Upgrade Instructions](UPGRADE.md) for each major release (especially handling breaking changes),
 - [Upgrade Methods](docs/upgrade-methods.md) for detailed instructions on how to perform an upgrade of the Talos OS version, Kubernetes version, scaling the cluster, and other aspects, and
 - [Talos Compatibility](docs/talos-compatibility.md) for the module/Talos version compatibility matrix and known caveats when upgrading past a given Talos version.
 
@@ -38,9 +37,9 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 ## Requirements
 
 1. **Required**: You need to have one or more [**Proxmox**](https://www.proxmox.com/en/proxmox-virtual-environment) nodes to run the VMs on. A Proxmox cluster setup is required in the case of using multiple nodes.
-1. **Free Choice**: The module is tested to running well with [**OpenTofu**](https://opentofu.org/), while it should be compatible with [**Terraform**](https://www.terraform.io/) as well.
+1. **Free Choice**: The module is tested with [**OpenTofu**](https://opentofu.org/), while it should be compatible with [**Terraform**](https://www.terraform.io/) as well.
 1. **Recommended**: It's recommended using [**SOPS**](https://getsops.io/) for encrypting your Terraform credentials (e.g. Proxmox login). This allows storing all your Terraform configuration in version control.
-1. **Recommended**: For daily operations of the cluster you should have K8S **CLI tools** such als `kubectl`, `kustomize`, `cilium`, and `kubeseal`.
+1. **Recommended**: For daily operations of the cluster you should have Kubernetes **CLI tools** such as `kubectl`, `kustomize`, `cilium`, and `kubeseal`.
 1. **Optional**: You could have CLI tool `talosctl` for checking your Talos cluster. It's not strictly needed because even [upgrades are done using declarative IaC](docs/upgrade-methods.md#talos-os-upgrade).
 1. **Optional**: Using [**Terragrunt**](https://terragrunt.gruntwork.io/) as a DRY-wrapper for terraform/tofu is optional.  Though, it's recommended by the author when aiming for multiple incarnations of the module for running multiple environments (e.g. dev, test, prod).
 
@@ -61,13 +60,13 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 - [ ] Hybrid cluster, consisting of Proxmox VMs and bare metal hosts → [#219](https://github.com/isejalabs/terraform-proxmox-talos/issues/219)
 - [ ] Make included components' versions (e.g. cilium) more independent of module → [#218](https://github.com/isejalabs/terraform-proxmox-talos/issues/218)
 
-If you think a feature is worth getting implemented inside this terraform/tofu module, feel free starting a community [discussion](https://github.com/isejalabs/terraform-proxmox-talos/discussions). You can also look for existing [feature requests](https://github.com/isejalabs/terraform-proxmox-talos/issues?q=is%3Aissue%20state%3Aopen%20type%3AFeature) created in the [issue tracker](https://github.com/isejalabs/terraform-proxmox-talos/issues) which are steered by the [project plan](https://github.com/orgs/isejalabs/projects/2).
+If you think a feature is worth getting implemented inside this terraform/tofu module, feel free to start a community [discussion](https://github.com/isejalabs/terraform-proxmox-talos/discussions). You can also look for existing [feature requests](https://github.com/isejalabs/terraform-proxmox-talos/issues?q=is%3Aissue%20state%3Aopen%20type%3AFeature) created in the [issue tracker](https://github.com/isejalabs/terraform-proxmox-talos/issues) which are steered by the [project plan](https://github.com/orgs/isejalabs/projects/2).
 
 ## Credits
 
 This terraform module would not exist without [**Vegard Stenhjem Hagen**](https://github.com/vehagn). He set the foundation for a terraform module creating a Talos Kubernetes cluster in Proxmox in his excellent [vehagn/homelab//tofu/kubernets](https://github.com/vehagn/homelab/tree/140fbc249b26c622c0e2ab413c3aca9eb5014f8e) implementation. Vegard's implementation got transformed into a reusable terraform module by adding variables and other tweaks.
 
-Additional features got added by the author of this module in the meanwhile while functionality from Vegard's implementation get ported from time to time. See the [Changelog](CHANGELOG.md) for a full list of changes. And don't miss out checking Vegard's helpful [blog](https://blog.stonegarden.dev/), where he's giving brilliant explainations on Kubernetes topics, and of course his [homelab implementation](https://github.com/vehagn/homelab).
+Additional features got added by the author of this module in the meanwhile while functionality from Vegard's implementation get ported from time to time. See the [Changelog](CHANGELOG.md) for a full list of changes. And don't miss out checking Vegard's helpful [blog](https://blog.stonegarden.dev/), where he's giving brilliant explanations on Kubernetes topics, and of course his [homelab implementation](https://github.com/vehagn/homelab).
 
 ## Disclaimer
 

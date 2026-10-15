@@ -2,6 +2,16 @@
 
 This document describes the procedures for upgrading various components of the Talos Kubernetes cluster managed by this `terraform-proxmox-talos` module.
 
+## On this page
+
+- [Overview](#overview)
+- [Talos OS upgrade](#talos-os-upgrade)
+- [Talos schematic upgrade](#talos-schematic-upgrade)
+- [Kubernetes version upgrade](#kubernetes-version-upgrade)
+- [VM changes, scaling, and node moves](#vm-configuration-changes)
+- [Terraform module version upgrade](#terraform-module-version-upgrade)
+- [Included component upgrades](#upgrade-of-inbuilt-components)
+
 ## Overview
 
 ### Types of Cluster Upgrades
@@ -72,7 +82,7 @@ Carry out the following steps to **upgrade Talos nodes one by one**:
 1. Set [`image.update_version`](variables.md#definition-3) to the required version you want to update to.
 1. In the following, you will process each node subsequently, **control planes first**. Set [`nodes[1].update = true`](variables.md#definition-4) for the 1st node and run `terraform apply`.
 1. Set `nodes[2].update = true` for the 2nd node, _leave_ the previous node's `update = true` and run `terraform apply`.
-1. Similarily to before, set `nodes[3].update = true` for the 3rd node, leave the previous nodes' `update = true` and run `terraform apply`.
+1. Similarly to before, set `nodes[3].update = true` for the 3rd node, leave the previous nodes' `update = true` and run `terraform apply`.
 1. ...
 1. Set `nodes[n].update = true` for the n-th node, leave the previous nodes' `update = true` and run `terraform apply`.
 1. After upgrading all nodes, set `image.version` to match the update version, reset `update = false` (or remove the attribute) for all [nodes](variables.md#definition-4), and — if you unset `cluster.talos_machine_config_version` in step 0 — re-pin it to the same version now. Run `terraform apply` once more and confirm it converges to a clean (or drift-free) plan.
