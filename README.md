@@ -29,9 +29,11 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 - [Upgrade Methods](docs/upgrade-methods.md) for detailed instructions on how to perform an upgrade of the Talos OS version, Kubernetes version, scaling the cluster, and other aspects, and
 - [Talos Compatibility](docs/talos-compatibility.md) for the module/Talos version compatibility matrix and known caveats when upgrading past a given Talos version.
 
-### Example
+### Examples
 
-For seeing an example usage of the module, please be referred to the [author](https://github.com/sebiklamar/)'s implementation of the module in [isejalab/homelab](https://github.com/isejalabs/homelab). You will see this module being used in a multi-environment (e.g. dev, qa, prod), not only leveraging [Terragrunt](https://terragrunt.gruntwork.io/) as a DRY-style wrapper for `terraform`/`tofu`. Copious amounts of [YAML](https://yaml.org/) using [kustomize](https://kustomize.io/) and its [transformer](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/transformerconfigs/README.md), patches and components features will provide more [DRY](https://de.wikipedia.org/wiki/Don%E2%80%99t_repeat_yourself) capabilities.
+1. Start with the [direct Terraform/OpenTofu examples](docs/examples.md) for a minimal cluster, a multi-node topology, and storage configurations.
+1. For a complete configuration showing all module inputs together, see the [full example](docs/full-example.md).
+1. For a larger Terragrunt-based, multi-environment setup, see the [homelab implementation](https://github.com/isejalabs/homelab) of the module author.
 
 ## Requirements
 
@@ -46,7 +48,7 @@ For seeing an example usage of the module, please be referred to the [author](ht
 
 - [X] Transform Vegard's implementation into a separate and reusable terraform module, also converting hardcodings into variables → [v0.2](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/vehagn-k8s-v0.2.0)
 - [X] Allow creating clusters with only one control plane node → [v0.0.3](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/vehagn-k8s-v0.0.3)
-- [X] Introduce an environment-specific prefix to allow multiple clusters on the same Proxmox cluster in parallel → [v1.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/vehagn-k8s-v1.0.0)
+- [X] Introduce an environment-specific prefix to allow multiple clusters on the same Proxmox cluster in parallel → [v1.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/v1.0.0)
 - [X] Additional variables for configuring the VM and the cluster, growing → see the [CHANGELOG](CHANGELOG.md)
 - [X] Make scheduling on control plane configurable → [v5.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/v5.0.0) / [#124](https://github.com/isejalabs/terraform-proxmox-talos/issues/124)
 - [X] Allow customizing the Talos Machine Configuration (ported from vehagn upstream) → [v5.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/v5.0.0) / [#83](https://github.com/isejalabs/terraform-proxmox-talos/issues/83)
