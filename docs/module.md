@@ -8,7 +8,7 @@ For the [input variables](#inputs) see also the dedicated [Variables Documentati
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | 2.38.0 |
 | <a name="requirement_proxmox"></a> [proxmox](#requirement\_proxmox) | 0.116.0 |
 | <a name="requirement_restapi"></a> [restapi](#requirement\_restapi) | 2.0.1 |
@@ -17,13 +17,13 @@ For the [input variables](#inputs) see also the dedicated [Variables Documentati
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="provider_local"></a> [local](#provider\_local) | n/a |
 
 ## Modules
 
 | Name | Source | Version |
-| ---- | ------ | ------- |
+|------|--------|---------|
 | <a name="module_proxmox_csi_plugin"></a> [proxmox\_csi\_plugin](#module\_proxmox\_csi\_plugin) | ./bootstrap/proxmox-csi-plugin | n/a |
 | <a name="module_sealed_secrets"></a> [sealed\_secrets](#module\_sealed\_secrets) | ./bootstrap/sealed-secrets | n/a |
 | <a name="module_talos"></a> [talos](#module\_talos) | ./talos | n/a |
@@ -32,7 +32,7 @@ For the [input variables](#inputs) see also the dedicated [Variables Documentati
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [local_file.kube_config](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
 | [local_file.talos_config](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
 | [local_file.talos_machine_configs](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file) | resource |
@@ -41,7 +41,7 @@ For the [input variables](#inputs) see also the dedicated [Variables Documentati
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_cilium_config"></a> [cilium\_config](#input\_cilium\_config) | Cilium configuration | <pre>object({<br/>    bootstrap_manifest_path = optional(string, "talos/inline-manifests/cilium-install.yaml")<br/>    values_file_path        = optional(string, "talos/inline-manifests/cilium-values.default.yaml")<br/>  })</pre> | <pre>{<br/>  "bootstrap_manifest_path": "talos/inline-manifests/cilium-install.yaml",<br/>  "values_file_path": "talos/inline-manifests/cilium-values.default.yaml"<br/>}</pre> | no |
 | <a name="input_cluster"></a> [cluster](#input\_cluster) | Cluster configuration | <pre>object({<br/>    gateway                          = string<br/>    gateway_api_version              = string<br/>    kubernetes_version               = string<br/>    name                             = string<br/>    proxmox_cluster                  = string<br/>    allow_scheduling_on_controlplane = optional(bool, false)<br/>    api_server                       = optional(string)<br/>    extra_manifests                  = optional(list(string), [])<br/>    kubelet                          = optional(string)<br/>    machine_features                 = optional(string)<br/>    on_boot                          = optional(bool, true)<br/>    subnet_mask                      = optional(string, "24")<br/>    talos_machine_config_version     = optional(string)<br/>    vip                              = optional(string)<br/>  })</pre> | n/a | yes |
 | <a name="input_env"></a> [env](#input\_env) | environment (e.g. prod, qa, dev) | `string` | `""` | no |
@@ -56,7 +56,7 @@ For the [input variables](#inputs) see also the dedicated [Variables Documentati
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | Sensitive Kubernetes kubeconfig for cluster administration. |
 | <a name="output_talos_config"></a> [talos\_config](#output\_talos\_config) | Sensitive Talos client configuration for cluster administration. |
 <!-- END_TF_DOCS -->
