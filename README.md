@@ -1,3 +1,16 @@
+## About
+
+A `terraform`/`tofu` module for creating a [Kubernetes](https://kubernetes.io/) cluster on [Proxmox VE](https://www.proxmox.com/en/proxmox-virtual-environment), using [Talos Linux](https://talos.dev) as the governing declarative K8S OS.
+
+## What's in the pocket
+
+You will get:
+
+- [Kubernetes](https://kubernetes.io/) cluster based on
+- [Talos Linux](https://talos.dev) (a secure, immutable, and minimal distribution, explecitely designed for K8S) with
+- [Cilium](https://cilium.io) as a [CNI](https://www.cni.dev),
+- [Gateway API](https://gateway-api.sigs.k8s.io/) as next-generation Kubernetes Ingress,
+- [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) for providing storage,
 - [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) providing a safe store for your [`Secrets`](https://kubernetes.io/docs/concepts/configuration/secret/) – even inside a public repository –,
 - all running as QEMU/KVM VMs on [Proxmox VE](https://www.proxmox.com/en/proxmox-virtual-environment).
 
@@ -33,7 +46,7 @@ Start with the [direct Terraform/OpenTofu examples](docs/examples.md) for a mini
 
 - [X] Transform Vegard's implementation into a separate and reusable terraform module, also converting hardcodings into variables → [v0.2](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/vehagn-k8s-v0.2.0)
 - [X] Allow creating clusters with only one control plane node → [v0.0.3](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/vehagn-k8s-v0.0.3)
-- [X] Introduce an environment-specific prefix to allow multiple clusters on the same Proxmox cluster in parallel → [v1.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/vehagn-k8s-v1.0.0)
+- [X] Introduce an environment-specific prefix to allow multiple clusters on the same Proxmox cluster in parallel → [v1.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/v1.0.0)
 - [X] Additional variables for configuring the VM and the cluster, growing → see the [CHANGELOG](CHANGELOG.md)
 - [X] Make scheduling on control plane configurable → [v5.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/v5.0.0) / [#124](https://github.com/isejalabs/terraform-proxmox-talos/issues/124)
 - [X] Allow customizing the Talos Machine Configuration (ported from vehagn upstream) → [v5.0](https://github.com/isejalabs/terraform-proxmox-talos/releases/tag/v5.0.0) / [#83](https://github.com/isejalabs/terraform-proxmox-talos/issues/83)
@@ -51,3 +64,11 @@ If you think a feature is worth getting implemented inside this terraform/tofu m
 ## Credits
 
 This terraform module would not exist without [**Vegard Stenhjem Hagen**](https://github.com/vehagn). He set the foundation for a terraform module creating a Talos Kubernetes cluster in Proxmox in his excellent [vehagn/homelab//tofu/kubernets](https://github.com/vehagn/homelab/tree/140fbc249b26c622c0e2ab413c3aca9eb5014f8e) implementation. Vegard's implementation got transformed into a reusable terraform module by adding variables and other tweaks.
+
+Additional features got added by the author of this module in the meanwhile while functionality from Vegard's implementation get ported from time to time. See the [Changelog](CHANGELOG.md) for a full list of changes. And don't miss out checking Vegard's helpful [blog](https://blog.stonegarden.dev/), where he's giving brilliant explainations on Kubernetes topics, and of course his [homelab implementation](https://github.com/vehagn/homelab).
+
+## Disclaimer
+
+This project is a personal open-source initiative and is not affiliated with, endorsed by, or associated with any of my current or former employers. All opinions, code, and documentation are solely those of myself and the individual contributors.
+
+The project is not affiliated with [Proxmox Server Solutions GmbH](https://www.proxmox.com/en/about/about-us/company) or any of its subsidiaries. The same applies to [Sidero Labs](https://siderolabs.com/) and its product [Talos](https://www.talos.dev/). The use of the Proxmox, Siderolabs or Talos name and/or logo is for informational purposes only and does not imply any endorsement or affiliation with the Proxmox or Talos products.
