@@ -5,6 +5,7 @@ Use this index to find the module documentation by task.
 ## Learn and start a cluster
 
 - [Direct usage examples](examples.md) — tutorial with prerequisites, a single-node quickstart, a highly available topology, and storage snippets. Start here when using the module directly from Terraform or OpenTofu.
+- [Canonical root configurations](../examples/) — self-contained minimal and high-availability Terraform roots that can be reviewed and validated from a repository checkout.
 - [Complete input example](full-example.md) — reference configuration showing every top-level input, with notes about values and local files to replace.
 - [Input variables](variables.md) — reference for types, defaults, constraints, and per-variable examples.
 
