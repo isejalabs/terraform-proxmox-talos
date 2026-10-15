@@ -31,7 +31,7 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 
 ### Example
 
-Start with the [direct Terraform/OpenTofu examples](docs/examples.md) for a minimal cluster, a multi-node topology, and storage configurations. For a larger Terragrunt-based, multi-environment deployment, see the [homelab implementation](https://github.com/isejalabs/homelab).
+Start with the [direct Terraform/OpenTofu examples](docs/examples.md) for a minimal cluster, a multi-node topology, and storage configurations. For a complete configuration showing all module inputs together, see the [full example](docs/full-example.md). For a larger Terragrunt-based, multi-environment setup, see the [homelab implementation of the module author](https://github.com/isejalabs/homelab).
 
 ## Requirements
 
