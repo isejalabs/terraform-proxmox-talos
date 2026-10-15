@@ -29,9 +29,11 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 - [Upgrade Methods](docs/upgrade-methods.md) for detailed instructions on how to perform an upgrade of the Talos OS version, Kubernetes version, scaling the cluster, and other aspects, and
 - [Talos Compatibility](docs/talos-compatibility.md) for the module/Talos version compatibility matrix and known caveats when upgrading past a given Talos version.
 
-### Example
+### Examples
 
-Start with the [direct Terraform/OpenTofu examples](docs/examples.md) for a minimal cluster, a multi-node topology, and storage configurations. For a complete configuration showing all module inputs together, see the [full example](docs/full-example.md). For a larger Terragrunt-based, multi-environment setup, see the [homelab implementation of the module author](https://github.com/isejalabs/homelab).
+1. Start with the [direct Terraform/OpenTofu examples](docs/examples.md) for a minimal cluster, a multi-node topology, and storage configurations.
+1. For a complete configuration showing all module inputs together, see the [full example](docs/full-example.md).
+1. For a larger Terragrunt-based, multi-environment setup, see the [homelab implementation](https://github.com/isejalabs/homelab) of the module author.
 
 ## Requirements
 
