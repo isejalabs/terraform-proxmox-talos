@@ -314,19 +314,72 @@ This has been confirmed to fail **consistently and symmetrically** (in either di
 - The **data VM's own disks** typically do get moved successfully (it does own them) – `terraform apply`/`tofu apply` reports that resource's move as complete.
 - The **Talos VM's attachment** to those disks is left unreconciled, still referencing the old `datastore_id`/volume path. Proxmox does not auto-delete the old copy in this case, so the old volume remains in place (no immediate data loss), but it's now an **orphaned duplicate** alongside the new one, and the Talos VM is left stopped mid-apply.
 
-There is no terraform-only way to reconcile this today – retrying the apply fails identically. The workaround is a manual, out-of-band fix on the Proxmox host, since it's a plain config rewrite rather than a "move" and therefore isn't subject to the ownership check:
+There is no terraform-only way to reconcile this once it has happened – retrying the apply fails identically. So the first rule is: **do not change `datastore` of an existing node in place**. Replace the node's disks instead (next section). If it has happened anyway, see [Recovering a node with a flipped datastore](#recovering-a-node-with-a-flipped-datastore).
 
-1. Confirm the Talos VM is stopped (`qm status <vm_id>`).
-1. Repoint the affected `scsiN` entries at the data VM's new volume location, keeping every other disk option identical to what `qm config <vm_id>` currently shows, e.g.:
+A proper fix would need to decouple the attached-disk declaration in the Talos VM resource from directly mirroring the data VM's `datastore_id`; until then the procedures below apply.
 
-   ```sh
-   qm set <vm_id> --scsi1 'local-zfs-4k:vm-<data_vm_id>-disk-0,aio=io_uring,backup=1,cache=writethrough,discard=on,iothread=1,replicate=1,size=12G,ssd=1'
-   ```
+#### Changing the datastore without the problem: replace the disks
 
-1. Re-run `terraform apply`/`tofu apply`: the remaining diff should now only cover the Talos VM's own disks (which it owns and can move cleanly) and starting the VM back up.
-1. Once confirmed healthy, free the now-unreferenced old-datastore copies to reclaim space, e.g. `pvesm free local-enc:vm-<data_vm_id>-disk-0`.
+Both paths create fresh disks on the new datastore, so nothing has to be moved through the Talos VM. They are verified on real clusters (control plane: `local-enc` to `local-zfs-4k`; worker: `local-zfs-4k` to `local-enc`).
 
-Migrating a node's datastore when it has any attached data VM disk is therefore **not a clean, terraform-only operation** with the current module architecture. A proper fix would need to decouple the attached-disk declaration in the Talos VM resource from directly mirroring the data VM's `datastore_id`.
+- **Control plane node, through an interim control plane node** (no etcd downtime):
+  1. [Add an interim control plane node](upgrade-methods.md#ramping-up) with `datastore` set to the **new** datastore. Leave the `datastore` of the original node **unchanged** meanwhile – otherwise the same plan tries to move its disks and fails. Check that both nodes are in `etcd` (`talosctl etcd members`).
+  1. [Retire the original node](upgrade-methods.md#ramping-down): drain, `talosctl etcd leave` on it, remove its entry, apply. The first apply fails the cluster health check because of the stale `Node` object; `kubectl delete node <name>` and apply again.
+  1. Add the original node again with the new `datastore` (same name, IP and VM ID can be reused, the destroy removed its data VM and disks), apply, wait until it is in `etcd`.
+  1. Retire the interim node the same way as in step 2.
+- **Worker node, replace both VMs**: set the new `datastore` in the node entry and plan/apply with the Talos VM and the data VM named for replacement:
+
+  ```sh
+  tofu plan -out=tfplan \
+    -replace='module.talos.proxmox_virtual_environment_vm.this["<node-name>"]' \
+    -replace='module.talos.proxmox_virtual_environment_vm.data_vm["<node-name>"]'
+  tofu apply tfplan
+  ```
+
+  The plan should only replace that node's two VMs and its machine configuration. The node comes back **empty**, including its [`disk` volumes](#types): drain it and move or evict the data it holds before (for example Longhorn replicas), and restore afterwards.
+
+Afterwards check that the node's volumes (`pvesm list <datastore>`: OS disk, cloud-init, the data VM's disk `<vm_id>0`) are on the new datastore, nothing is left on the old one, and `tofu plan` shows no changes.
+
+#### Recovering a node with a flipped datastore
+
+Symptom after the failed apply (`qm config <vm_id>` of the Talos VM and of the data VM, `<data_vm_id>` = `<vm_id>0`):
+
+- the Talos VM is stopped, its cloud-init disk (`ide2`) and possibly its OS disk (`scsi0`) are on the new datastore, but `scsi1` (the attached data disk) still points to the **old** datastore;
+- the data VM's `scsi0` points to the **new** datastore: the data VM moved its disk successfully;
+- the data disk exists **twice**, `<old>:vm-<data_vm_id>-disk-0` and `<new>:vm-<data_vm_id>-disk-0`.
+
+Before touching anything: make sure both VMs are stopped (`qm status`) and save `qm config <vm_id>` and `qm config <data_vm_id>` to a file.
+
+**Which copy of the data disk to keep?** The copy on the new datastore was made by the data VM's move and is only as recent as that moment. The copy the Talos VM is still attached to (old datastore) is what the node actually ran with and may have received writes after the move (the move happens while the Talos VM is running unless it was stopped first; compare `zfs get creation,written` of both volumes on ZFS storage). Keep the copy on the **new** datastore (variant A) if nothing important was written since, e.g. the node was shut down right before or the data is replicated elsewhere (worker with replicated volumes, control plane with other healthy `etcd` members). Keep the **live** copy (variant B) if it is the only up-to-date one, e.g. the sole control plane.
+
+*Variant A: keep the copy on the new datastore* (the simple workaround): repoint the attached disk, keeping every other disk option as shown by `qm config`:
+
+```sh
+qm set <vm_id> --scsi1 '<new>:vm-<data_vm_id>-disk-0,aio=io_uring,backup=1,cache=writethrough,discard=on,iothread=1,replicate=1,size=<size>G,ssd=1'
+```
+
+Then run `tofu apply` (it moves the Talos VM's own disks, which it owns, and starts the VM), and after the node is healthy free the old copy: `pvesm free <old>:vm-<data_vm_id>-disk-0`.
+
+*Variant B: keep the live copy.* Hand the live copy back to its owner and let the data VM move it:
+
+```sh
+# 1. drop the lagging copy on the new datastore (irreversible; check it is the lagging one first)
+qm set <data_vm_id> --delete scsi0
+qm unlink <data_vm_id> --idlist unused0 --force 1
+# 2. attach the live copy (old datastore) to the data VM, same options as before
+qm set <data_vm_id> --scsi0 '<old>:vm-<data_vm_id>-disk-0,aio=io_uring,backup=1,cache=writethrough,discard=on,iothread=1,replicate=1,size=<size>G,ssd=1'
+# 3. move it through its owner, keep the source for now (no --delete)
+qm disk move <data_vm_id> scsi0 <new>
+# 4. point the Talos VM at the moved volume
+qm set <vm_id> --scsi1 '<new>:vm-<data_vm_id>-disk-0,aio=io_uring,backup=1,cache=writethrough,discard=on,iothread=1,replicate=1,size=<size>G,ssd=1'
+```
+
+Then `tofu apply` as in variant A, and when the node is healthy free the old source (`qm unlink <data_vm_id> --idlist unused0 --force 1`). The volume has the name `vm-<data_vm_id>-disk-0` again after step 3 because the lagging copy was removed in step 1, which keeps the Terraform state consistent.
+
+> [!NOTE]
+> Variant B is derived from how Proxmox handles ownership and moves; it is being verified on a test cluster and this note is to be removed once done. Variant A is the documented workaround from the original report.
+
+In both variants the final `tofu plan` must show no infrastructure changes. If the Talos VM's OS disk (`scsi0`) is still on the old datastore, the apply moves it – that is a disk the Talos VM owns.
 
 ## Architecture of the Volumes in Proxmox and Talos
 
