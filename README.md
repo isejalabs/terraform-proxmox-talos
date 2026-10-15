@@ -1,16 +1,3 @@
-## About
-
-A `terraform`/`tofu` module for creating a [Kubernetes](https://kubernetes.io/) cluster on [Proxmox VE](https://www.proxmox.com/en/proxmox-virtual-environment), using [Talos Linux](https://talos.dev) as the governing declarative K8S OS.
-
-## What's in the pocket
-
-You will get:
-
-- [Kubernetes](https://kubernetes.io/) cluster based on
-- [Talos Linux](https://talos.dev) (a secure, immutable, and minimal distribution, explecitely designed for K8S) with
-- [Cilium](https://cilium.io) as a [CNI](https://www.cni.dev),
-- [Gateway API](https://gateway-api.sigs.k8s.io/) as next-generation Kubernetes Ingress,
-- [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin) for providing storage,
 - [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets) providing a safe store for your [`Secrets`](https://kubernetes.io/docs/concepts/configuration/secret/) – even inside a public repository –,
 - all running as QEMU/KVM VMs on [Proxmox VE](https://www.proxmox.com/en/proxmox-virtual-environment).
 
@@ -31,7 +18,7 @@ This module is designed for being minimalistic by bootstrapping a Kubernetes clu
 
 ### Example
 
-For seeing an example usage of the module, please be referred to the [author](https://github.com/sebiklamar/)'s implementation of the module in [isejalab/homelab](https://github.com/isejalabs/homelab). You will see this module being used in a multi-environment (e.g. dev, qa, prod), not only leveraging [Terragrunt](https://terragrunt.gruntwork.io/) as a DRY-style wrapper for `terraform`/`tofu`. Copious amounts of [YAML](https://yaml.org/) using [kustomize](https://kustomize.io/) and its [transformer](https://github.com/kubernetes-sigs/kustomize/blob/master/examples/transformerconfigs/README.md), patches and components features will provide more [DRY](https://de.wikipedia.org/wiki/Don%E2%80%99t_repeat_yourself) capabilities.
+Start with the [direct Terraform/OpenTofu examples](docs/examples.md) for a minimal cluster, a multi-node topology, and storage configurations. For a larger Terragrunt-based, multi-environment deployment, see the [homelab implementation](https://github.com/isejalabs/homelab).
 
 ## Requirements
 
@@ -64,11 +51,3 @@ If you think a feature is worth getting implemented inside this terraform/tofu m
 ## Credits
 
 This terraform module would not exist without [**Vegard Stenhjem Hagen**](https://github.com/vehagn). He set the foundation for a terraform module creating a Talos Kubernetes cluster in Proxmox in his excellent [vehagn/homelab//tofu/kubernets](https://github.com/vehagn/homelab/tree/140fbc249b26c622c0e2ab413c3aca9eb5014f8e) implementation. Vegard's implementation got transformed into a reusable terraform module by adding variables and other tweaks.
-
-Additional features got added by the author of this module in the meanwhile while functionality from Vegard's implementation get ported from time to time. See the [Changelog](CHANGELOG.md) for a full list of changes. And don't miss out checking Vegard's helpful [blog](https://blog.stonegarden.dev/), where he's giving brilliant explainations on Kubernetes topics, and of course his [homelab implementation](https://github.com/vehagn/homelab).
-
-## Disclaimer
-
-This project is a personal open-source initiative and is not affiliated with, endorsed by, or associated with any of my current or former employers. All opinions, code, and documentation are solely those of myself and the individual contributors.
-
-The project is not affiliated with [Proxmox Server Solutions GmbH](https://www.proxmox.com/en/about/about-us/company) or any of its subsidiaries. The same applies to [Sidero Labs](https://siderolabs.com/) and its product [Talos](https://www.talos.dev/). The use of the Proxmox, Siderolabs or Talos name and/or logo is for informational purposes only and does not imply any endorsement or affiliation with the Proxmox or Talos products.
