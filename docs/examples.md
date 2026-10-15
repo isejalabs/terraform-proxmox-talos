@@ -1,6 +1,6 @@
 # Module usage examples
 
-This guide shows direct Terraform/OpenTofu usage without Terragrunt. See [input variables](variables.md) for all options and [storage options](storage.md) for storage behavior and caveats.
+This guide shows direct Terraform/OpenTofu usage without Terragrunt. See [input variables](variables.md) for all options and [storage options](storage.md) for storage behavior and caveats. A [complete configuration](full-example.md) brings every top-level input together.
 
 ## Prerequisites
 
@@ -9,7 +9,7 @@ This guide shows direct Terraform/OpenTofu usage without Terragrunt. See [input 
 - Reserved IP addresses for the nodes and a reachable gateway.
 - Terraform or OpenTofu and a Talos Image Factory schematic file (see [image configuration](variables.md#image)).
 
-Keep credentials out of version control. The examples read the API token from TF_VAR_proxmox_api_token.
+Keep credentials out of version control. The examples expose the token as a sensitive root variable populated from TF_VAR_proxmox_api_token.
 
 ## Minimal single-node cluster
 
@@ -18,8 +18,15 @@ A single control-plane node is useful for a lab or evaluation, but is not highly
 Create a root configuration such as main.tf:
 
 ~~~terraform
+variable "proxmox_api_token" {
+  type      = string
+  sensitive = true
+}
+
 module "talos_cluster" {
   source = "github.com/isejalabs/terraform-proxmox-talos?ref=v7.6.0"
+
+  proxmox_api_token = var.proxmox_api_token
 
   proxmox = {
     cluster_name = "proxmox"
@@ -54,7 +61,7 @@ module "talos_cluster" {
 }
 ~~~
 
-Initialize, review the plan, then apply:
+Initialize and review the plan, then apply:
 
 ~~~sh
 export TF_VAR_proxmox_api_token='terraform@pve!provider=REPLACE-WITH-TOKEN-SECRET'
@@ -82,11 +89,46 @@ cluster = {
 }
 
 nodes = {
-  controlplane1 = { cpu = 2, host_node = "pve1", ip = "10.20.30.41", machine_type = "controlplane", ram_dedicated = 4096, vm_id = 141 }
-  controlplane2 = { cpu = 2, host_node = "pve2", ip = "10.20.30.42", machine_type = "controlplane", ram_dedicated = 4096, vm_id = 142 }
-  controlplane3 = { cpu = 2, host_node = "pve3", ip = "10.20.30.43", machine_type = "controlplane", ram_dedicated = 4096, vm_id = 143 }
-  worker1       = { cpu = 4, host_node = "pve1", ip = "10.20.30.51", machine_type = "worker", ram_dedicated = 8192, vm_id = 151 }
-  worker2       = { cpu = 4, host_node = "pve2", ip = "10.20.30.52", machine_type = "worker", ram_dedicated = 8192, vm_id = 152 }
+  controlplane1 = {
+    cpu           = 2
+    host_node     = "pve1"
+    ip            = "10.20.30.41"
+    machine_type  = "controlplane"
+    ram_dedicated = 4096
+    vm_id         = 141
+  }
+  controlplane2 = {
+    cpu           = 2
+    host_node     = "pve2"
+    ip            = "10.20.30.42"
+    machine_type  = "controlplane"
+    ram_dedicated = 4096
+    vm_id         = 142
+  }
+  controlplane3 = {
+    cpu           = 2
+    host_node     = "pve3"
+    ip            = "10.20.30.43"
+    machine_type  = "controlplane"
+    ram_dedicated = 4096
+    vm_id         = 143
+  }
+  worker1 = {
+    cpu           = 4
+    host_node     = "pve1"
+    ip            = "10.20.30.51"
+    machine_type  = "worker"
+    ram_dedicated = 8192
+    vm_id         = 151
+  }
+  worker2 = {
+    cpu           = 4
+    host_node     = "pve2"
+    ip            = "10.20.30.52"
+    machine_type  = "worker"
+    ram_dedicated = 8192
+    vm_id         = 152
+  }
 }
 ~~~
 
