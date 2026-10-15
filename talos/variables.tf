@@ -90,7 +90,7 @@ variable "talos_volumes" {
       size         = string
       datastore    = optional(string)           # default is to use the main VM's datastore
       machine_type = optional(string, "worker") # "all", "controlplane", "worker"
-      type         = optional(string, "disk")   # "directory", "disk", "partition"
+      type         = optional(string, "disk")   # "directory", "disk"
     })
   )
   default = {}

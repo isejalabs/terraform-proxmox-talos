@@ -139,13 +139,13 @@ variable "talos_config_patches" {
 }
 
 variable "volumes" {
-  description = "Additional storage volumes available to the cluster"
+  description = "Additional storage volumes: directory and disk use Talos User Volumes; proxmox-csi creates Proxmox disks and Kubernetes PersistentVolumes. Partition volumes are not supported."
   type = map(
     object({
       # common
       size = string                          # in GB (not GiB)
-      type = optional(string, "proxmox-csi") # "directory", "disk", "partition", "proxmox-csi"
-      # directory, disk and partition
+      type = optional(string, "proxmox-csi") # "directory", "disk", "proxmox-csi"
+      # directory and disk
       machine_type = optional(string, "worker") # "all", "controlplane", "worker"
       # disk and proxmox-csi
       datastore = optional(string) # default is to use the main VM's datastore  
