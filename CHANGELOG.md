@@ -36,6 +36,8 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Added
 
+- Allow passing USB devices through to individual Talos VMs via per-node `usb_devices`, using either a Proxmox host device/port identifier or a cluster-wide USB resource mapping.
+
 ### Removed
 
 ### Fixed

@@ -50,7 +50,7 @@ variable "image" {
 }
 
 variable "nodes" {
-  description = "Configuration for cluster nodes"
+  description = "Configuration for cluster nodes, including optional host devices passed through to each node's VM"
   type = map(object({
     cpu                  = number
     host_node            = string
@@ -67,12 +67,28 @@ variable "nodes" {
     mac_address          = optional(string, null)
     talos_config_patches = optional(list(string), [])
     update               = optional(bool, false)
-    vlan_id              = optional(number, 0)
+    # Each device must use exactly one host USB ID/port or cluster-wide USB mapping.
+    usb_devices = optional(list(object({
+      host    = optional(string)
+      mapping = optional(string)
+      usb3    = optional(bool, false)
+    })), [])
+    vlan_id = optional(number, 0)
   }))
   validation {
     // @formatter:off
     condition     = length([for n in var.nodes : n if contains(["controlplane", "worker"], n.machine_type)]) == length(var.nodes)
     error_message = "Node machine_type must be either 'controlplane' or 'worker'."
+    // @formatter:on
+  }
+  validation {
+    // @formatter:off
+    condition = alltrue(flatten([
+      for node in values(var.nodes) : [
+        for device in node.usb_devices : (device.host != null) != (device.mapping != null)
+      ]
+    ]))
+    error_message = "Each USB device must set exactly one of 'host' or 'mapping'."
     // @formatter:on
   }
 }
