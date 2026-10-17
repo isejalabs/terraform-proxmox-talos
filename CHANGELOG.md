@@ -40,7 +40,13 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Fixed
 
-- Set restrictive `0600` permissions on the generated Talos machine secrets file.
+## [7.6.1] - 2026-10-17
+
+This patch release tightens permissions on the generated Talos machine secrets file.
+
+### Fixed
+
+- Set restrictive `0600` permissions on the generated Talos machine secrets file ([#283](https://github.com/isejalabs/terraform-proxmox-talos/pull/283)).
 
 ## [7.6.0] - 2026-10-15
 
@@ -48,7 +54,7 @@ This feature release adds direct USB passthrough to selected Talos VMs, enabling
 
 ### Added
 
-- Allow passing USB devices through to individual Talos VMs via per-node `usb_devices`, using either a Proxmox host device/port identifier or a cluster-wide USB resource mapping.
+- Allow passing USB devices through to individual Talos VMs via per-node `usb_devices`, using either a Proxmox host device/port identifier or a cluster-wide USB resource mapping ([#276](https://github.com/isejalabs/terraform-proxmox-talos/pull/276)).
 
 ## [7.5.0] - 2026-10-14
 
@@ -60,7 +66,7 @@ The module now supports Talos v1.14 and newer again, in addition to the existing
 
 ### Changed
 
-- Machine config generation is now version-gated for Talos 1.14+: the fields this module sets that moved to dedicated configuration documents in Talos 1.14 (`machine.kubelet`, `machine.nodeLabels`, `machine.features.hostDNS`, `cluster.apiServer`, `cluster.controllerManager`, `cluster.scheduler`, `cluster.proxy`, `cluster.allowSchedulingOnControlPlanes`, and the default Flannel CNI) are now emitted on their new document (`KubeletConfig`, `KubeNodeConfig`, `KubeAPIServerConfig`, `KubeControllerManagerConfig`, `KubeSchedulerConfig`, `KubeProxyConfig`, and a `KubeFlannelCNIConfig` `$patch: delete`) instead of the legacy `v1alpha1` fields when `talos_machine_config_version`/`image.version` targets `v1.14.0` or newer. Without this, targeting 1.14+ fails outright: Talos rejects a config that sets the same thing under both the old field and the new document. See [docs/talos-compatibility.md](docs/talos-compatibility.md) for the full writeup.
+- Machine config generation is now version-gated for Talos 1.14+: the fields this module sets that moved to dedicated configuration documents in Talos 1.14 (`machine.kubelet`, `machine.nodeLabels`, `machine.features.hostDNS`, `cluster.apiServer`, `cluster.controllerManager`, `cluster.scheduler`, `cluster.proxy`, `cluster.allowSchedulingOnControlPlanes`, and the default Flannel CNI) are now emitted on their new document (`KubeletConfig`, `KubeNodeConfig`, `KubeAPIServerConfig`, `KubeControllerManagerConfig`, `KubeSchedulerConfig`, `KubeProxyConfig`, and a `KubeFlannelCNIConfig` `$patch: delete`) instead of the legacy `v1alpha1` fields when `talos_machine_config_version`/`image.version` targets `v1.14.0` or newer. Without this, targeting 1.14+ fails outright: Talos rejects a config that sets the same thing under both the old field and the new document. See [docs/talos-compatibility.md](docs/talos-compatibility.md) for the full writeup ([#270](https://github.com/isejalabs/terraform-proxmox-talos/pull/270)).
 
 ## [7.4.0] - 2026-10-13
 
@@ -68,9 +74,9 @@ This release finishes the first batch of `bpg/proxmox` resource-rename follow-up
 
 ### Changed
 
-- Migrated `proxmox_virtual_environment_download_file` (`talos/image.tf`) to `proxmox_download_file`, following `bpg/proxmox`'s ADR-007 resource rename ([#252](https://github.com/isejalabs/terraform-proxmox-talos/issues/252)). Existing consumer state is carried over via a `moved` block; no plan diff expected.
-- Migrated `proxmox_virtual_environment_user_token` (`bootstrap/proxmox-csi-plugin/config.tf`) to `proxmox_user_token`, following `bpg/proxmox`'s ADR-007 resource rename ([#253](https://github.com/isejalabs/terraform-proxmox-talos/issues/253)). Existing consumer state is carried over via a `moved` block; no plan diff expected.
-- Replaced the inline `acl` block on `proxmox_virtual_environment_user.kubernetes-csi` (`bootstrap/proxmox-csi-plugin/config.tf`) with a dedicated `proxmox_acl` resource, following `bpg/proxmox`'s deprecation of the inline block ([#254](https://github.com/isejalabs/terraform-proxmox-talos/issues/254)). No `moved` block applies here (an inline block isn't a separately addressable resource); verified the user resource itself only updates in-place (the nested `acl` block is dropped, nothing else changes) rather than being replaced, so the existing user and its token are unaffected — only the ACL entry itself gets recreated as a standalone resource with the same path/role/user.
+- Migrated `proxmox_virtual_environment_download_file` (`talos/image.tf`) to `proxmox_download_file`, following `bpg/proxmox`'s ADR-007 resource rename ([#252](https://github.com/isejalabs/terraform-proxmox-talos/issues/252), [#259](https://github.com/isejalabs/terraform-proxmox-talos/pull/259)). Existing consumer state is carried over via a `moved` block; no plan diff expected.
+- Migrated `proxmox_virtual_environment_user_token` (`bootstrap/proxmox-csi-plugin/config.tf`) to `proxmox_user_token`, following `bpg/proxmox`'s ADR-007 resource rename ([#253](https://github.com/isejalabs/terraform-proxmox-talos/issues/253), [#261](https://github.com/isejalabs/terraform-proxmox-talos/pull/261)). Existing consumer state is carried over via a `moved` block; no plan diff expected.
+- Replaced the inline `acl` block on `proxmox_virtual_environment_user.kubernetes-csi` (`bootstrap/proxmox-csi-plugin/config.tf`) with a dedicated `proxmox_acl` resource, following `bpg/proxmox`'s deprecation of the inline block ([#254](https://github.com/isejalabs/terraform-proxmox-talos/issues/254), [#262](https://github.com/isejalabs/terraform-proxmox-talos/pull/262)). No `moved` block applies here (an inline block isn't a separately addressable resource); verified the user resource itself only updates in-place (the nested `acl` block is dropped, nothing else changes) rather than being replaced, so the existing user and its token are unaffected — only the ACL entry itself gets recreated as a standalone resource with the same path/role/user.
 
 ## [7.3.0] - 2026-10-13
 
@@ -78,16 +84,16 @@ This release bumps provider versions, primarily to prepare for upcoming Talos OS
 
 ### Changed
 
-- Bumped the `siderolabs/talos` provider version constraint to `0.12.0` ([#247](https://github.com/isejalabs/terraform-proxmox-talos/issues/247)).
+- Bumped the `siderolabs/talos` provider version constraint to `0.12.0` ([#247](https://github.com/isejalabs/terraform-proxmox-talos/issues/247), [#249](https://github.com/isejalabs/terraform-proxmox-talos/pull/249)).
 - Bumped the `bpg/proxmox` provider version to `0.116.0` ([#225](https://github.com/isejalabs/terraform-proxmox-talos/pull/225)). No breaking changes affect this module's usage, but three upstream deprecations do (none removed before the provider's v1.0, all still functional today) — tracked as follow-ups, not fixed in this release:
-  - `proxmox_virtual_environment_download_file` (`talos/image.tf`) → `proxmox_download_file` ([#252](https://github.com/isejalabs/terraform-proxmox-talos/issues/252)).
-  - `proxmox_virtual_environment_user_token` (`bootstrap/proxmox-csi-plugin/config.tf`) → `proxmox_user_token` ([#253](https://github.com/isejalabs/terraform-proxmox-talos/issues/253)).
-  - `proxmox_virtual_environment_user`'s inline `acl` block (`bootstrap/proxmox-csi-plugin/config.tf`) → dedicated `proxmox_acl` resource ([#254](https://github.com/isejalabs/terraform-proxmox-talos/issues/254)).
+  - `proxmox_virtual_environment_download_file` (`talos/image.tf`) → `proxmox_download_file` ([#252](https://github.com/isejalabs/terraform-proxmox-talos/issues/252), [#259](https://github.com/isejalabs/terraform-proxmox-talos/pull/259)).
+  - `proxmox_virtual_environment_user_token` (`bootstrap/proxmox-csi-plugin/config.tf`) → `proxmox_user_token` ([#253](https://github.com/isejalabs/terraform-proxmox-talos/issues/253), [#261](https://github.com/isejalabs/terraform-proxmox-talos/pull/261)).
+  - `proxmox_virtual_environment_user`'s inline `acl` block (`bootstrap/proxmox-csi-plugin/config.tf`) → dedicated `proxmox_acl` resource ([#254](https://github.com/isejalabs/terraform-proxmox-talos/issues/254), [#262](https://github.com/isejalabs/terraform-proxmox-talos/pull/262)).
 - Bumped the Cilium version installed by the bootstrap `cilium-install` job (`talos/inline-manifests/cilium-install.yaml`) from `v1.18.7` to `v1.18.14` ([#226](https://github.com/isejalabs/terraform-proxmox-talos/pull/226)). Patch-only release, no breaking changes. Note this only affects brand-new clusters bootstrapping from scratch — an already-running cluster's Cilium version is governed by whatever manages it day-2 (e.g. a Flux `HelmRelease`), not by this one-time install job.
 
 ### Dependencies
 
-- update `terraform talos` v0.10.1 → v0.12.0 ([#247](https://github.com/isejalabs/terraform-proxmox-talos/issues/247))
+- update `terraform talos` v0.10.1 → v0.12.0 ([#247](https://github.com/isejalabs/terraform-proxmox-talos/issues/247), [#249](https://github.com/isejalabs/terraform-proxmox-talos/pull/249))
 - update `terraform proxmox` v0.98.1 → v0.116.0 ([#225](https://github.com/isejalabs/terraform-proxmox-talos/pull/225))
 - update `cilium/cilium` v1.18.7 → v1.18.14 ([#226](https://github.com/isejalabs/terraform-proxmox-talos/pull/226))
 
