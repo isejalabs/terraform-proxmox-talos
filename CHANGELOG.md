@@ -36,13 +36,19 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Added
 
-- Allow passing USB devices through to individual Talos VMs via per-node `usb_devices`, using either a Proxmox host device/port identifier or a cluster-wide USB resource mapping.
-
 ### Removed
 
 ### Fixed
 
 - Set restrictive `0600` permissions on the generated Talos machine secrets file.
+
+## [7.6.0] - 2026-10-15
+
+This feature release adds direct USB passthrough to selected Talos VMs, enabling use of a USB Zigbee coordinator such as the ConBee II.
+
+### Added
+
+- Allow passing USB devices through to individual Talos VMs via per-node `usb_devices`, using either a Proxmox host device/port identifier or a cluster-wide USB resource mapping.
 
 ## [7.5.0] - 2026-10-14
 
