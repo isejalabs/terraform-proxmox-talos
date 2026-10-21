@@ -17,7 +17,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: terraform fmt
-        uses: dflook/terraform-fmt@90fc9225b4c109d9a6bb0b2ca0faa89490c0ba95 # v2
+        uses: dflook/terraform-fmt@2aedcd12c3abae7829a3fb479da20c35959fd0bc # v3
         with:
           path: .
       - name: Create Pull Request
