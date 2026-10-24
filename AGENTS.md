@@ -4,6 +4,8 @@ This file provides guidance to AI coding agents (Claude Code, and others reading
 
 @.commons/agents/AGENTS.common.md
 
+The shared conventions in [.commons/agents/AGENTS.common.md](.commons/agents/AGENTS.common.md) apply here. Agents that do not expand the `@` import must initialize the submodule and read that file directly.
+
 ## About
 
 This is a `terraform`/`tofu` **module** (not a standalone deployable stack) that provisions a Kubernetes cluster on Proxmox VE using Talos Linux as the node OS. It creates Proxmox VMs, generates Talos machine configuration, bootstraps the cluster, and installs core infrastructure: Cilium (CNI), Gateway API, Proxmox CSI Plugin (storage), and Sealed Secrets.
