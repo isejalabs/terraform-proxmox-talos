@@ -376,9 +376,6 @@ qm set <vm_id> --scsi1 '<new>:vm-<data_vm_id>-disk-0,aio=io_uring,backup=1,cache
 
 Then `tofu apply` as in variant A, and when the node is healthy free the old source (`qm unlink <data_vm_id> --idlist unused0 --force 1`). The volume has the name `vm-<data_vm_id>-disk-0` again after step 3 because the lagging copy was removed in step 1, which keeps the Terraform state consistent.
 
-> [!NOTE]
-> Variant B is derived from how Proxmox handles ownership and moves; it is being verified on a test cluster and this note is to be removed once done. Variant A is the documented workaround from the original report.
-
 In both variants the final `tofu plan` must show no infrastructure changes. If the Talos VM's OS disk (`scsi0`) is still on the old datastore, the apply moves it – that is a disk the Talos VM owns.
 
 ## Architecture of the Volumes in Proxmox and Talos
