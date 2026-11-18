@@ -50,12 +50,12 @@ resource "local_file" "kube_config" {
 
 output "kube_config" {
   description = "Sensitive Kubernetes kubeconfig for cluster administration."
-  value     = module.talos.kube_config.kubeconfig_raw
-  sensitive = true
+  value       = module.talos.kube_config.kubeconfig_raw
+  sensitive   = true
 }
 
 output "talos_config" {
   description = "Sensitive Talos client configuration for cluster administration."
-  value     = module.talos.client_configuration.talos_config
-  sensitive = true
+  value       = module.talos.client_configuration.talos_config
+  sensitive   = true
 }
