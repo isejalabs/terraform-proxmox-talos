@@ -28,7 +28,9 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   cpu {
     cores = each.value.cpu
+    limit = each.value.cpu_limit
     type  = each.value.cpu_type
+    units = each.value.cpu_units
   }
 
   memory {

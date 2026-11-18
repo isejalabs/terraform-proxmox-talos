@@ -56,7 +56,9 @@ variable "nodes" {
     ram_dedicated        = number
     vm_id                = number
     bridge               = optional(string, "vmbr0")
+    cpu_limit            = optional(number)
     cpu_type             = optional(string, "x86-64-v2-AES")
+    cpu_units            = optional(number)
     datastore            = optional(string, "local-zfs")
     disk_size            = optional(number, 20)
     dns                  = optional(list(string))
