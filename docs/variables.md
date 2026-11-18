@@ -201,7 +201,9 @@ The `nodes` variable defines the Talos VMs that form the cluster. It consists of
 | ram_dedicated | **Required** RAM size in MB                                                                                | `number`       | e.g. `4096`                       |
 | vm_id         | **Required** Unique VM id in Proxmox cluster                                                               | `number`       | e.g. `123`                        |
 | bridge        | Network bridge the VM connect to                                                                           | `string`       | `"vmbr0"`                         |
+| cpu_limit     | Hard cap on the CPU time of the VM in vCPU equivalents (`0` to `128`, fractions allowed, `0` is unlimited). See [CPU priority and limit](#cpu-priority-and-limit) | `number`       | `null` (unlimited)                |
 | cpu_type      | Proxmox [CPU type](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_cpu_type)                        | `string`       | `"x86-64-v2-AES"`                 |
+| cpu_units     | Relative CPU weight of the VM under contention (`1` to `262144`), the higher the more CPU time. See [CPU priority and limit](#cpu-priority-and-limit) | `number`       | `null` (Proxmox default)          |
 | datastore     | The Proxmox datastore used to store the VM                                                                 | `string`       | `"local-zfs"`                     |
 | disk_size     | VM disk size in GB, i.e. _without_ Unit of Measure suffix                                                  | `number`       | `20`                              |
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                            |
@@ -235,7 +237,9 @@ nodes = {
 
     # optional
     bridge        = "mybridge"
+    cpu_limit     = 3       # at most 3 vCPUs worth of CPU time, even if the host is idle
     cpu_type      = "custom-x86-64-v2-AES-AVX"
+    cpu_units     = 2000    # twice the Proxmox default weight of 1024 (cgroup v1) under contention
     datastore     = "nfs"
     disk_size     = 30      # 30 GB
     dns           = ["1.1.1.1", "9.9.9.9"]
@@ -259,6 +263,20 @@ nodes = {
   }
 }
 ```
+
+### CPU priority and limit
+
+Several clusters can share the same Proxmox hosts. By default every VM only gets a core count (`cpu`) and a CPU type, so under contention all VMs compete equally. Two optional per-node settings let a cluster prioritize or cap its VMs, using the Proxmox [`cpuunits` and `cpulimit`](https://pve.proxmox.com/wiki/Manual:_qm.conf) options. Neither is set by default, so existing callers see no plan change.
+
+- `cpu_units` is a **relative weight**, used by the host's scheduler only while the host is short of CPU. The value counts against the weights of _all_ other running VMs and containers on that Proxmox host, including those of other clusters and non-Talos guests, so it only has meaning together with the values used elsewhere. The Proxmox default is `1024` on hosts with cgroup v1 and `100` on cgroup v2, so give every cluster on a shared host an explicit value (for example `400` for a standing cluster and `100` for an environment that may be starved) rather than mixing set and unset VMs. An idle host ignores the weight.
+- `cpu_limit` is a **hard cap**, in vCPU equivalents, that applies even when the host is idle. A VM with `cpu = 4` and `cpu_limit = 2` can use 2 CPUs worth of time, spread over its 4 vCPUs. A value of `0` means no limit, and a value of `cpu` or higher has no effect.
+- Prefer `cpu_units` for prioritizing. A hard cap throttles the VM, which can delay etcd on a control plane and lead to slow responses or leader elections, so use `cpu_limit` sparingly there and never below what the control plane needs at its busiest.
+- Set the values per node. For a cluster-wide default, define it once in the calling configuration (for example a local that you assign to every node) instead of repeating the number.
+
+Behaviour when changing the values on an existing cluster:
+
+- With the current Proxmox provider, changing anything in the VM's `cpu` block (so also `cpu_units` and `cpu_limit`) makes the provider **restart a running VM** after the update, although Proxmox could apply the values live. Apply the change node by node, control planes one at a time, and wait for each node to be healthy again before the next, as for any other node reboot.
+- Removing `cpu_limit` again resets the limit to unlimited. Removing `cpu_units` does **not** reset the weight on the VM, the last value stays in place. To go back to the Proxmox default, set it explicitly (`100` on cgroup v2, `1024` on cgroup v1).
 
 ## proxmox
 

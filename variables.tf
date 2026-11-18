@@ -59,7 +59,9 @@ variable "nodes" {
     ram_dedicated        = number
     vm_id                = number
     bridge               = optional(string, "vmbr0")
+    cpu_limit            = optional(number)
     cpu_type             = optional(string, "x86-64-v2-AES")
+    cpu_units            = optional(number)
     datastore            = optional(string, "local-zfs")
     disk_size            = optional(number, 20)
     dns                  = optional(list(string))
@@ -96,6 +98,18 @@ variable "nodes" {
       ]
     ]))
     error_message = "Each USB device must set exactly one of 'host' or 'mapping'."
+    // @formatter:on
+  }
+  validation {
+    // @formatter:off
+    condition     = alltrue([for node in values(var.nodes) : node.cpu_units == null || (node.cpu_units >= 1 && node.cpu_units <= 262144)])
+    error_message = "Node cpu_units must be between 1 and 262144."
+    // @formatter:on
+  }
+  validation {
+    // @formatter:off
+    condition     = alltrue([for node in values(var.nodes) : node.cpu_limit == null || (node.cpu_limit >= 0 && node.cpu_limit <= 128)])
+    error_message = "Node cpu_limit must be between 0 (unlimited) and 128."
     // @formatter:on
   }
 }
