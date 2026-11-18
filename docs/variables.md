@@ -207,6 +207,7 @@ The `nodes` variable defines the Talos VMs that form the cluster. It consists of
 | dns           | List of DNS servers                                                                                        | `list(string)` | `null`                            |
 | igpu          | Passthrough of an iGPU                                                                                     | `bool`         | `false`                           |
 | mac_address   | Custom MAC address, if no auto-assignment desired. Can be chosen from Proxmox' `BC:24:11` range            | `string`       | `null`                            |
+| startup       | Proxmox [startup and shutdown order](https://pve.proxmox.com/pve-docs/pve-admin-guide.html#qm_startup_and_shutdown) of the VM, as an object with optional `order` (lower values start first and stop last), `up_delay` and `down_delay` (shutdown timeout in seconds before Proxmox kills the VM, Proxmox default 180). Give control planes a lower `order` than workers and raise `down_delay`, because Talos drains the node before it shuts down | `object`       | `null`                            |
 | talos_config_patches | List of paths to Talos [MachineConfig](https://docs.siderolabs.com/talos/v1.12/reference/configuration/v1alpha1/config) patch files, dedicated per node-level, similar to the global-scoped [`talos_config_patches`](#talos_config_patches) variable | `list(string)` | `[]`
 | update        | If set to `true`, the node will get updated to the [`image.update_version`](#definition-3) and/or [`image.update_schematic`](#definition-3). See the [upgrade documentation](upgrade-methods.md#steps-to-upgrade-talos-os) for more details. | `bool`         | `false`                           |
 | usb_devices   | USB devices passed through to this VM. Each object sets exactly one of `host` (a USB device ID or host port) or `mapping` (a Proxmox cluster-wide USB mapping); `usb3` is optional. | `list(object)` | `[]` |
@@ -240,6 +241,10 @@ nodes = {
     dns           = ["1.1.1.1", "9.9.9.9"]
     igpu          = true
     mac_address   = "BC:24:11:2E:C8:02"
+    startup = {
+      order      = 2    # workers stop before control planes (use e.g. 1 there)
+      down_delay = 600  # seconds Proxmox waits for the guest shutdown, default 180
+    }
     usb_devices = [
       { host = "1cf1:0030" }, # ConBee II, selected by USB vendor:product ID
       # Alternatively, use a Proxmox cluster-wide mapping:
