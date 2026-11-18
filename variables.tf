@@ -67,6 +67,13 @@ variable "nodes" {
     mac_address          = optional(string, null)
     talos_config_patches = optional(list(string), [])
     update               = optional(bool, false)
+    # Proxmox startup/shutdown behaviour of the VM. Lower `order` starts first and stops last.
+    # `down_delay` is the shutdown timeout in seconds before Proxmox kills the VM (default 180).
+    startup = optional(object({
+      order      = optional(number)
+      up_delay   = optional(number)
+      down_delay = optional(number)
+    }))
     # Each device must use exactly one host USB ID/port or cluster-wide USB mapping.
     usb_devices = optional(list(object({
       host    = optional(string)

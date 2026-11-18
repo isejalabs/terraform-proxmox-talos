@@ -17,6 +17,15 @@ resource "proxmox_virtual_environment_vm" "this" {
     enabled = true
   }
 
+  dynamic "startup" {
+    for_each = each.value.startup != null ? [each.value.startup] : []
+    content {
+      order      = startup.value.order
+      up_delay   = startup.value.up_delay
+      down_delay = startup.value.down_delay
+    }
+  }
+
   cpu {
     cores = each.value.cpu
     type  = each.value.cpu_type

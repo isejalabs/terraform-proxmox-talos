@@ -36,6 +36,8 @@ Alongside this [CHANGELOG.md](CHANGELOG.md), please consult the [UPGRADE.md](UPG
 
 ### Added
 
+- Allow setting the Proxmox startup order and shutdown timeout per node via the optional `startup` object (`order`, `up_delay`, `down_delay`) in `nodes`, so a host shutdown or reboot gives the VMs enough time and stops them in a defined order ([#299](https://github.com/isejalabs/terraform-proxmox-talos/issues/299)).
+
 ### Removed
 
 ### Fixed
